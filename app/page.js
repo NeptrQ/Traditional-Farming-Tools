@@ -1,4 +1,23 @@
 import collection from "../collection.config.js";
+import EntryCard from "../components/EntryCard.js";
+
+// Real entries, collected from elders and farmers in Kampong Cham Province.
+const entries = [
+  {
+    title: "Yoke",
+    description:
+      "A traditional wooden beam used to connect two animals so they can work together to pull a load.",
+    contributor: "My grandfather and grandmother",
+    place: "Kampong Cham Province, Cambodia",
+  },
+  {
+    title: "Sickle",
+    description:
+      "A traditional agricultural tool with a curved blade used for harvesting rice and cutting grass.",
+    contributor: "My grandfather and grandmother",
+    place: "Kampong Cham Province, Cambodia",
+  },
+];
 
 const styles = {
   wrap: {
@@ -72,7 +91,11 @@ export default function Home() {
         <p style={styles.cardValue}>{collection.source}</p>
       </div>
 
-      <p style={styles.count}>entries in the archive: 0 (for now)</p>
+      {entries.map((entry) => (
+        <EntryCard key={entry.title} entry={entry} />
+      ))}
+
+      <p style={styles.count}>entries in the archive: {entries.length}</p>
 
       <footer style={styles.footer}>
         Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall
