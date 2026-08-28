@@ -4,16 +4,16 @@ import EntryCard from "../components/EntryCard.js";
 // Real entries, collected from elders and farmers in Kampong Cham Province.
 const entries = [
   {
-    title: "Yoke",
+    title: "នឹម",
     description:
-      "A traditional wooden beam used to connect two animals so they can work together to pull a load.",
+      "ឧបករណ៍ធ្វើពីឈើ ដែលប្រើសម្រាប់ភ្ជាប់សត្វពីរក្បាល ដើម្បីឱ្យវាអាចធ្វើការជាមួយគ្នា និងអូសវត្ថុផ្សេងៗ។",
     contributor: "My grandfather and grandmother",
     place: "Kampong Cham Province, Cambodia",
   },
   {
-    title: "Sickle",
+    title: "កណ្តៀវ",
     description:
-      "A traditional agricultural tool with a curved blade used for harvesting rice and cutting grass.",
+      "ឧបករណ៍កសិកម្មបុរាណដែលមានដង និងផ្លែកោង ប្រើសម្រាប់ច្រូតស្រូវ និងកាត់ស្មៅ។",
     contributor: "My grandfather and grandmother",
     place: "Kampong Cham Province, Cambodia",
   },
