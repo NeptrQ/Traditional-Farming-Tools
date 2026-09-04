@@ -1,62 +1,70 @@
 // EntryCard shows one archive entry: title, description, contributor, place.
 
-// Same Latin stack as the site body, followed by Khmer-capable fonts before
-// the generic fallback. Font matching is per glyph: Latin text resolves in
-// the same fonts as before, while Khmer glyphs pick a real Khmer typeface
-// instead of whatever the operating system happens to guess. The Khmer
-// names come after the Latin ones on purpose - Noto Sans Khmer also
-// contains basic Latin, so listing it first would change English rendering.
 const fontFamily =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, " +
   "'Noto Sans Khmer', 'Leelawadee UI', 'Khmer UI', sans-serif";
 
 const styles = {
   card: {
-    marginTop: 24,
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E8E2D8",
+    borderRadius: 12,
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
     padding: 24,
-    backgroundColor: "#1C222C",
-    border: "1px solid #2E3644",
-    borderRadius: 10,
-    // Set once here so every text element in the card inherits it. The
-    // CONTRIBUTOR/PLACE labels declare their own monospace font, which
-    // overrides inheritance, so they are unaffected.
+    display: "flex",
+    flexDirection: "column",
     fontFamily: fontFamily,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 700,
-    margin: "0 0 8px",
+    color: "#2D241E",
+    margin: "0 0 10px",
   },
   description: {
-    // Tall line height so Khmer script's stacked glyphs are not clipped,
-    // and break-word so long text wraps instead of stretching the layout.
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 1.7,
-    color: "#C6CEDA",
+    color: "#5C5248",
     overflowWrap: "break-word",
     whiteSpace: "pre-line",
     margin: "0 0 16px",
+    flexGrow: 1,
   },
   emptyDescription: {
-    fontSize: 16,
+    fontSize: 15,
     fontStyle: "italic",
-    color: "#5A6373",
+    color: "#8C827A",
     margin: "0 0 16px",
   },
-  label: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 12,
-    color: "#97A1B3",
-    margin: 0,
+  footer: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: "auto",
+    paddingTop: 16,
+    borderTop: "1px solid #F0EAE1",
   },
-  value: {
-    fontSize: 15,
-    margin: "4px 0 12px",
+  pill: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "4px 10px",
+    borderRadius: 16,
+    backgroundColor: "#F4EFEA",
+    border: "1px solid #E4DDD3",
+    fontSize: 12,
+    color: "#5C5248",
+  },
+  pillLabel: {
+    fontFamily: "'Courier New', monospace",
+    fontSize: 11,
+    color: "#B87314",
+    fontWeight: 700,
+    margin: 0,
   },
 };
 
 export default function EntryCard({ entry }) {
-  // Without this guard, a missing entry would crash on the first field below.
   if (!entry) {
     return (
       <article style={styles.card}>
@@ -74,20 +82,18 @@ export default function EntryCard({ entry }) {
         <p style={styles.emptyDescription}>Description coming soon.</p>
       )}
       {(entry.contributor || entry.place) && (
-        <footer>
-          {/* Each field renders only when it has content, so a label
-              never sits above a blank value. */}
+        <footer style={styles.footer}>
           {entry.contributor && (
-            <>
-              <p style={styles.label}>CONTRIBUTOR</p>
-              <p style={styles.value}>{entry.contributor}</p>
-            </>
+            <div style={styles.pill}>
+              <span style={styles.pillLabel}>BY</span>
+              <span>{entry.contributor}</span>
+            </div>
           )}
           {entry.place && (
-            <>
-              <p style={styles.label}>PLACE</p>
-              <p style={{ ...styles.value, marginBottom: 0 }}>{entry.place}</p>
-            </>
+            <div style={styles.pill}>
+              <span style={styles.pillLabel}>LOC</span>
+              <span>{entry.place}</span>
+            </div>
           )}
         </footer>
       )}
