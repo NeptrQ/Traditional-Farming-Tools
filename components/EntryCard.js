@@ -34,6 +34,7 @@ const styles = {
     lineHeight: 1.7,
     color: "#C6CEDA",
     overflowWrap: "break-word",
+    whiteSpace: "pre-line",
     margin: "0 0 16px",
   },
   emptyDescription: {
