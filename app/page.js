@@ -19,13 +19,6 @@ const styles = {
   footer: { marginTop: 64, paddingTop: 24, borderTop: "1px solid #2E3644", fontSize: 13, color: "#5A6373" },
 };
 
-function matchTerm(target, term) {
-  return target.includes(term) ||
-    (term.endsWith("s") && target.includes(term.slice(0, -1))) ||
-    (term.endsWith("es") && target.includes(term.slice(0, -2))) ||
-    (term.endsWith("ing") && target.includes(term.slice(0, -3)));
-}
-
 export default function Home() {
   const [query, setQuery] = useState("");
 
@@ -33,7 +26,7 @@ export default function Home() {
     const q = query.trim().toLowerCase();
     if (!q) return true;
     const target = `${entry.title} ${entry.description} ${entry.contributor || ""} ${entry.place || ""}`.toLowerCase();
-    return q.split(/\s+/).every((term) => matchTerm(target, term));
+    return target.includes(q);
   });
 
   return (
