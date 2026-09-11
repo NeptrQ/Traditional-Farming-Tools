@@ -6,6 +6,71 @@ import EntryCard from "../components/EntryCard.js";
 import EntryModal from "../components/EntryModal.js";
 import { entries } from "../data/entries.js";
 
+function getLevenshteinDistance(a, b) {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (a[i - 1] === b[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+      }
+    }
+  }
+  return dp[m][n];
+}
+
+function findSuggestion(rawQuery, allEntries) {
+  const q = (rawQuery || "").trim().toLowerCase();
+  if (!q || q.length < 2 || !allEntries?.length) return null;
+
+  let bestEntry = null;
+  let bestScore = 0;
+
+  for (const entry of allEntries) {
+    if (!entry?.title) continue;
+    const rawClean = entry.title.replace(/[()]/g, " ");
+    const terms = [
+      entry.title,
+      ...rawClean.split(/[\s/]+/).filter((w) => w.length >= 2),
+    ];
+
+    for (const term of terms) {
+      const t = term.toLowerCase().trim();
+      if (!t || t.length < 2) continue;
+
+      let score = 0;
+      if (t === q) {
+        score = 1.0;
+      } else if (t.includes(q) || q.includes(t)) {
+        const overlap = Math.min(t.length, q.length);
+        const maxLen = Math.max(t.length, q.length);
+        score = Math.max(score, overlap / maxLen);
+      } else {
+        const dist = getLevenshteinDistance(q, t);
+        const maxLen = Math.max(q.length, t.length);
+        const sim = 1 - dist / maxLen;
+        if (dist <= 2 || sim >= 0.45) {
+          score = Math.max(score, sim);
+        }
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestEntry = entry;
+      }
+    }
+  }
+
+  return bestScore >= 0.45 ? bestEntry : null;
+}
+
 const styles = {
   wrap: {
     maxWidth: 960,
@@ -104,6 +169,33 @@ const styles = {
     fontSize: 14,
     color: "#5C5248",
   },
+  suggestionWrap: {
+    marginTop: 16,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 8,
+  },
+  suggestionLabel: {
+    fontSize: 14,
+    color: "#7A6F65",
+    fontWeight: 500,
+  },
+  suggestionBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "8px 18px",
+    backgroundColor: "#FDF9F3",
+    border: "1.5px solid #B87314",
+    borderRadius: 24,
+    color: "#B87314",
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(184, 115, 20, 0.1)",
+    transition: "all 0.2s ease",
+  },
   count: {
     fontFamily: "'Courier New', monospace",
     fontSize: 13,
@@ -126,8 +218,10 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState(null);
 
+  const trimmedQuery = query.trim();
+
   const filtered = (entries || []).filter((entry) => {
-    const q = (query || "").trim().toLowerCase();
+    const q = trimmedQuery.toLowerCase();
     if (!q) return true;
 
     const title = (entry?.title || "").toLowerCase();
@@ -138,6 +232,11 @@ export default function Home() {
     const description = (entry?.description || "").toLowerCase();
     return title.includes(q) || description.includes(q);
   });
+
+  const suggestion =
+    filtered.length === 0 && trimmedQuery
+      ? findSuggestion(trimmedQuery, entries)
+      : null;
 
   return (
     <main style={styles.wrap}>
@@ -172,6 +271,12 @@ export default function Home() {
         .search-input:focus {
           border-color: #B87314 !important;
           box-shadow: 0 0 0 3px rgba(184, 115, 20, 0.15), 0 2px 8px rgba(0,0,0,0.04) !important;
+        }
+        .suggestion-btn:hover {
+          background-color: #B87314 !important;
+          color: #FFFFFF !important;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(184, 115, 20, 0.25) !important;
         }
         .mobile-swipe-hint {
           display: flex;
@@ -244,6 +349,22 @@ export default function Home() {
             ))}
           </div>
         </>
+      ) : suggestion ? (
+        <div style={styles.empty}>
+          <p style={styles.emptyTitle}>
+            រកមិនឃើញឧបករណ៍កសិកម្មទេ / No farming tools found matching &ldquo;{trimmedQuery}&rdquo;
+          </p>
+          <div style={styles.suggestionWrap}>
+            <button
+              type="button"
+              style={styles.suggestionBtn}
+              className="suggestion-btn"
+              onClick={() => setQuery(suggestion.title)}
+            >
+              🔍 Did you mean: <strong>{suggestion.title}</strong>?
+            </button>
+          </div>
+        </div>
       ) : (
         <div style={styles.empty}>
           <p style={styles.emptyTitle}>រកមិនឃើញឧបករណ៍កសិកម្មទេ។</p>
