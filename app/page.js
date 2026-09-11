@@ -3,37 +3,206 @@
 import { useState } from "react";
 import collection from "../collection.config.js";
 import EntryCard from "../components/EntryCard.js";
+import EntryModal from "../components/EntryModal.js";
 import { entries } from "../data/entries.js";
 
 const styles = {
-  wrap: { maxWidth: 960, margin: "0 auto", padding: "64px 24px", color: "#2D241E" },
+  wrap: {
+    maxWidth: 960,
+    margin: "0 auto",
+    padding: "40px 16px",
+    boxSizing: "border-box",
+    color: "#2D241E",
+    width: "100%",
+  },
   header: { textAlign: "center", marginBottom: 36 },
-  kicker: { fontFamily: "'Courier New', monospace", color: "#B87314", fontSize: 13, letterSpacing: 2, fontWeight: 700, margin: "0 0 8px" },
-  title: { fontSize: 42, fontWeight: 800, margin: "0 0 12px", color: "#2D241E", lineHeight: 1.2 },
-  description: { fontSize: 17, color: "#5C5248", lineHeight: 1.6, maxWidth: 640, margin: "0 auto" },
-  metaRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginTop: 32 },
-  card: { padding: "18px 20px", backgroundColor: "#FFFFFF", border: "1px solid #E8E2D8", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.04)", textAlign: "left" },
-  cardLabel: { fontFamily: "'Courier New', monospace", fontSize: 11, color: "#B87314", fontWeight: 700, margin: 0 },
+  kicker: {
+    fontFamily: "'Courier New', monospace",
+    color: "#B87314",
+    fontSize: 13,
+    letterSpacing: 2,
+    fontWeight: 700,
+    margin: "0 0 8px",
+  },
+  title: {
+    fontSize: "clamp(28px, 6vw, 42px)",
+    fontWeight: 800,
+    margin: "0 0 12px",
+    color: "#2D241E",
+    lineHeight: 1.2,
+    wordBreak: "break-word",
+  },
+  description: {
+    fontSize: 17,
+    color: "#5C5248",
+    lineHeight: 1.6,
+    maxWidth: 640,
+    margin: "0 auto",
+  },
+  metaRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+    gap: 16,
+    marginTop: 32,
+  },
+  card: {
+    padding: "18px 20px",
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E8E2D8",
+    borderRadius: 12,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    textAlign: "left",
+    boxSizing: "border-box",
+  },
+  cardLabel: {
+    fontFamily: "'Courier New', monospace",
+    fontSize: 11,
+    color: "#B87314",
+    fontWeight: 700,
+    margin: 0,
+  },
   cardValue: { fontSize: 15, color: "#2D241E", margin: "6px 0 0" },
-  input: { width: "100%", padding: "14px 20px", fontSize: 16, backgroundColor: "#FFFFFF", border: "1px solid #E8E2D8", borderRadius: 28, color: "#2D241E", boxSizing: "border-box", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", outline: "none", marginTop: 32 },
-  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20, marginTop: 28 },
-  empty: { padding: 40, textAlign: "center", color: "#5C5248", backgroundColor: "#FFFFFF", border: "1px dashed #E8E2D8", borderRadius: 12, marginTop: 28 },
-  count: { fontFamily: "'Courier New', monospace", fontSize: 13, color: "#B87314", fontWeight: 700, marginTop: 40, textAlign: "center" },
-  footer: { marginTop: 48, paddingTop: 20, borderTop: "1px solid #E8E2D8", fontSize: 13, color: "#8C827A", textAlign: "center" },
+  inputWrap: { position: "relative", marginTop: 32 },
+  input: {
+    width: "100%",
+    padding: "14px 20px 14px 44px",
+    fontSize: 16,
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E8E2D8",
+    borderRadius: 28,
+    color: "#2D241E",
+    boxSizing: "border-box",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    outline: "none",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+  },
+  searchIcon: {
+    position: "absolute",
+    left: 16,
+    top: "50%",
+    transform: "translateY(-50%)",
+    fontSize: 16,
+    color: "#8C827A",
+    pointerEvents: "none",
+  },
+  empty: {
+    padding: "48px 20px",
+    textAlign: "center",
+    backgroundColor: "#FFFFFF",
+    border: "1px dashed #E8E2D8",
+    borderRadius: 16,
+    marginTop: 28,
+  },
+  emptyTitle: {
+    margin: 0,
+    fontSize: 16,
+    fontWeight: 700,
+    color: "#2D241E",
+  },
+  emptySubtitle: {
+    margin: "6px 0 0",
+    fontSize: 14,
+    color: "#5C5248",
+  },
+  count: {
+    fontFamily: "'Courier New', monospace",
+    fontSize: 13,
+    color: "#B87314",
+    fontWeight: 700,
+    marginTop: 40,
+    textAlign: "center",
+  },
+  footer: {
+    marginTop: 48,
+    paddingTop: 20,
+    borderTop: "1px solid #E8E2D8",
+    fontSize: 13,
+    color: "#8C827A",
+    textAlign: "center",
+  },
 };
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [selectedEntry, setSelectedEntry] = useState(null);
 
-  const filtered = entries.filter((entry) => {
-    const q = query.trim().toLowerCase();
+  const filtered = (entries || []).filter((entry) => {
+    const q = (query || "").trim().toLowerCase();
     if (!q) return true;
-    const target = `${entry.title} ${entry.description} ${entry.contributor || ""} ${entry.place || ""}`.toLowerCase();
-    return target.includes(q);
+
+    const title = (entry?.title || "").toLowerCase();
+    if (q.length === 1) {
+      return title.includes(q);
+    }
+
+    const description = (entry?.description || "").toLowerCase();
+    return title.includes(q) || description.includes(q);
   });
 
   return (
     <main style={styles.wrap}>
+      <style>{`
+        .swipe-container {
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          gap: 16px;
+          padding: 8px 16px 20px;
+          margin: 20px -16px 0;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .swipe-container::-webkit-scrollbar {
+          display: none;
+        }
+        .swipe-card {
+          flex: 0 0 85%;
+          max-width: 85%;
+          scroll-snap-align: center;
+          box-sizing: border-box;
+        }
+        .entry-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+          border-color: #D8CFC4;
+        }
+        .search-input:focus {
+          border-color: #B87314 !important;
+          box-shadow: 0 0 0 3px rgba(184, 115, 20, 0.15), 0 2px 8px rgba(0,0,0,0.04) !important;
+        }
+        .mobile-swipe-hint {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-size: 13px;
+          color: "#8C827A";
+          margin: 16px 0 -8px;
+          font-weight: 500;
+        }
+        @media (min-width: 641px) {
+          .swipe-container {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            overflow-x: visible !important;
+            padding: 0 !important;
+            margin: 28px 0 0 !important;
+            gap: 20px !important;
+          }
+          .swipe-card {
+            flex: unset !important;
+            max-width: 100% !important;
+            scroll-snap-align: unset !important;
+          }
+          .mobile-swipe-hint {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       <header style={styles.header}>
         <p style={styles.kicker}>KHMER LIVING ARCHIVE</p>
         <h1 style={styles.title}>{collection.name}</h1>
@@ -50,22 +219,35 @@ export default function Home() {
         </div>
       </header>
 
-      <input
-        type="search"
-        placeholder="ស្វែងរកឧបករណ៍កសិកម្ម... / Search farming tools..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={styles.input}
-      />
+      <div style={styles.inputWrap}>
+        <span style={styles.searchIcon}>🔍</span>
+        <input
+          type="search"
+          placeholder="ស្វែងរកឧបករណ៍កសិកម្ម... / Search farming tools..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={styles.input}
+          className="search-input"
+        />
+      </div>
 
       {filtered.length > 0 ? (
-        <div style={styles.grid}>
-          {filtered.map((entry) => <EntryCard key={entry.id} entry={entry} />)}
-        </div>
+        <>
+          <div className="mobile-swipe-hint">👉 អូសដើម្បីមើលបន្ថែម / Swipe cards</div>
+          <div className="swipe-container">
+            {filtered.map((entry) => (
+              <EntryCard
+                key={entry.id}
+                entry={entry}
+                onSelect={setSelectedEntry}
+              />
+            ))}
+          </div>
+        </>
       ) : (
         <div style={styles.empty}>
-          <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#2D241E" }}>រកមិនឃើញឧបករណ៍កសិកម្មទេ។</p>
-          <p style={{ margin: "6px 0 0", fontSize: 14 }}>No farming tools found.</p>
+          <p style={styles.emptyTitle}>រកមិនឃើញឧបករណ៍កសិកម្មទេ។</p>
+          <p style={styles.emptySubtitle}>No farming tools found.</p>
         </div>
       )}
 
@@ -74,6 +256,11 @@ export default function Home() {
       <footer style={styles.footer}>
         Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall 2026. This archive is under construction all semester.
       </footer>
+
+      <EntryModal
+        entry={selectedEntry}
+        onClose={() => setSelectedEntry(null)}
+      />
     </main>
   );
 }
