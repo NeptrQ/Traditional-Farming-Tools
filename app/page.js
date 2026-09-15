@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import collection from "../collection.config.js";
 import EntryCard from "../components/EntryCard.js";
@@ -126,6 +126,49 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
+  primaryBtn: {
+    padding: "10px 20px",
+    backgroundColor: "#B87314",
+    border: "1px solid #B87314",
+    borderRadius: 8,
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+  dashboardBanner: {
+    backgroundColor: "#FAF7F2",
+    borderRadius: 16,
+    padding: "32px 24px",
+    border: "1px solid #E8E2D8",
+    marginBottom: 48,
+    textAlign: "center",
+  },
+  dashboardGreeting: {
+    fontSize: 24,
+    fontWeight: 800,
+    color: "#2D241E",
+    margin: "0 0 12px",
+  },
+  dashboardSubtext: {
+    fontSize: 15,
+    color: "#5C5248",
+    margin: "0 auto 20px",
+    maxWidth: 600,
+    lineHeight: 1.6,
+  },
+  statsPill: {
+    display: "inline-block",
+    padding: "6px 16px",
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E8E2D8",
+    borderRadius: 20,
+    fontSize: 14,
+    color: "#B87314",
+    fontWeight: 600,
+    margin: "0 0 24px",
+  },
   authLinks: {
     display: "flex",
     alignItems: "center",
@@ -153,53 +196,56 @@ const styles = {
     textDecoration: "none",
     transition: "all 0.2s ease",
   },
-  header: { textAlign: "center", marginBottom: 36 },
-  kicker: {
-    fontFamily: "'Courier New', monospace",
-    color: "#B87314",
-    fontSize: 13,
-    letterSpacing: 2,
-    fontWeight: 700,
-    margin: "0 0 8px",
-  },
-  title: {
-    fontSize: "clamp(28px, 6vw, 42px)",
-    fontWeight: 800,
-    margin: "0 0 12px",
-    color: "#2D241E",
-    lineHeight: 1.2,
-    wordBreak: "break-word",
-  },
-  description: {
-    fontSize: 17,
-    color: "#5C5248",
-    lineHeight: 1.6,
-    maxWidth: 640,
-    margin: "0 auto",
-  },
-  metaRow: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
-    gap: 16,
-    marginTop: 32,
-  },
-  card: {
-    padding: "18px 20px",
+  heroHeader: {
+    textAlign: "center",
+    marginBottom: 48,
+    padding: "40px 20px",
     backgroundColor: "#FFFFFF",
+    borderRadius: 24,
     border: "1px solid #E8E2D8",
-    borderRadius: 12,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-    textAlign: "left",
-    boxSizing: "border-box",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
+    position: "relative",
+    overflow: "hidden",
   },
-  cardLabel: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 11,
-    color: "#B87314",
-    fontWeight: 700,
-    margin: 0,
+  stickersWrap: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 16,
+    marginBottom: 20,
+    fontSize: 32,
   },
-  cardValue: { fontSize: 15, color: "#2D241E", margin: "6px 0 0" },
+  heroTitle: {
+    fontSize: "clamp(24px, 5vw, 36px)",
+    fontWeight: 800,
+    margin: "0 0 16px",
+    color: "#2D241E",
+    lineHeight: 1.3,
+  },
+  heroSubtitle: {
+    fontSize: 16,
+    color: "#5C5248",
+    lineHeight: 1.7,
+    maxWidth: 700,
+    margin: "0 auto 28px",
+  },
+  pillsWrap: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 12,
+  },
+  heroPill: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "8px 16px",
+    backgroundColor: "#FDF9F3",
+    border: "1px solid #E4DDD3",
+    borderRadius: 24,
+    fontSize: 14,
+    color: "#5C5248",
+    fontWeight: 500,
+  },
   inputWrap: { position: "relative", marginTop: 32 },
   input: {
     width: "100%",
@@ -292,6 +338,49 @@ export default function Home() {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [newPlace, setNewPlace] = useState("");
+
+  const handleAddSubmit = (e) => {
+    e.preventDefault();
+    alert("Submission feature coming soon!");
+    setShowAddModal(false);
+    setNewTitle("");
+    setNewDesc("");
+    setNewPlace("");
+  };
+
+  const nextCard = () => {
+    if (activeIndex < filtered.length - 1) setActiveIndex((prev) => prev + 1);
+  };
+  const prevCard = () => {
+    if (activeIndex > 0) setActiveIndex((prev) => prev - 1);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > 50) nextCard();
+    if (distance < -50) prevCard();
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -347,78 +436,82 @@ export default function Home() {
   return (
     <main style={styles.wrap}>
       <style>{`
-        .swipe-container {
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .floating-sticker {
+          animation: float 4s ease-in-out infinite;
+        }
+        .floating-sticker:nth-child(1) { animation-delay: 0s; }
+        .floating-sticker:nth-child(2) { animation-delay: 0.5s; }
+        .floating-sticker:nth-child(3) { animation-delay: 1s; }
+        .floating-sticker:nth-child(4) { animation-delay: 1.5s; }
+        .carousel-viewport {
+          overflow: hidden;
+          padding: 20px 0 40px;
+          margin: 20px -16px 0;
+        }
+        .carousel-track {
           display: flex;
           flex-direction: row;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          scroll-behavior: smooth;
-          -webkit-overflow-scrolling: touch;
           gap: 16px;
-          padding: 8px 16px 20px;
-          margin: 20px -16px 0;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-        .swipe-container::-webkit-scrollbar {
-          display: none;
+          padding: 0 16px;
+          width: 100%;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .swipe-card {
           flex: 0 0 85%;
           max-width: 85%;
-          scroll-snap-align: center;
           box-sizing: border-box;
         }
-        .entry-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-          border-color: #D8CFC4;
-        }
-        .search-input:focus {
-          border-color: #B87314 !important;
-          box-shadow: 0 0 0 3px rgba(184, 115, 20, 0.15), 0 2px 8px rgba(0,0,0,0.04) !important;
-        }
-        .suggestion-btn:hover {
-          background-color: #B87314 !important;
-          color: #FFFFFF !important;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(184, 115, 20, 0.25) !important;
-        }
-        .auth-btn:hover {
-          border-color: #B87314 !important;
-          color: #B87314 !important;
-        }
-        .auth-btn-primary:hover {
-          background-color: #9E600F !important;
-          border-color: #9E600F !important;
-        }
-        .mobile-swipe-hint {
+        .control-bar {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
-          font-size: 13px;
-          color: #8C827A;
-          margin: 16px 0 -8px;
-          font-weight: 500;
+          gap: 20px;
+          margin-top: 10px;
         }
-        @media (min-width: 641px) {
-          .swipe-container {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-            overflow-x: visible !important;
-            padding: 0 !important;
-            margin: 28px 0 0 !important;
-            gap: 20px !important;
-          }
-          .swipe-card {
-            flex: unset !important;
-            max-width: 100% !important;
-            scroll-snap-align: unset !important;
-          }
-          .mobile-swipe-hint {
-            display: none !important;
-          }
+        .carousel-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background-color: #FFFFFF;
+          border: 1px solid #E8E2D8;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          color: #5C5248;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .carousel-btn:hover:not(:disabled) {
+          background-color: #FDF9F3;
+          color: #B87314;
+          border-color: #B87314;
+        }
+        .carousel-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .pagination-dots {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+        .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #E8E2D8;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .dot.active {
+          background-color: #B87314;
+          transform: scale(1.3);
         }
       `}</style>
 
@@ -427,7 +520,7 @@ export default function Home() {
           (user ? (
             <div style={styles.authUserInfo}>
               <span style={styles.userBadge} title={user.email}>
-                👤 {user.email}
+                👤 Contributor: {user.email}
               </span>
               <button
                 type="button"
@@ -454,21 +547,47 @@ export default function Home() {
           ))}
       </div>
 
-      <header style={styles.header}>
-        <p style={styles.kicker}>KHMER LIVING ARCHIVE</p>
-        <h1 style={styles.title}>{collection.name}</h1>
-        <p style={styles.description}>{collection.description}</p>
-        <div style={styles.metaRow}>
-          <div style={styles.card}>
-            <p style={styles.cardLabel}>CURATED BY</p>
-            <p style={styles.cardValue}>{collection.curator}</p>
+      {!loadingUser && user ? (
+        <section style={styles.dashboardBanner}>
+          <h2 style={styles.dashboardGreeting}>ស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រង / Welcome to your Contributor Dashboard</h2>
+          <p style={styles.dashboardSubtext}>
+            You are logged in as an official archive contributor. You can contribute new traditional tools and manage your submissions.
+          </p>
+          <div style={styles.statsPill}>🌾 My Contributions: 0 tools submitted</div>
+          <div>
+            <button style={styles.primaryBtn} onClick={() => setShowAddModal(true)}>
+              ＋ បន្ថែមឧបករណ៍ថ្មី / Add New Farming Tool
+            </button>
           </div>
-          <div style={styles.card}>
-            <p style={styles.cardLabel}>SOURCE</p>
-            <p style={styles.cardValue}>{collection.source}</p>
+        </section>
+      ) : (
+        <header style={styles.heroHeader}>
+          <div style={styles.stickersWrap}>
+            <span className="floating-sticker">🌾</span>
+            <span className="floating-sticker">🐃</span>
+            <span className="floating-sticker">🪵</span>
+            <span className="floating-sticker">🛖</span>
           </div>
-        </div>
-      </header>
+          <h1 style={styles.heroTitle}>ស្វាគមន៍មកកាន់បណ្ណសារឧបករណ៍កសិកម្មបុរាណខ្មែរ</h1>
+          <p style={styles.heroSubtitle}>
+            Welcome to the Traditional Khmer Farming Tools Archive — where you can explore the timeless tools and agricultural heritage used by Cambodian farmers and elders for generations.
+          </p>
+          <div style={styles.pillsWrap}>
+            <div style={styles.heroPill}>
+              <span>📍</span>
+              <span>Sourced from {collection.source}</span>
+            </div>
+            <div style={styles.heroPill}>
+              <span>👤</span>
+              <span>Curated by {collection.curator}</span>
+            </div>
+            <div style={styles.heroPill}>
+              <span>🏛️</span>
+              <span>Preserving Living Knowledge</span>
+            </div>
+          </div>
+        </header>
+      )}
 
       <div style={styles.inputWrap}>
         <span style={styles.searchIcon}>🔍</span>
@@ -484,15 +603,50 @@ export default function Home() {
 
       {filtered.length > 0 ? (
         <>
-          <div className="mobile-swipe-hint">👉 អូសដើម្បីមើលបន្ថែម / Swipe cards</div>
-          <div className="swipe-container">
-            {filtered.map((entry) => (
-              <EntryCard
-                key={entry.id}
-                entry={entry}
-                onSelect={setSelectedEntry}
-              />
-            ))}
+          <div className="carousel-viewport" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+            <div 
+              className="carousel-track"
+              style={{ transform: `translateX(calc(-${activeIndex * 85}% - ${activeIndex * 16}px))` }}
+            >
+              {filtered.map((entry, index) => (
+                <EntryCard
+                  key={entry.id}
+                  entry={entry}
+                  onSelect={setSelectedEntry}
+                  isActive={index === activeIndex}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="control-bar">
+            <button 
+              type="button"
+              className="carousel-btn" 
+              onClick={prevCard}
+              disabled={activeIndex === 0}
+              aria-label="Previous"
+            >
+              &lt;
+            </button>
+            <div className="pagination-dots">
+              {filtered.map((_, index) => (
+                <div 
+                  key={index} 
+                  className={`dot ${index === activeIndex ? "active" : ""}`}
+                  onClick={() => setActiveIndex(index)}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            <button 
+              type="button"
+              className="carousel-btn" 
+              onClick={nextCard}
+              disabled={activeIndex === filtered.length - 1}
+              aria-label="Next"
+            >
+              &gt;
+            </button>
           </div>
         </>
       ) : suggestion ? (
@@ -528,6 +682,50 @@ export default function Home() {
         entry={selectedEntry}
         onClose={() => setSelectedEntry(null)}
       />
+
+      {showAddModal && (
+        <div
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: "rgba(45, 36, 30, 0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 20, zIndex: 1000,
+          }}
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            style={{
+              backgroundColor: "#FFFFFF", borderRadius: 16, padding: "32px 28px",
+              width: "100%", maxWidth: 460, boxSizing: "border-box",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>បន្ថែមឧបករណ៍ថ្មី<br/><span style={{fontSize: 15, color: "#8C827A", fontWeight: 500}}>Add New Tool</span></h3>
+              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C827A", padding: 0 }}>×</button>
+            </div>
+            <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title</label>
+                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description</label>
+                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", resize: "vertical", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin</label>
+                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
+                <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
+                <button type="submit" style={{...styles.primaryBtn, borderRadius: 10, padding: "12px 24px"}}>Submit Tool</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

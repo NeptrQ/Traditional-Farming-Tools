@@ -52,11 +52,28 @@ export default function SignupPage() {
 
   return (
     <main style={styles.page}>
-      <div style={styles.card}>
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animated-card {
+          animation: fadeSlideUp 0.6s ease-out forwards;
+        }
+        .auth-input:focus {
+          border-color: #B87314 !important;
+          outline: none !important;
+          box-shadow: 0 0 0 3px rgba(184, 115, 20, 0.15) !important;
+        }
+      `}</style>
+      <div style={styles.card} className="animated-card">
         <div style={styles.header}>
           <Link href="/" style={styles.backLink}>
             ← Back to Archive
           </Link>
+          <div style={styles.badgeWrap}>
+            <span style={styles.badge}>🌾 The Khmer Living Archive</span>
+          </div>
           <p style={styles.kicker}>KHMER LIVING ARCHIVE</p>
           <h1 style={styles.title}>បង្កើតគណនី / Sign Up</h1>
           <p style={styles.archiveName}>{collection.name}</p>
@@ -78,6 +95,7 @@ export default function SignupPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@domain.com"
               style={styles.input}
+              className="auth-input"
             />
           </div>
 
@@ -94,6 +112,7 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               style={styles.input}
+              className="auth-input"
             />
           </div>
 
@@ -154,6 +173,21 @@ const styles = {
     textDecoration: "none",
     marginBottom: 16,
     fontWeight: 500,
+  },
+  badgeWrap: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  badge: {
+    display: "inline-block",
+    padding: "6px 14px",
+    backgroundColor: "#FDF9F3",
+    border: "1px solid #E4DDD3",
+    borderRadius: 20,
+    fontSize: 13,
+    color: "#B87314",
+    fontWeight: 700,
   },
   kicker: {
     fontFamily: "'Courier New', monospace",
