@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import collection from "../collection.config.js";
 import EntryCard from "../components/EntryCard.js";
 import EntryModal from "../components/EntryModal.js";
 import { entries } from "../data/entries.js";
+import { createClient } from "../utils/supabase/client.js";
 
 function getLevenshteinDistance(a, b) {
   const m = a.length;
@@ -75,10 +77,81 @@ const styles = {
   wrap: {
     maxWidth: 960,
     margin: "0 auto",
-    padding: "40px 16px",
+    padding: "24px 16px 40px",
     boxSizing: "border-box",
     color: "#2D241E",
     width: "100%",
+  },
+  authBar: {
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 24,
+    minHeight: 38,
+    flexWrap: "wrap",
+  },
+  authUserInfo: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 10,
+    fontSize: 14,
+    color: "#5C5248",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+  },
+  userBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "6px 12px",
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E8E2D8",
+    borderRadius: 20,
+    fontSize: 13,
+    color: "#2D241E",
+    maxWidth: 240,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  logoutBtn: {
+    padding: "6px 14px",
+    backgroundColor: "transparent",
+    border: "1px solid #E8E2D8",
+    borderRadius: 8,
+    color: "#5C5248",
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+  authLinks: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  },
+  loginLink: {
+    padding: "6px 14px",
+    border: "1px solid #E8E2D8",
+    borderRadius: 8,
+    color: "#2D241E",
+    fontSize: 13,
+    fontWeight: 600,
+    textDecoration: "none",
+    backgroundColor: "#FFFFFF",
+    transition: "all 0.2s ease",
+  },
+  signupLink: {
+    padding: "6px 14px",
+    backgroundColor: "#B87314",
+    border: "1px solid #B87314",
+    borderRadius: 8,
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: 600,
+    textDecoration: "none",
+    transition: "all 0.2s ease",
   },
   header: { textAlign: "center", marginBottom: 36 },
   kicker: {
@@ -217,6 +290,39 @@ const styles = {
 export default function Home() {
   const [query, setQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function getUser() {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+      setUser(currentUser ?? null);
+      setLoadingUser(false);
+    }
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoadingUser(false);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+  }
 
   const trimmedQuery = query.trim();
 
@@ -278,13 +384,21 @@ export default function Home() {
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(184, 115, 20, 0.25) !important;
         }
+        .auth-btn:hover {
+          border-color: #B87314 !important;
+          color: #B87314 !important;
+        }
+        .auth-btn-primary:hover {
+          background-color: #9E600F !important;
+          border-color: #9E600F !important;
+        }
         .mobile-swipe-hint {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 6px;
           font-size: 13px;
-          color: "#8C827A";
+          color: #8C827A;
           margin: 16px 0 -8px;
           font-weight: 500;
         }
@@ -307,6 +421,38 @@ export default function Home() {
           }
         }
       `}</style>
+
+      <div style={styles.authBar}>
+        {!loadingUser &&
+          (user ? (
+            <div style={styles.authUserInfo}>
+              <span style={styles.userBadge} title={user.email}>
+                👤 {user.email}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={styles.logoutBtn}
+                className="auth-btn"
+              >
+                ចាកចេញ / Log Out
+              </button>
+            </div>
+          ) : (
+            <div style={styles.authLinks}>
+              <Link href="/login" style={styles.loginLink} className="auth-btn">
+                ចូល / Log In
+              </Link>
+              <Link
+                href="/signup"
+                style={styles.signupLink}
+                className="auth-btn-primary"
+              >
+                ចុះឈ្មោះ / Sign Up
+              </Link>
+            </div>
+          ))}
+      </div>
 
       <header style={styles.header}>
         <p style={styles.kicker}>KHMER LIVING ARCHIVE</p>
