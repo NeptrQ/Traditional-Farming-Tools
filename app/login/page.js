@@ -124,6 +124,11 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
+          <div style={{ marginTop: 16 }}>
+            <Link href="/" style={{ ...styles.link, color: "#8C7E72", fontSize: 14 }}>
+              ឬ ចូលមើលជាភ្ញៀវ / Or browse as guest →
+            </Link>
+          </div>
         </div>
       </div>
     </main>

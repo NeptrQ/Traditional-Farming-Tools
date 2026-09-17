@@ -338,9 +338,7 @@ export default function Home() {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
+  const [showArchive, setShowArchive] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -356,31 +354,7 @@ export default function Home() {
     setNewPlace("");
   };
 
-  const nextCard = () => {
-    if (activeIndex < filtered.length - 1) setActiveIndex((prev) => prev + 1);
-  };
-  const prevCard = () => {
-    if (activeIndex > 0) setActiveIndex((prev) => prev - 1);
-  };
 
-  const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    if (distance > 50) nextCard();
-    if (distance < -50) prevCard();
-    setTouchStart(0);
-    setTouchEnd(0);
-  };
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -391,6 +365,7 @@ export default function Home() {
       } = await supabase.auth.getUser();
       setUser(currentUser ?? null);
       setLoadingUser(false);
+      if (currentUser) setShowArchive(true);
     }
 
     getUser();
@@ -400,6 +375,7 @@ export default function Home() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoadingUser(false);
+      if (session?.user) setShowArchive(true);
     });
 
     return () => {
@@ -433,8 +409,250 @@ export default function Home() {
       ? findSuggestion(trimmedQuery, entries)
       : null;
 
+  if (!showArchive) {
+    return (
+      <main className="welcome-portal">
+        <style>{`
+          @keyframes glow {
+            from { box-shadow: 0 4px 16px rgba(184, 115, 20, 0.15); }
+            to { box-shadow: 0 4px 24px rgba(184, 115, 20, 0.35); }
+          }
+          .welcome-portal {
+            min-height: 100vh;
+            background-color: #FAF7F2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            box-sizing: border-box;
+          }
+          .portal-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 20px;
+            border-radius: 30px;
+            background-color: #FDF9F3;
+            border: 1px solid #E4DDD3;
+            color: #B87314;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 16px rgba(184, 115, 20, 0.2);
+            margin-bottom: 32px;
+            animation: glow 3s ease-in-out infinite alternate;
+          }
+          .portal-title-khmer {
+            font-size: clamp(32px, 5vw, 42px);
+            font-weight: 800;
+            color: #2D241E;
+            margin: 0 0 12px;
+            text-align: center;
+            line-height: 1.3;
+          }
+          .portal-title-en {
+            font-size: clamp(20px, 3vw, 24px);
+            font-weight: 600;
+            color: #5C5248;
+            margin: 0 0 16px;
+            text-align: center;
+          }
+          .portal-subtitle {
+            font-size: 16px;
+            color: #5C5248;
+            line-height: 1.7;
+            max-width: 600px;
+            text-align: center;
+            margin: 0 0 48px;
+          }
+          .teaser-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 48px;
+          }
+          @media (max-width: 768px) {
+            .teaser-row {
+              grid-template-columns: 1fr;
+            }
+          }
+          .teaser-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E4DDD3;
+            border-radius: 14px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.35s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .teaser-card:hover {
+            transform: translateY(-4px);
+            border-color: #D4A373;
+            box-shadow: 0 12px 24px rgba(184, 115, 20, 0.1);
+          }
+          .teaser-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+          }
+          .badge-amber { background-color: #FDF6EC; }
+          .badge-sand { background-color: #F5EFEB; }
+          .badge-cream { background-color: #FAF0E6; }
+          
+          .teaser-title {
+            font-weight: 700;
+            color: #2D241E;
+            margin: 0 0 10px;
+            font-size: 16px;
+            line-height: 1.4;
+          }
+          .teaser-desc {
+            font-size: 14px;
+            color: #5C5248;
+            margin: 0;
+            line-height: 1.5;
+          }
+          .portal-btn-primary {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #B87314, #8B5A2B);
+            border: none;
+            border-radius: 12px;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            box-shadow: 0 8px 24px rgba(184, 115, 20, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+          }
+          .portal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(184, 115, 20, 0.4);
+          }
+          .portal-btn-secondary {
+            padding: 14px 28px;
+            background-color: #FFFFFF;
+            border: 1px solid #B87314;
+            border-radius: 12px;
+            color: #B87314;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+          }
+          .portal-btn-secondary:hover {
+            background-color: #FDF9F3;
+            transform: translateY(-2px);
+          }
+          .portal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+          }
+          .portal-footer {
+            position: absolute;
+            bottom: 24px;
+            font-size: 13px;
+            color: #8C827A;
+            text-align: center;
+            width: 100%;
+          }
+        `}</style>
+        
+        <div className="portal-badge">
+          🌾 បណ្ណសារបេតិកភណ្ឌខ្មែរ | The Khmer Living Archive
+        </div>
+
+        <h1 className="portal-title-khmer">ស្វាគមន៍មកកាន់បណ្ណសារឧបករណ៍កសិកម្មបុរាណខ្មែរ</h1>
+        <h2 className="portal-title-en">Traditional Khmer Farming Tools Archive</h2>
+        <p className="portal-subtitle">
+          Step into the living heritage of Cambodian agriculture — preserved from the wisdom of elders and farmers in Kampong Cham Province.
+        </p>
+
+        <div className="teaser-row">
+          <div className="teaser-card">
+            <div className="teaser-badge badge-amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B87314" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22c0-9 6-12 6-12s-3 1-6 4c-3-3-6-4-6-4s6 3 6 12z"/>
+                <path d="M12 10V2"/>
+              </svg>
+            </div>
+            <h3 className="teaser-title">ចំណេះដឹងពីជីដូនជីតា</h3>
+            <p className="teaser-desc">Sourced from real elders in Kampong Cham</p>
+          </div>
+          <div className="teaser-card">
+            <div className="teaser-badge badge-sand">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5A2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+            </div>
+            <h3 className="teaser-title">ឧបករណ៍កសិកម្ម ១០ មុខ</h3>
+            <p className="teaser-desc">10 Traditional tools preserved</p>
+          </div>
+          <div className="teaser-card">
+            <div className="teaser-badge badge-cream">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A0522D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <h3 className="teaser-title">បេតិកភណ្ឌរស់</h3>
+            <p className="teaser-desc">Authentic Khmer cultural archive</p>
+          </div>
+        </div>
+
+        <div className="portal-actions">
+          <button onClick={() => setShowArchive(true)} className="portal-btn-primary">
+            🌾 រុករកបណ្ណសារ / Enter Archive Collection →
+          </button>
+          <Link href="/login" className="portal-btn-secondary">
+            🔑 ចូលគណនីអ្នករួមចំណែក / Contributor Portal
+          </Link>
+        </div>
+
+        <footer className="portal-footer">
+          📍 ខេត្តកំពង់ចាម (Kampong Cham) • 🏛️ AUPP Software Development • 👨‍🌾 Curated by {collection.curator}
+        </footer>
+      </main>
+    );
+  }
+
   return (
     <main style={styles.wrap}>
+      <button onClick={() => setShowArchive(false)} style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "8px 16px",
+          backgroundColor: "transparent",
+          border: "1px solid #E8E2D8",
+          borderRadius: "20px",
+          color: "#5C5248",
+          fontSize: "14px",
+          fontWeight: "600",
+          cursor: "pointer",
+          marginBottom: "24px",
+          transition: "all 0.2s ease"
+      }}>
+        ← ត្រឡប់ទៅទំព័រដើម / Back to Welcome
+      </button>
+
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
@@ -447,71 +665,123 @@ export default function Home() {
         .floating-sticker:nth-child(2) { animation-delay: 0.5s; }
         .floating-sticker:nth-child(3) { animation-delay: 1s; }
         .floating-sticker:nth-child(4) { animation-delay: 1.5s; }
-        .carousel-viewport {
-          overflow: hidden;
-          padding: 20px 0 40px;
-          margin: 20px -16px 0;
-        }
-        .carousel-track {
-          display: flex;
-          flex-direction: row;
-          gap: 16px;
+        
+        /* Museum Gallery Grid */
+        .museum-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 24px;
+          margin-top: 40px;
           padding: 0 16px;
-          width: 100%;
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .swipe-card {
-          flex: 0 0 85%;
-          max-width: 85%;
-          box-sizing: border-box;
-        }
-        .control-bar {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 20px;
-          margin-top: 10px;
-        }
-        .carousel-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
+
+        /* EntryCard Hover Interactions */
+        .entry-card {
           background-color: #FFFFFF;
           border: 1px solid #E8E2D8;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          padding: 28px;
           display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 16px;
-          color: #5C5248;
+          flex-direction: column;
+          box-sizing: border-box;
+          overflow-wrap: break-word;
+          word-break: break-word;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.35s ease;
+          position: relative;
         }
-        .carousel-btn:hover:not(:disabled) {
-          background-color: #FDF9F3;
-          color: #B87314;
+        
+        .entry-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 16px 32px rgba(184, 115, 20, 0.15);
           border-color: #B87314;
         }
-        .carousel-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
+        
+        .entry-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #2D241E;
+          margin: 0 0 10px;
         }
-        .pagination-dots {
+        
+        .entry-desc {
+          font-size: 15px;
+          line-height: 1.8;
+          color: #5C5248;
+          white-space: pre-line;
+          margin: 0;
+          flex-grow: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          transition: all 0.35s ease;
+        }
+        
+        .entry-card:hover .entry-desc {
+          -webkit-line-clamp: unset;
+          margin-bottom: 24px;
+        }
+        
+        .entry-empty-desc {
+          font-size: 15px;
+          font-style: italic;
+          color: #8C827A;
+          margin: 0 0 16px;
+        }
+        
+        .entry-footer {
           display: flex;
+          flex-wrap: wrap;
           gap: 8px;
+          margin-top: 0;
+          padding-top: 0;
+          border-top: 1px solid transparent;
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transition: all 0.35s ease;
+        }
+        
+        .entry-card:hover .entry-footer {
+          opacity: 1;
+          max-height: 100px;
+          padding-top: 16px;
+          margin-top: auto;
+          border-top-color: #F0EAE1;
+        }
+        
+        .entry-pill {
+          display: inline-flex;
           align-items: center;
+          gap: 6px;
+          padding: 5px 12px;
+          border-radius: 20px;
+          background-color: #F7F3EE;
+          border: 1px solid #E4DDD3;
+          font-size: 12px;
+          color: #5C5248;
         }
-        .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: #E8E2D8;
-          cursor: pointer;
-          transition: all 0.3s ease;
+        
+        .entry-view-hint {
+          font-size: 13px;
+          color: #B87314;
+          font-weight: 700;
+          margin-top: 0;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transition: all 0.35s ease;
         }
-        .dot.active {
-          background-color: #B87314;
-          transform: scale(1.3);
+        
+        .entry-card:hover .entry-view-hint {
+          opacity: 1;
+          max-height: 50px;
+          margin-top: 16px;
         }
       `}</style>
 
@@ -520,7 +790,7 @@ export default function Home() {
           (user ? (
             <div style={styles.authUserInfo}>
               <span style={styles.userBadge} title={user.email}>
-                👤 Contributor: {user.email}
+                👤 អ្នករួមចំណែក: {user.email}
               </span>
               <button
                 type="button"
@@ -547,7 +817,7 @@ export default function Home() {
           ))}
       </div>
 
-      {!loadingUser && user ? (
+      {!loadingUser && user && (
         <section style={styles.dashboardBanner}>
           <h2 style={styles.dashboardGreeting}>ស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រង / Welcome to your Contributor Dashboard</h2>
           <p style={styles.dashboardSubtext}>
@@ -560,36 +830,21 @@ export default function Home() {
             </button>
           </div>
         </section>
-      ) : (
-        <header style={styles.heroHeader}>
-          <div style={styles.stickersWrap}>
-            <span className="floating-sticker">🌾</span>
-            <span className="floating-sticker">🐃</span>
-            <span className="floating-sticker">🪵</span>
-            <span className="floating-sticker">🛖</span>
-          </div>
-          <h1 style={styles.heroTitle}>ស្វាគមន៍មកកាន់បណ្ណសារឧបករណ៍កសិកម្មបុរាណខ្មែរ</h1>
-          <p style={styles.heroSubtitle}>
-            Welcome to the Traditional Khmer Farming Tools Archive — where you can explore the timeless tools and agricultural heritage used by Cambodian farmers and elders for generations.
-          </p>
-          <div style={styles.pillsWrap}>
-            <div style={styles.heroPill}>
-              <span>📍</span>
-              <span>Sourced from {collection.source}</span>
-            </div>
-            <div style={styles.heroPill}>
-              <span>👤</span>
-              <span>Curated by {collection.curator}</span>
-            </div>
-            <div style={styles.heroPill}>
-              <span>🏛️</span>
-              <span>Preserving Living Knowledge</span>
-            </div>
-          </div>
-        </header>
       )}
 
       <div style={styles.inputWrap}>
+        {!loadingUser && !user && (
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <div style={{ display: "inline-block", padding: "6px 14px", backgroundColor: "#FDF9F3", border: "1px solid #E4DDD3", borderRadius: 20, fontSize: 13, color: "#B87314", fontWeight: 700, marginBottom: 16 }}>
+              👀 កំពុងមើលជាភ្ញៀវ (Guest Mode) • ចូលគណនីដើម្បីបន្ថែមឧបករណ៍ / Log in to contribute
+            </div>
+            <div>
+              <button onClick={() => alert("សូមចូលគណនីជាមុនសិន / Please log in to add new tools.")} style={styles.primaryBtn}>
+                ＋ បន្ថែមឧបករណ៍ថ្មី / Add New Farming Tool
+              </button>
+            </div>
+          </div>
+        )}
         <span style={styles.searchIcon}>🔍</span>
         <input
           type="search"
@@ -602,53 +857,15 @@ export default function Home() {
       </div>
 
       {filtered.length > 0 ? (
-        <>
-          <div className="carousel-viewport" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
-            <div 
-              className="carousel-track"
-              style={{ transform: `translateX(calc(-${activeIndex * 85}% - ${activeIndex * 16}px))` }}
-            >
-              {filtered.map((entry, index) => (
-                <EntryCard
-                  key={entry.id}
-                  entry={entry}
-                  onSelect={setSelectedEntry}
-                  isActive={index === activeIndex}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="control-bar">
-            <button 
-              type="button"
-              className="carousel-btn" 
-              onClick={prevCard}
-              disabled={activeIndex === 0}
-              aria-label="Previous"
-            >
-              &lt;
-            </button>
-            <div className="pagination-dots">
-              {filtered.map((_, index) => (
-                <div 
-                  key={index} 
-                  className={`dot ${index === activeIndex ? "active" : ""}`}
-                  onClick={() => setActiveIndex(index)}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-            <button 
-              type="button"
-              className="carousel-btn" 
-              onClick={nextCard}
-              disabled={activeIndex === filtered.length - 1}
-              aria-label="Next"
-            >
-              &gt;
-            </button>
-          </div>
-        </>
+        <div id="collection" className="museum-grid">
+          {filtered.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              entry={entry}
+              onSelect={setSelectedEntry}
+            />
+          ))}
+        </div>
       ) : suggestion ? (
         <div style={styles.empty}>
           <p style={styles.emptyTitle}>
