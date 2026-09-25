@@ -5,7 +5,6 @@ import Link from "next/link";
 import collection from "../collection.config.js";
 import EntryCard from "../components/EntryCard.js";
 import EntryModal from "../components/EntryModal.js";
-import { entries } from "../data/entries.js";
 import { createClient } from "../utils/supabase/client.js";
 
 function getLevenshteinDistance(a, b) {
@@ -334,6 +333,8 @@ const styles = {
 };
 
 export default function Home() {
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [user, setUser] = useState(null);
@@ -381,6 +382,22 @@ export default function Home() {
     return () => {
       subscription?.unsubscribe();
     };
+  }, []);
+
+  useEffect(() => {
+    async function loadEntries() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("entries")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (data) {
+        setEntries(data);
+      }
+      setLoading(false);
+    }
+    loadEntries();
   }, []);
 
   async function handleLogout() {
@@ -575,7 +592,7 @@ export default function Home() {
             width: 100%;
           }
         `}</style>
-        
+
         <div className="portal-badge">
           🌾 បណ្ណសារបេតិកភណ្ឌខ្មែរ | The Khmer Living Archive
         </div>
@@ -590,8 +607,8 @@ export default function Home() {
           <div className="teaser-card">
             <div className="teaser-badge badge-amber">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B87314" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22c0-9 6-12 6-12s-3 1-6 4c-3-3-6-4-6-4s6 3 6 12z"/>
-                <path d="M12 10V2"/>
+                <path d="M12 22c0-9 6-12 6-12s-3 1-6 4c-3-3-6-4-6-4s6 3 6 12z" />
+                <path d="M12 10V2" />
               </svg>
             </div>
             <h3 className="teaser-title">ចំណេះដឹងពីជីដូនជីតា</h3>
@@ -600,7 +617,7 @@ export default function Home() {
           <div className="teaser-card">
             <div className="teaser-badge badge-sand">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5A2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
               </svg>
             </div>
             <h3 className="teaser-title">ឧបករណ៍កសិកម្ម ១០ មុខ</h3>
@@ -609,7 +626,7 @@ export default function Home() {
           <div className="teaser-card">
             <div className="teaser-badge badge-cream">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A0522D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
             </div>
             <h3 className="teaser-title">បេតិកភណ្ឌរស់</h3>
@@ -636,19 +653,19 @@ export default function Home() {
   return (
     <main style={styles.wrap}>
       <button onClick={() => setShowArchive(false)} style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "8px 16px",
-          backgroundColor: "transparent",
-          border: "1px solid #E8E2D8",
-          borderRadius: "20px",
-          color: "#5C5248",
-          fontSize: "14px",
-          fontWeight: "600",
-          cursor: "pointer",
-          marginBottom: "24px",
-          transition: "all 0.2s ease"
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "8px 16px",
+        backgroundColor: "transparent",
+        border: "1px solid #E8E2D8",
+        borderRadius: "20px",
+        color: "#5C5248",
+        fontSize: "14px",
+        fontWeight: "600",
+        cursor: "pointer",
+        marginBottom: "24px",
+        transition: "all 0.2s ease"
       }}>
         ← ត្រឡប់ទៅទំព័រដើម / Back to Welcome
       </button>
@@ -856,7 +873,13 @@ export default function Home() {
         />
       </div>
 
-      {filtered.length > 0 ? (
+      {loading ? (
+        <div style={styles.empty}>
+          <p style={styles.emptyTitle}>
+            🌾 កំពុងទាញយកទិន្នន័យ... / Loading archive...
+          </p>
+        </div>
+      ) : filtered.length > 0 ? (
         <div id="collection" className="museum-grid">
           {filtered.map((entry) => (
             <EntryCard
@@ -919,7 +942,7 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>បន្ថែមឧបករណ៍ថ្មី<br/><span style={{fontSize: 15, color: "#8C827A", fontWeight: 500}}>Add New Tool</span></h3>
+              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>បន្ថែមឧបករណ៍ថ្មី<br /><span style={{ fontSize: 15, color: "#8C827A", fontWeight: 500 }}>Add New Tool</span></h3>
               <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C827A", padding: 0 }}>×</button>
             </div>
             <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -937,7 +960,7 @@ export default function Home() {
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
                 <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" style={{...styles.primaryBtn, borderRadius: 10, padding: "12px 24px"}}>Submit Tool</button>
+                <button type="submit" style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px" }}>Submit Tool</button>
               </div>
             </form>
           </div>
