@@ -345,14 +345,74 @@ export default function Home() {
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPlace, setNewPlace] = useState("");
+  const [newContributor, setNewContributor] = useState("");
+  const [newPhotoFile, setNewPhotoFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddSubmit = (e) => {
+  const handleAddSubmit = async (e) => {
     e.preventDefault();
-    alert("Submission feature coming soon!");
-    setShowAddModal(false);
-    setNewTitle("");
-    setNewDesc("");
-    setNewPlace("");
+    if (!user) {
+      alert("សូមចូលគណនីជាមុនសិន / Please log in to add new tools.");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    const supabase = createClient();
+    
+    let publicUrl = null;
+    if (newPhotoFile) {
+      const fileExt = newPhotoFile.name.split('.').pop();
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from('photos').upload(filePath, newPhotoFile);
+      
+      if (uploadError) {
+        alert(`Error uploading photo: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: { publicUrl: url } } = supabase.storage.from('photos').getPublicUrl(filePath);
+      publicUrl = url;
+    }
+
+    const { data, error } = await supabase.from('entries').insert([{
+      title: newTitle,
+      description: newDesc,
+      place: newPlace,
+      contributor: newContributor || user.email,
+      photo_url: publicUrl,
+      owner: user.id
+    }]).select();
+
+    setIsSubmitting(false);
+
+    if (error) {
+      alert(`Error adding entry: ${error.message}`);
+    } else {
+      alert("Success! Entry added.");
+      setShowAddModal(false);
+      setNewTitle("");
+      setNewDesc("");
+      setNewPlace("");
+      setNewContributor("");
+      setNewPhotoFile(null);
+      if (data && data.length > 0) {
+        setEntries((prev) => [data[0], ...prev]);
+      }
+    }
+  };
+
+  const handleDelete = async (entryId) => {
+    const supabase = createClient();
+    const { error } = await supabase.from('entries').delete().eq('id', entryId);
+    if (error) {
+      alert(`Error deleting entry: ${error.message}`);
+    } else {
+      setEntries((prev) => prev.filter(e => e.id !== entryId));
+      if (selectedEntry?.id === entryId) {
+        setSelectedEntry(null);
+      }
+    }
   };
 
 
@@ -886,6 +946,8 @@ export default function Home() {
               key={entry.id}
               entry={entry}
               onSelect={setSelectedEntry}
+              currentUser={user}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -921,6 +983,8 @@ export default function Home() {
       <EntryModal
         entry={selectedEntry}
         onClose={() => setSelectedEntry(null)}
+        currentUser={user}
+        onDelete={handleDelete}
       />
 
       {showAddModal && (
@@ -938,6 +1002,7 @@ export default function Home() {
               backgroundColor: "#FFFFFF", borderRadius: 16, padding: "32px 28px",
               width: "100%", maxWidth: 460, boxSizing: "border-box",
               boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              maxHeight: "90vh", overflowY: "auto"
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -947,20 +1012,28 @@ export default function Home() {
             </div>
             <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title</label>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title *</label>
                 <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description</label>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description *</label>
                 <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", resize: "vertical", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin</label>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>អ្នករួមចំណែក / Contributor *</label>
+                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin *</label>
                 <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
               </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload</label>
+                <input type="file" accept="image/*" onChange={e => setNewPhotoFile(e.target.files[0])} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px" }}>Submit Tool</button>
+                <button type="button" onClick={() => setShowAddModal(false)} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "default" : "pointer" }}>{isSubmitting ? "Submitting..." : "Submit Tool"}</button>
               </div>
             </form>
           </div>
