@@ -1,5 +1,5 @@
 // EntryCard displays an archive item: title, description, and metadata.
-export default function EntryCard({ entry, onSelect, currentUser, onDelete }) {
+export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEdit }) {
   if (!entry) {
     return (
       <article className="entry-card">
@@ -27,18 +27,33 @@ export default function EntryCard({ entry, onSelect, currentUser, onDelete }) {
       style={{ padding: 0, overflow: "hidden", position: "relative" }}
     >
       {isOwner && (
-        <button
-          onClick={handleDeleteClick}
-          style={{
-            position: "absolute", top: 12, right: 12, zIndex: 10,
-            backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E8E2D8",
-            borderRadius: 8, padding: "6px 12px", fontSize: 13,
-            color: "#D32F2F", fontWeight: 700, cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-          }}
-        >
-          🗑️ លុប / Delete
-        </button>
+        <div style={{
+          position: "absolute", top: 12, right: 12, zIndex: 10,
+          display: "flex", gap: 8
+        }}>
+          <button
+            onClick={(e) => { e.stopPropagation(); onEdit?.(entry); }}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E8E2D8",
+              borderRadius: 8, padding: "6px 12px", fontSize: 13,
+              color: "#5C5248", fontWeight: 700, cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+            }}
+          >
+            ✏️ កែប្រែ / Edit
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E8E2D8",
+              borderRadius: 8, padding: "6px 12px", fontSize: 13,
+              color: "#D32F2F", fontWeight: 700, cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+            }}
+          >
+            🗑️ លុប / Delete
+          </button>
+        </div>
       )}
 
       {entry.photo_url ? (

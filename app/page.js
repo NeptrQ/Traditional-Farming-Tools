@@ -342,6 +342,7 @@ export default function Home() {
   const [showArchive, setShowArchive] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editEntry, setEditEntry] = useState(null);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPlace, setNewPlace] = useState("");
@@ -404,13 +405,78 @@ export default function Home() {
 
   const handleDelete = async (entryId) => {
     const supabase = createClient();
-    const { error } = await supabase.from('entries').delete().eq('id', entryId);
+    const { data, error } = await supabase.from('entries').delete().eq('id', entryId).select();
     if (error) {
       alert(`Error deleting entry: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      console.error("Delete failed: RLS may have silently blocked it.");
+      alert("That change wasn't saved");
     } else {
       setEntries((prev) => prev.filter(e => e.id !== entryId));
       if (selectedEntry?.id === entryId) {
         setSelectedEntry(null);
+      }
+    }
+  };
+
+  const handleEditClick = (entry) => {
+    setEditEntry(entry);
+    setNewTitle(entry.title || "");
+    setNewDesc(entry.description || "");
+    setNewPlace(entry.place || "");
+    setNewContributor(entry.contributor || "");
+    setNewPhotoFile(null);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!user || !editEntry) return;
+    
+    setIsSubmitting(true);
+    const supabase = createClient();
+    
+    let publicUrl = editEntry.photo_url;
+    if (newPhotoFile) {
+      const fileExt = newPhotoFile.name.split('.').pop();
+      const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from('photos').upload(filePath, newPhotoFile);
+      
+      if (uploadError) {
+        alert(`Error uploading photo: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: { publicUrl: url } } = supabase.storage.from('photos').getPublicUrl(filePath);
+      publicUrl = url;
+    }
+
+    const { data, error } = await supabase.from('entries').update({
+      title: newTitle,
+      description: newDesc,
+      place: newPlace,
+      contributor: newContributor,
+      photo_url: publicUrl
+    }).eq('id', editEntry.id).select();
+
+    setIsSubmitting(false);
+
+    if (error) {
+      alert(`Error updating entry: ${error.message}`);
+    } else if (!data || data.length === 0) {
+      console.error("Update failed: No data returned, possibly RLS silent refusal.");
+      alert("That change wasn't saved");
+    } else {
+      alert("Success! Entry updated.");
+      setEditEntry(null);
+      setNewTitle("");
+      setNewDesc("");
+      setNewPlace("");
+      setNewContributor("");
+      setNewPhotoFile(null);
+      setEntries((prev) => prev.map(e => e.id === editEntry.id ? data[0] : e));
+      if (selectedEntry?.id === editEntry.id) {
+        setSelectedEntry(data[0]);
       }
     }
   };
@@ -948,6 +1014,7 @@ export default function Home() {
               onSelect={setSelectedEntry}
               currentUser={user}
               onDelete={handleDelete}
+              onEdit={handleEditClick}
             />
           ))}
         </div>
@@ -985,6 +1052,7 @@ export default function Home() {
         onClose={() => setSelectedEntry(null)}
         currentUser={user}
         onDelete={handleDelete}
+        onEdit={handleEditClick}
       />
 
       {showAddModal && (
@@ -1034,6 +1102,59 @@ export default function Home() {
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
                 <button type="button" onClick={() => setShowAddModal(false)} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
                 <button type="submit" disabled={isSubmitting} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "default" : "pointer" }}>{isSubmitting ? "Submitting..." : "Submit Tool"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editEntry && (
+        <div
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: "rgba(45, 36, 30, 0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: 20, zIndex: 1000,
+          }}
+          onClick={() => setEditEntry(null)}
+        >
+          <div
+            style={{
+              backgroundColor: "#FFFFFF", borderRadius: 16, padding: "32px 28px",
+              width: "100%", maxWidth: 460, boxSizing: "border-box",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              maxHeight: "90vh", overflowY: "auto"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>កែប្រែឧបករណ៍<br /><span style={{ fontSize: 15, color: "#8C827A", fontWeight: 500 }}>Edit Tool</span></h3>
+              <button onClick={() => setEditEntry(null)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C827A", padding: 0 }}>×</button>
+            </div>
+            <form onSubmit={handleEditSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title *</label>
+                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description *</label>
+                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", resize: "vertical", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>អ្នករួមចំណែក / Contributor *</label>
+                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin *</label>
+                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload (Optional)</label>
+                <input type="file" accept="image/*" onChange={e => setNewPhotoFile(e.target.files[0])} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
+                <button type="button" onClick={() => setEditEntry(null)} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "default" : "pointer" }}>{isSubmitting ? "Saving..." : "Save Changes"}</button>
               </div>
             </form>
           </div>

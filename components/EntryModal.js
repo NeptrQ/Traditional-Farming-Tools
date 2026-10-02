@@ -18,7 +18,7 @@ const styles = {
   deleteBtn: { padding: "8px 14px", borderRadius: 12, backgroundColor: "transparent", border: "1px solid #E8E2D8", fontSize: 13, color: "#D32F2F", fontWeight: 700, cursor: "pointer" }
 };
 
-export default function EntryModal({ entry, onClose, currentUser, onDelete }) {
+export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -55,9 +55,17 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete }) {
               {entry.place && <div style={styles.badge}><span>📍</span><span>{entry.place}</span></div>}
             </div>
             {isOwner && (
-              <button style={styles.deleteBtn} onClick={handleDeleteClick}>
-                🗑️ លុប / Delete
-              </button>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  style={{ ...styles.deleteBtn, color: "#5C5248" }}
+                  onClick={() => { onClose(); onEdit?.(entry); }}
+                >
+                  ✏️ កែប្រែ / Edit
+                </button>
+                <button style={styles.deleteBtn} onClick={handleDeleteClick}>
+                  🗑️ លុប / Delete
+                </button>
+              </div>
             )}
           </div>
         </div>
