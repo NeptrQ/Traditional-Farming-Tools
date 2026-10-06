@@ -157,7 +157,29 @@ export default function ContributePage() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setPhoto(file || null);
+    if (!file) {
+      setPhoto(null);
+      return;
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      e.target.value = "";
+      setPhoto(null);
+      setErrors((prev) => ({ ...prev, photo: "រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP / Please upload a JPG, PNG, or WebP image." }));
+      return;
+    }
+
+    if (file.size > MAX_SIZE) {
+      e.target.value = "";
+      setPhoto(null);
+      setErrors((prev) => ({ ...prev, photo: "ទំហំរូបភាពត្រូវតែតូចជាង 5 MB / Image size must be under 5 MB." }));
+      return;
+    }
+
+    setPhoto(file);
     if (errors.photo) {
       setErrors((prev) => ({ ...prev, photo: "" }));
     }
@@ -327,7 +349,7 @@ export default function ContributePage() {
             <input
               id="photo"
               type="file"
-              accept="image/jpeg, image/png, image/webp"
+              accept="image/jpeg,image/png,image/webp"
               style={styles.fileInput}
               onChange={handleFileChange}
             />
@@ -339,7 +361,7 @@ export default function ContributePage() {
             style={{ ...styles.submitBtn, ...(isSubmitting ? styles.disabledBtn : {}) }}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Entry"}
+            {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry"}
           </button>
         </form>
       </div>

@@ -348,6 +348,7 @@ export default function Home() {
   const [newPlace, setNewPlace] = useState("");
   const [newContributor, setNewContributor] = useState("");
   const [newPhotoFile, setNewPhotoFile] = useState(null);
+  const [photoError, setPhotoError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddSubmit = async (e) => {
@@ -426,6 +427,7 @@ export default function Home() {
     setNewPlace(entry.place || "");
     setNewContributor(entry.contributor || "");
     setNewPhotoFile(null);
+    setPhotoError("");
   };
 
   const handleEditSubmit = async (e) => {
@@ -968,7 +970,7 @@ export default function Home() {
           </p>
           <div style={styles.statsPill}>🌾 My Contributions: 0 tools submitted</div>
           <div>
-            <button style={styles.primaryBtn} onClick={() => setShowAddModal(true)}>
+            <button style={styles.primaryBtn} onClick={() => { setShowAddModal(true); setPhotoError(""); }}>
               ＋ បន្ថែមឧបករណ៍ថ្មី / Add New Farming Tool
             </button>
           </div>
@@ -1097,11 +1099,34 @@ export default function Home() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload</label>
-                <input type="file" accept="image/*" onChange={e => setNewPhotoFile(e.target.files[0])} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => {
+                  const file = e.target.files[0];
+                  if (!file) {
+                    setNewPhotoFile(null);
+                    return;
+                  }
+                  const MAX_SIZE = 5 * 1024 * 1024;
+                  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+                  if (!ALLOWED_TYPES.includes(file.type)) {
+                    e.target.value = "";
+                    setNewPhotoFile(null);
+                    setPhotoError("រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP / Please upload a JPG, PNG, or WebP image.");
+                    return;
+                  }
+                  if (file.size > MAX_SIZE) {
+                    e.target.value = "";
+                    setNewPhotoFile(null);
+                    setPhotoError("ទំហំរូបភាពត្រូវតែតូចជាង 5 MB / Image size must be under 5 MB.");
+                    return;
+                  }
+                  setNewPhotoFile(file);
+                  setPhotoError("");
+                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                {photoError && <span style={{ color: "#D32F2F", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => setShowAddModal(false)} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" disabled={isSubmitting} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "default" : "pointer" }}>{isSubmitting ? "Submitting..." : "Submit Tool"}</button>
+                <button type="button" onClick={() => { setShowAddModal(false); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting || !!photoError} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Tool"}</button>
               </div>
             </form>
           </div>
@@ -1150,11 +1175,34 @@ export default function Home() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload (Optional)</label>
-                <input type="file" accept="image/*" onChange={e => setNewPhotoFile(e.target.files[0])} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => {
+                  const file = e.target.files[0];
+                  if (!file) {
+                    setNewPhotoFile(null);
+                    return;
+                  }
+                  const MAX_SIZE = 5 * 1024 * 1024;
+                  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+                  if (!ALLOWED_TYPES.includes(file.type)) {
+                    e.target.value = "";
+                    setNewPhotoFile(null);
+                    setPhotoError("រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP / Please upload a JPG, PNG, or WebP image.");
+                    return;
+                  }
+                  if (file.size > MAX_SIZE) {
+                    e.target.value = "";
+                    setNewPhotoFile(null);
+                    setPhotoError("ទំហំរូបភាពត្រូវតែតូចជាង 5 MB / Image size must be under 5 MB.");
+                    return;
+                  }
+                  setNewPhotoFile(file);
+                  setPhotoError("");
+                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                {photoError && <span style={{ color: "#D32F2F", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => setEditEntry(null)} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" disabled={isSubmitting} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "default" : "pointer" }}>{isSubmitting ? "Saving..." : "Save Changes"}</button>
+                <button type="button" onClick={() => { setEditEntry(null); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting || !!photoError} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Save Changes"}</button>
               </div>
             </form>
           </div>
