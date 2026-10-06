@@ -1,5 +1,5 @@
 // EntryCard displays an archive item: title, description, and metadata.
-export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEdit }) {
+export default function EntryCard({ entry, index, onSelect, currentUser, onDelete, onEdit }) {
   if (!entry) {
     return (
       <article className="entry-card">
@@ -34,30 +34,28 @@ export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEd
           <button
             onClick={(e) => { e.stopPropagation(); onEdit?.(entry); }}
             style={{
-              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E8E2D8",
-              borderRadius: 8, padding: "6px 12px", fontSize: 13,
-              color: "#5C5248", fontWeight: 700, cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E5E2DC",
+              borderRadius: 4, padding: "6px 12px", fontSize: 13,
+              color: "#44403C", fontWeight: 600, cursor: "pointer",
             }}
           >
-            ✏️ កែប្រែ / Edit
+            Edit
           </button>
           <button
             onClick={handleDeleteClick}
             style={{
-              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E8E2D8",
-              borderRadius: 8, padding: "6px 12px", fontSize: 13,
-              color: "#D32F2F", fontWeight: 700, cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+              backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #E5E2DC",
+              borderRadius: 4, padding: "6px 12px", fontSize: 13,
+              color: "#D32F2F", fontWeight: 600, cursor: "pointer",
             }}
           >
-            🗑️ លុប / Delete
+            Delete
           </button>
         </div>
       )}
 
       {entry.photo_url ? (
-        <div style={{ width: "100%", height: 180, backgroundColor: "#F7F3EE", borderTopLeftRadius: 16, borderTopRightRadius: 16, overflow: "hidden" }}>
+        <div style={{ width: "100%", height: 180, backgroundColor: "#F9F8F5", borderTopLeftRadius: 4, borderTopRightRadius: 4, overflow: "hidden" }}>
           <img 
             src={entry.photo_url} 
             alt={entry.title || "Archive item"} 
@@ -65,12 +63,17 @@ export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEd
           />
         </div>
       ) : (
-        <div style={{ width: "100%", height: 180, backgroundColor: "#FDF9F3", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid #E8E2D8", borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-          <span style={{ fontSize: 64, opacity: 0.5 }}>🌾</span>
+        <div style={{ width: "100%", height: 180, backgroundColor: "#F9F8F5", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: "1px solid #E5E2DC", borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+          <span style={{ fontSize: 64, opacity: 0.1 }}>🌾</span>
         </div>
       )}
       
       <div style={{ padding: 28, display: "flex", flexDirection: "column", height: "100%", boxSizing: "border-box" }}>
+        {typeof index === 'number' && (
+          <div style={{ fontFamily: "monospace", fontSize: 12, color: "#8C827A", marginBottom: 8, letterSpacing: 1 }}>
+            ITEM #{String(index + 1).padStart(2, '0')}
+          </div>
+        )}
         <h2 className="entry-title">{entry.title || "Untitled Entry"}</h2>
         
         {entry.description ? (
@@ -83,13 +86,11 @@ export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEd
           <footer className="entry-footer">
             {entry.contributor && (
               <div className="entry-pill">
-                <span>👤</span>
                 <span>{entry.contributor}</span>
               </div>
             )}
             {entry.place && (
               <div className="entry-pill">
-                <span>📍</span>
                 <span>{entry.place}</span>
               </div>
             )}
@@ -97,8 +98,7 @@ export default function EntryCard({ entry, onSelect, currentUser, onDelete, onEd
         )}
         
         <div className="entry-view-hint">
-          <span>ស្វែងយល់បន្ថែម / View Full Story</span>
-          <span>→</span>
+          <span>View Catalog Entry</span>
         </div>
       </div>
     </article>

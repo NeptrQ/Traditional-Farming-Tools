@@ -78,8 +78,11 @@ const styles = {
     margin: "0 auto",
     padding: "24px 16px 40px",
     boxSizing: "border-box",
-    color: "#2D241E",
+    color: "#44403C",
+    backgroundColor: "#F9F8F5",
     width: "100%",
+    minHeight: "100vh",
+    fontFamily: "system-ui, sans-serif",
   },
   authBar: {
     display: "flex",
@@ -95,7 +98,7 @@ const styles = {
     alignItems: "center",
     gap: 10,
     fontSize: 14,
-    color: "#5C5248",
+    color: "#44403C",
     flexWrap: "wrap",
     justifyContent: "flex-end",
   },
@@ -105,10 +108,10 @@ const styles = {
     gap: 6,
     padding: "6px 12px",
     backgroundColor: "#FFFFFF",
-    border: "1px solid #E8E2D8",
-    borderRadius: 20,
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
     fontSize: 13,
-    color: "#2D241E",
+    color: "#1C1917",
     maxWidth: 240,
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -117,9 +120,9 @@ const styles = {
   logoutBtn: {
     padding: "6px 14px",
     backgroundColor: "transparent",
-    border: "1px solid #E8E2D8",
-    borderRadius: 8,
-    color: "#5C5248",
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
+    color: "#44403C",
     fontSize: 13,
     fontWeight: 600,
     cursor: "pointer",
@@ -127,32 +130,33 @@ const styles = {
   },
   primaryBtn: {
     padding: "10px 20px",
-    backgroundColor: "#B87314",
-    border: "1px solid #B87314",
-    borderRadius: 8,
+    backgroundColor: "#1C1917",
+    border: "1px solid #1C1917",
+    borderRadius: 4,
     color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: 700,
+    fontWeight: 600,
     cursor: "pointer",
     transition: "all 0.2s ease",
   },
   dashboardBanner: {
-    backgroundColor: "#FAF7F2",
-    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 4,
     padding: "32px 24px",
-    border: "1px solid #E8E2D8",
+    border: "1px solid #E5E2DC",
     marginBottom: 48,
     textAlign: "center",
   },
   dashboardGreeting: {
     fontSize: 24,
-    fontWeight: 800,
-    color: "#2D241E",
+    fontWeight: 700,
+    fontFamily: "Georgia, 'Kantumruy Pro', serif",
+    color: "#1C1917",
     margin: "0 0 12px",
   },
   dashboardSubtext: {
     fontSize: 15,
-    color: "#5C5248",
+    color: "#44403C",
     margin: "0 auto 20px",
     maxWidth: 600,
     lineHeight: 1.6,
@@ -160,11 +164,11 @@ const styles = {
   statsPill: {
     display: "inline-block",
     padding: "6px 16px",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #E8E2D8",
-    borderRadius: 20,
+    backgroundColor: "#F9F8F5",
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
     fontSize: 14,
-    color: "#B87314",
+    color: "#44403C",
     fontWeight: 600,
     margin: "0 0 24px",
   },
@@ -175,9 +179,9 @@ const styles = {
   },
   loginLink: {
     padding: "6px 14px",
-    border: "1px solid #E8E2D8",
-    borderRadius: 8,
-    color: "#2D241E",
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
+    color: "#1C1917",
     fontSize: 13,
     fontWeight: 600,
     textDecoration: "none",
@@ -186,78 +190,28 @@ const styles = {
   },
   signupLink: {
     padding: "6px 14px",
-    backgroundColor: "#B87314",
-    border: "1px solid #B87314",
-    borderRadius: 8,
+    backgroundColor: "#1C1917",
+    border: "1px solid #1C1917",
+    borderRadius: 4,
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: 600,
     textDecoration: "none",
     transition: "all 0.2s ease",
   },
-  heroHeader: {
-    textAlign: "center",
-    marginBottom: 48,
-    padding: "40px 20px",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    border: "1px solid #E8E2D8",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
-    position: "relative",
-    overflow: "hidden",
-  },
-  stickersWrap: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 16,
-    marginBottom: 20,
-    fontSize: 32,
-  },
-  heroTitle: {
-    fontSize: "clamp(24px, 5vw, 36px)",
-    fontWeight: 800,
-    margin: "0 0 16px",
-    color: "#2D241E",
-    lineHeight: 1.3,
-  },
-  heroSubtitle: {
-    fontSize: 16,
-    color: "#5C5248",
-    lineHeight: 1.7,
-    maxWidth: 700,
-    margin: "0 auto 28px",
-  },
-  pillsWrap: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 12,
-  },
-  heroPill: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 8,
-    padding: "8px 16px",
-    backgroundColor: "#FDF9F3",
-    border: "1px solid #E4DDD3",
-    borderRadius: 24,
-    fontSize: 14,
-    color: "#5C5248",
-    fontWeight: 500,
-  },
   inputWrap: { position: "relative", marginTop: 32 },
   input: {
     width: "100%",
     padding: "14px 20px 14px 44px",
     fontSize: 16,
+    fontFamily: "system-ui, sans-serif",
     backgroundColor: "#FFFFFF",
-    border: "1px solid #E8E2D8",
-    borderRadius: 28,
-    color: "#2D241E",
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
+    color: "#1C1917",
     boxSizing: "border-box",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
     outline: "none",
-    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+    transition: "border-color 0.2s ease",
   },
   searchIcon: {
     position: "absolute",
@@ -272,20 +226,21 @@ const styles = {
     padding: "48px 20px",
     textAlign: "center",
     backgroundColor: "#FFFFFF",
-    border: "1px dashed #E8E2D8",
-    borderRadius: 16,
+    border: "1px dashed #E5E2DC",
+    borderRadius: 4,
     marginTop: 28,
   },
   emptyTitle: {
     margin: 0,
     fontSize: 16,
     fontWeight: 700,
-    color: "#2D241E",
+    fontFamily: "Georgia, 'Kantumruy Pro', serif",
+    color: "#1C1917",
   },
   emptySubtitle: {
     margin: "6px 0 0",
     fontSize: 14,
-    color: "#5C5248",
+    color: "#44403C",
   },
   suggestionWrap: {
     marginTop: 16,
@@ -296,7 +251,7 @@ const styles = {
   },
   suggestionLabel: {
     fontSize: 14,
-    color: "#7A6F65",
+    color: "#44403C",
     fontWeight: 500,
   },
   suggestionBtn: {
@@ -304,28 +259,26 @@ const styles = {
     alignItems: "center",
     gap: 8,
     padding: "8px 18px",
-    backgroundColor: "#FDF9F3",
-    border: "1.5px solid #B87314",
-    borderRadius: 24,
-    color: "#B87314",
+    backgroundColor: "#F9F8F5",
+    border: "1px solid #E5E2DC",
+    borderRadius: 4,
+    color: "#1C1917",
     fontSize: 15,
     fontWeight: 700,
     cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(184, 115, 20, 0.1)",
     transition: "all 0.2s ease",
   },
   count: {
     fontFamily: "'Courier New', monospace",
     fontSize: 13,
-    color: "#B87314",
-    fontWeight: 700,
+    color: "#44403C",
     marginTop: 40,
     textAlign: "center",
   },
   footer: {
     marginTop: 48,
     paddingTop: 20,
-    borderTop: "1px solid #E8E2D8",
+    borderTop: "1px solid #E5E2DC",
     fontSize: 13,
     color: "#8C827A",
     textAlign: "center",
@@ -558,13 +511,9 @@ export default function Home() {
     return (
       <main className="welcome-portal">
         <style>{`
-          @keyframes glow {
-            from { box-shadow: 0 4px 16px rgba(184, 115, 20, 0.15); }
-            to { box-shadow: 0 4px 24px rgba(184, 115, 20, 0.35); }
-          }
           .welcome-portal {
             min-height: 100vh;
-            background-color: #FAF7F2;
+            background-color: #F9F8F5;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -572,138 +521,73 @@ export default function Home() {
             padding: 40px 20px;
             position: relative;
             box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+            color: #44403C;
           }
-          .portal-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 20px;
-            border-radius: 30px;
-            background-color: #FDF9F3;
-            border: 1px solid #E4DDD3;
-            color: #B87314;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 4px 16px rgba(184, 115, 20, 0.2);
-            margin-bottom: 32px;
-            animation: glow 3s ease-in-out infinite alternate;
-          }
-          .portal-title-khmer {
+          .academic-title {
+            font-family: Georgia, 'Kantumruy Pro', serif;
             font-size: clamp(32px, 5vw, 42px);
-            font-weight: 800;
-            color: #2D241E;
+            font-weight: 700;
+            color: #1C1917;
             margin: 0 0 12px;
             text-align: center;
             line-height: 1.3;
           }
-          .portal-title-en {
+          .academic-subtitle {
+            font-family: Georgia, 'Kantumruy Pro', serif;
             font-size: clamp(20px, 3vw, 24px);
-            font-weight: 600;
-            color: #5C5248;
-            margin: 0 0 16px;
+            font-weight: 400;
+            color: #44403C;
+            margin: 0 0 24px;
             text-align: center;
+            font-style: italic;
           }
-          .portal-subtitle {
-            font-size: 16px;
-            color: #5C5248;
+          .academic-note {
+            font-size: 15px;
+            color: #44403C;
             line-height: 1.7;
             max-width: 600px;
             text-align: center;
             margin: 0 0 48px;
-          }
-          .teaser-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 48px;
-          }
-          @media (max-width: 768px) {
-            .teaser-row {
-              grid-template-columns: 1fr;
-            }
-          }
-          .teaser-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E4DDD3;
-            border-radius: 14px;
-            padding: 32px 24px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            transition: all 0.35s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-          }
-          .teaser-card:hover {
-            transform: translateY(-4px);
-            border-color: #D4A373;
-            box-shadow: 0 12px 24px rgba(184, 115, 20, 0.1);
-          }
-          .teaser-badge {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-          }
-          .badge-amber { background-color: #FDF6EC; }
-          .badge-sand { background-color: #F5EFEB; }
-          .badge-cream { background-color: #FAF0E6; }
-          
-          .teaser-title {
-            font-weight: 700;
-            color: #2D241E;
-            margin: 0 0 10px;
-            font-size: 16px;
-            line-height: 1.4;
-          }
-          .teaser-desc {
-            font-size: 14px;
-            color: #5C5248;
-            margin: 0;
-            line-height: 1.5;
+            border-top: 1px solid #E5E2DC;
+            border-bottom: 1px solid #E5E2DC;
+            padding: 24px 0;
           }
           .portal-btn-primary {
             padding: 14px 28px;
-            background: linear-gradient(135deg, #B87314, #8B5A2B);
-            border: none;
-            border-radius: 12px;
+            background: #1C1917;
+            border: 1px solid #1C1917;
+            border-radius: 4px;
             color: #FFFFFF;
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.35s ease;
-            box-shadow: 0 8px 24px rgba(184, 115, 20, 0.3);
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 10px;
           }
           .portal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(184, 115, 20, 0.4);
+            background: #292524;
           }
           .portal-btn-secondary {
             padding: 14px 28px;
-            background-color: #FFFFFF;
-            border: 1px solid #B87314;
-            border-radius: 12px;
-            color: #B87314;
-            font-size: 16px;
-            font-weight: 700;
+            background-color: transparent;
+            border: 1px solid #E5E2DC;
+            border-radius: 4px;
+            color: #1C1917;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.35s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 10px;
           }
           .portal-btn-secondary:hover {
-            background-color: #FDF9F3;
-            transform: translateY(-2px);
+            background-color: #FFFFFF;
           }
           .portal-actions {
             display: flex;
@@ -721,58 +605,23 @@ export default function Home() {
           }
         `}</style>
 
-        <div className="portal-badge">
-          🌾 បណ្ណសារបេតិកភណ្ឌខ្មែរ | The Khmer Living Archive
-        </div>
-
-        <h1 className="portal-title-khmer">ស្វាគមន៍មកកាន់បណ្ណសារឧបករណ៍កសិកម្មបុរាណខ្មែរ</h1>
-        <h2 className="portal-title-en">Traditional Khmer Farming Tools Archive</h2>
-        <p className="portal-subtitle">
-          Step into the living heritage of Cambodian agriculture — preserved from the wisdom of elders and farmers in Kampong Cham Province.
-        </p>
-
-        <div className="teaser-row">
-          <div className="teaser-card">
-            <div className="teaser-badge badge-amber">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B87314" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22c0-9 6-12 6-12s-3 1-6 4c-3-3-6-4-6-4s6 3 6 12z" />
-                <path d="M12 10V2" />
-              </svg>
-            </div>
-            <h3 className="teaser-title">ចំណេះដឹងពីជីដូនជីតា</h3>
-            <p className="teaser-desc">Sourced from real elders in Kampong Cham</p>
-          </div>
-          <div className="teaser-card">
-            <div className="teaser-badge badge-sand">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5A2B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-              </svg>
-            </div>
-            <h3 className="teaser-title">ឧបករណ៍កសិកម្ម ១០ មុខ</h3>
-            <p className="teaser-desc">10 Traditional tools preserved</p>
-          </div>
-          <div className="teaser-card">
-            <div className="teaser-badge badge-cream">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A0522D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </div>
-            <h3 className="teaser-title">បេតិកភណ្ឌរស់</h3>
-            <p className="teaser-desc">Authentic Khmer cultural archive</p>
-          </div>
+        <h1 className="academic-title">The Khmer Living Archive</h1>
+        <h2 className="academic-subtitle">Traditional Agricultural Implements of Cambodia</h2>
+        <div className="academic-note">
+          A student archive by Va Nuth for ICT 340 at American University of Phnom Penh. Documenting traditional farming tools and oral knowledge from my grandparents in Kampong Cham Province.
         </div>
 
         <div className="portal-actions">
           <button onClick={() => setShowArchive(true)} className="portal-btn-primary">
-            🌾 រុករកបណ្ណសារ / Enter Archive Collection →
+            Enter Archive Collection
           </button>
           <Link href="/login" className="portal-btn-secondary">
-            🔑 ចូលគណនីអ្នករួមចំណែក / Contributor Portal
+            Contributor Portal
           </Link>
         </div>
 
         <footer className="portal-footer">
-          📍 ខេត្តកំពង់ចាម (Kampong Cham) • 🏛️ AUPP Software Development • 👨‍🌾 Curated by {collection.curator}
+          Kampong Cham Province • AUPP Software Development • Curated by {collection.curator}
         </footer>
       </main>
     );
@@ -799,18 +648,6 @@ export default function Home() {
       </button>
 
       <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .floating-sticker {
-          animation: float 4s ease-in-out infinite;
-        }
-        .floating-sticker:nth-child(1) { animation-delay: 0s; }
-        .floating-sticker:nth-child(2) { animation-delay: 0.5s; }
-        .floating-sticker:nth-child(3) { animation-delay: 1s; }
-        .floating-sticker:nth-child(4) { animation-delay: 1.5s; }
-        
         /* Museum Gallery Grid */
         .museum-grid {
           display: grid;
@@ -823,9 +660,8 @@ export default function Home() {
         /* EntryCard Hover Interactions */
         .entry-card {
           background-color: #FFFFFF;
-          border: 1px solid #E8E2D8;
-          border-radius: 16px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          border: 1px solid #E5E2DC;
+          border-radius: 4px;
           padding: 28px;
           display: flex;
           flex-direction: column;
@@ -833,27 +669,26 @@ export default function Home() {
           overflow-wrap: break-word;
           word-break: break-word;
           cursor: pointer;
-          transition: all 0.35s ease;
+          transition: all 0.2s ease;
           position: relative;
         }
         
         .entry-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 16px 32px rgba(184, 115, 20, 0.15);
-          border-color: #B87314;
+          border-color: #1C1917;
         }
         
         .entry-title {
+          font-family: Georgia, 'Kantumruy Pro', serif;
           font-size: 20px;
           font-weight: 700;
-          color: #2D241E;
+          color: #1C1917;
           margin: 0 0 10px;
         }
         
         .entry-desc {
           font-size: 15px;
           line-height: 1.8;
-          color: #5C5248;
+          color: #44403C;
           white-space: pre-line;
           margin: 0;
           flex-grow: 1;
@@ -861,7 +696,7 @@ export default function Home() {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          transition: all 0.35s ease;
+          transition: all 0.2s ease;
         }
         
         .entry-card:hover .entry-desc {
@@ -886,7 +721,7 @@ export default function Home() {
           opacity: 0;
           max-height: 0;
           overflow: hidden;
-          transition: all 0.35s ease;
+          transition: all 0.2s ease;
         }
         
         .entry-card:hover .entry-footer {
@@ -894,25 +729,27 @@ export default function Home() {
           max-height: 100px;
           padding-top: 16px;
           margin-top: auto;
-          border-top-color: #F0EAE1;
+          border-top-color: #E5E2DC;
         }
         
         .entry-pill {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          padding: 5px 12px;
-          border-radius: 20px;
-          background-color: #F7F3EE;
-          border: 1px solid #E4DDD3;
+          padding: 4px 8px;
+          border-radius: 4px;
+          background-color: #F9F8F5;
+          border: 1px solid #E5E2DC;
           font-size: 12px;
-          color: #5C5248;
+          color: #44403C;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         
         .entry-view-hint {
           font-size: 13px;
-          color: #B87314;
-          font-weight: 700;
+          color: #1C1917;
+          font-weight: 600;
           margin-top: 0;
           display: flex;
           align-items: center;
@@ -920,7 +757,7 @@ export default function Home() {
           opacity: 0;
           max-height: 0;
           overflow: hidden;
-          transition: all 0.35s ease;
+          transition: all 0.2s ease;
         }
         
         .entry-card:hover .entry-view-hint {
@@ -1009,10 +846,11 @@ export default function Home() {
         </div>
       ) : filtered.length > 0 ? (
         <div id="collection" className="museum-grid">
-          {filtered.map((entry) => (
+          {filtered.map((entry, index) => (
             <EntryCard
               key={entry.id}
               entry={entry}
+              index={index}
               onSelect={setSelectedEntry}
               currentUser={user}
               onDelete={handleDelete}
