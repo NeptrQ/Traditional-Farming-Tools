@@ -1,7 +1,7 @@
 // EntryModal displays full details of a selected tool in an interactive popup.
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const styles = {
   backdrop: { position: "fixed", inset: 0, backgroundColor: "rgba(30, 24, 18, 0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 1000, boxSizing: "border-box" },
@@ -13,12 +13,14 @@ const styles = {
   footer: { display: "flex", flexWrap: "wrap", gap: 10, paddingTop: 18, borderTop: "1px solid #F0EAE1", justifyContent: "space-between", alignItems: "center" },
   badgeWrap: { display: "flex", flexWrap: "wrap", gap: 10 },
   badge: { display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12, backgroundColor: "#FAF7F2", border: "1px solid #E8E2D8", fontSize: 13, color: "#2D241E" },
-  imageContainer: { width: "100%", backgroundColor: "#F7F3EE", borderBottom: "1px solid #E8E2D8" },
-  image: { width: "100%", height: "auto", maxHeight: 300, objectFit: "cover", display: "block", borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  imageContainer: { width: "100%", boxSizing: "border-box" },
+  image: { width: "100%", maxHeight: 360, objectFit: "contain", backgroundColor: "#F4F1EA", display: "block", boxSizing: "border-box", borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   deleteBtn: { padding: "8px 14px", borderRadius: 12, backgroundColor: "transparent", border: "1px solid #E8E2D8", fontSize: 13, color: "#D32F2F", fontWeight: 700, cursor: "pointer" }
 };
 
 export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
+  const [imgError, setImgError] = useState(false);
+  
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -40,11 +42,21 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button style={styles.closeBtn} onClick={onClose} aria-label="Close details">✕</button>
         
-        {entry.photo_url && (
-          <div style={styles.imageContainer}>
-            <img src={entry.photo_url} alt={entry.title} style={styles.image} />
-          </div>
-        )}
+        <div style={styles.imageContainer}>
+          {entry.photo_url && !imgError ? (
+            <img 
+              src={entry.photo_url} 
+              alt={entry.title || "Archive item"} 
+              onError={() => setImgError(true)}
+              style={styles.image} 
+            />
+          ) : (
+            <div style={{ width: "100%", height: 360, backgroundColor: "#F4F1EA", borderTopLeftRadius: 20, borderTopRightRadius: 20, borderBottom: "1px solid #E5E2DC", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <span style={{ fontSize: 40, opacity: 0.6 }}>🌾</span>
+              <span style={{ color: "#8C827A", fontStyle: "italic", fontSize: 15, fontWeight: 500 }}>រូបថតកំពុងរៀបចំ / Photograph Being Documented</span>
+            </div>
+          )}
+        </div>
         
         <div style={styles.contentWrapper}>
           <h2 style={styles.title}>{entry.title}</h2>

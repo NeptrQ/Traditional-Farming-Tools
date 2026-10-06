@@ -661,20 +661,25 @@ export default function Home() {
         .entry-card {
           background-color: #FFFFFF;
           border: 1px solid #E5E2DC;
-          border-radius: 4px;
-          padding: 28px;
+          border-radius: 12px;
           display: flex;
           flex-direction: column;
           box-sizing: border-box;
           overflow-wrap: break-word;
           word-break: break-word;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.4s ease;
           position: relative;
         }
         
         .entry-card:hover {
-          border-color: #1C1917;
+          border-color: #D4A373;
+          transform: translateY(-6px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        .entry-card:hover .entry-image {
+          transform: scale(1.03);
         }
         
         .entry-title {
