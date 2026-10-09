@@ -5,121 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../utils/supabase/client.js";
 
-const styles = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#FAF7F2",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "40px 20px",
-    fontFamily: "sans-serif",
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: "16px",
-    padding: "32px",
-    width: "100%",
-    maxWidth: "600px",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-    border: "1px solid #E8E2D8",
-  },
-  title: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    color: "#2D241E",
-    marginBottom: "24px",
-    textAlign: "center",
-  },
-  formGroup: {
-    marginBottom: "20px",
-  },
-  label: {
-    display: "block",
-    marginBottom: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#5C5248",
-  },
-  input: {
-    width: "100%",
-    padding: "12px",
-    fontSize: "15px",
-    border: "1px solid #E8E2D8",
-    borderRadius: "8px",
-    backgroundColor: "#FAF7F2",
-    color: "#2D241E",
-    boxSizing: "border-box",
-  },
-  textarea: {
-    width: "100%",
-    padding: "12px",
-    fontSize: "15px",
-    border: "1px solid #E8E2D8",
-    borderRadius: "8px",
-    backgroundColor: "#FAF7F2",
-    color: "#2D241E",
-    minHeight: "120px",
-    resize: "vertical",
-    boxSizing: "border-box",
-  },
-  fileInput: {
-    display: "block",
-    width: "100%",
-    fontSize: "14px",
-    color: "#5C5248",
-    marginTop: "4px",
-  },
-  errorMsg: {
-    color: "#D32F2F",
-    fontSize: "13px",
-    marginTop: "4px",
-    display: "block",
-  },
-  submitBtn: {
-    width: "100%",
-    padding: "14px",
-    backgroundColor: "#B87314",
-    color: "#FFFFFF",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "16px",
-    fontWeight: "700",
-    cursor: "pointer",
-    transition: "background-color 0.2s",
-    marginTop: "12px",
-  },
-  disabledBtn: {
-    backgroundColor: "#D4A373",
-    cursor: "not-allowed",
-  },
-  loginMsg: {
-    textAlign: "center",
-    fontSize: "18px",
-    color: "#5C5248",
-  },
-  linkBtn: {
-    display: "inline-block",
-    marginTop: "16px",
-    padding: "10px 20px",
-    backgroundColor: "#B87314",
-    color: "#FFFFFF",
-    textDecoration: "none",
-    borderRadius: "8px",
-    fontWeight: "600",
-  },
-  globalError: {
-    padding: "12px",
-    backgroundColor: "#FDECEA",
-    color: "#D32F2F",
-    borderRadius: "8px",
-    marginBottom: "20px",
-    textAlign: "center",
-    border: "1px solid #F5C6CB",
-  }
-};
-
 export default function ContributePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -270,101 +155,105 @@ export default function ContributePage() {
   };
 
   if (loadingAuth) {
-    return <div style={styles.container}>Loading...</div>;
+    return <div className="container" style={{ padding: "var(--space-64) 1.5rem", color: "var(--color-paper)" }}>Loading...</div>;
   }
 
   if (!user) {
     return (
-      <div style={styles.container}>
-        <div style={styles.card}>
-          <p style={styles.loginMsg}>Please log in to contribute to the archive</p>
-          <div style={{ textAlign: "center" }}>
-            <Link href="/login" style={styles.linkBtn}>Go to Login</Link>
-          </div>
+      <div className="container" style={{ padding: "var(--space-64) 1.5rem", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="page-animate" style={{ textAlign: "center", background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", maxWidth: 400 }}>
+          <p style={{ color: "var(--color-paper)", marginBottom: "var(--space-24)" }}>Please log in to contribute to the archive</p>
+          <Link href="/login" className="btn btn-primary focus-ring">Go to Login</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Add New Entry</h1>
+    <main className="container page-animate" style={{ padding: "var(--space-64) 1.5rem", display: "flex", justifyContent: "center" }}>
+      <div style={{ background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", width: "100%", maxWidth: 600 }}>
+        <h1 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: 32, margin: "0 0 24px", textAlign: "center" }}>Add New Entry</h1>
         
-        {submitError && <div style={styles.globalError}>{submitError}</div>}
+        {submitError && <div style={{ backgroundColor: "var(--surface-soft)", border: "1px solid var(--color-ember-clay)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{submitError}</div>}
         
-        <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="title">Title</label>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <label htmlFor="title" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Title</label>
             <input
               id="title"
               name="title"
-              style={styles.input}
               value={formData.title}
               onChange={handleInputChange}
               maxLength={200}
+              className="input focus-ring"
+              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
             />
-            {errors.title && <span style={styles.errorMsg}>{errors.title}</span>}
+            {errors.title && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.title}</span>}
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="description">Description</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <label htmlFor="description" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Description</label>
             <textarea
               id="description"
               name="description"
-              style={styles.textarea}
               value={formData.description}
               onChange={handleInputChange}
               maxLength={2000}
+              className="input focus-ring"
+              style={{ minHeight: 120, padding: 12, resize: "vertical", background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
             />
-            {errors.description && <span style={styles.errorMsg}>{errors.description}</span>}
+            {errors.description && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.description}</span>}
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="contributor">Contributor (Elder/Source)</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <label htmlFor="contributor" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Contributor (Elder/Source)</label>
             <input
               id="contributor"
               name="contributor"
-              style={styles.input}
               value={formData.contributor}
               onChange={handleInputChange}
+              className="input focus-ring"
+              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
             />
-            {errors.contributor && <span style={styles.errorMsg}>{errors.contributor}</span>}
+            {errors.contributor && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.contributor}</span>}
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="place">Place (Province/Origin)</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <label htmlFor="place" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Place (Province/Origin)</label>
             <input
               id="place"
               name="place"
-              style={styles.input}
               value={formData.place}
               onChange={handleInputChange}
+              className="input focus-ring"
+              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
             />
-            {errors.place && <span style={styles.errorMsg}>{errors.place}</span>}
+            {errors.place && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.place}</span>}
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="photo">Photo</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <label htmlFor="photo" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Photo</label>
             <input
               id="photo"
               type="file"
               accept="image/jpeg,image/png,image/webp"
-              style={styles.fileInput}
               onChange={handleFileChange}
+              style={{ color: "var(--color-paper)" }}
             />
-            {errors.photo && <span style={styles.errorMsg}>{errors.photo}</span>}
+            {errors.photo && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.photo}</span>}
           </div>
 
           <button 
             type="submit" 
-            style={{ ...styles.submitBtn, ...(isSubmitting ? styles.disabledBtn : {}) }}
             disabled={isSubmitting}
+            className="btn btn-primary focus-ring"
+            style={{ width: "100%", height: 48, marginTop: 16, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
           >
             {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry"}
           </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
+

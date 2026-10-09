@@ -1,0 +1,107 @@
+/* theme.css: dark and light mode tokens + the toggle button.
+   The theme is set by <html data-theme="dark|light">.
+   Every colour on the site should come from these variables, so switching the
+   attribute restyles everything at once. All text pairs pass WCAG AA. */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #14100d;
+  --text: #f3ece0; /* 16.1:1 on bg */
+  --text-muted: #bdb1a1; /* 9.0:1 */
+  --accent: #e8b04a; /* gold: buttons, highlights, focus rings */
+  --accent-hover: #f0bf62;
+  --accent-contrast: #14100d; /* text on gold buttons, 9.7:1 */
+  --accent-text: #e8b04a; /* gold used as TEXT, 9.7:1 */
+  --accent-2: #c8553d; /* clay */
+  --surface: rgba(28, 23, 19, 0.72); /* cards, header, panels (no blur) */
+  --surface-soft: rgba(255, 255, 255, 0.04);
+  --surface-solid: #1c1713;
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --vignette-rgb: 20, 16, 13;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f7f1e6;
+  --text: #1f1a17; /* 15.3:1 on bg */
+  --text-muted: #5c534b; /* 6.7:1 */
+  --accent: #e8b04a; /* gold stays for buttons */
+  --accent-hover: #dba03a;
+  --accent-contrast: #1f1a17; /* text on gold buttons, 8.8:1 */
+  --accent-text: #8a4b00; /* gold as TEXT must be deeper on light, 6.1:1 */
+  --accent-2: #a83420; /* clay */
+  --surface: rgba(255, 252, 246, 0.8);
+  --surface-soft: rgba(40, 28, 18, 0.04);
+  --surface-solid: #fffdf8;
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --border: rgba(40, 28, 18, 0.12);
+  --border-strong: rgba(40, 28, 18, 0.22);
+  --vignette-rgb: 247, 241, 230;
+  --shadow: 0 8px 30px rgba(60, 40, 20, 0.12);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Smooth colour change only while switching (not always on, which costs speed). */
+html.theme-anim,
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease,
+    fill 0.3s ease, stroke 0.3s ease !important;
+}
+
+/* ---------- Toggle button ---------- */
+.theme-toggle {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--accent);
+}
+.theme-toggle:active {
+  transform: scale(0.96);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.theme-toggle svg {
+  position: absolute;
+  transition: transform 0.35s ease, opacity 0.25s ease;
+}
+/* Dark mode shows the sun (click for light). Light mode shows the moon. */
+:root[data-theme='dark'] .theme-toggle .icon-moon,
+:root:not([data-theme]) .theme-toggle .icon-moon {
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.6);
+}
+:root[data-theme='light'] .theme-toggle .icon-sun {
+  opacity: 0;
+  transform: rotate(60deg) scale(0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-anim,
+  html.theme-anim *,
+  .theme-toggle,
+  .theme-toggle svg {
+    transition: none !important;
+  }
+}

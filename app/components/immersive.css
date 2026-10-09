@@ -1,0 +1,235 @@
+/* immersive.css: styles for SpotlightGrid, ScrollCarousel, HorizontalScroll.
+   Colours fall back to the dark-soil palette if your own tokens are missing. */
+
+:root {
+  --gold: var(--accent);
+  --clay: var(--accent-2);
+  --paper: var(--text);
+  --muted: var(--text-muted);
+  --soil: var(--bg);
+}
+
+/* ---------------------------------------------------------------- */
+/* 1. Spotlight cards                                                */
+/* ---------------------------------------------------------------- */
+.spot-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+}
+
+/* soft light inside the card */
+.spot-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    var(--surface-soft),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* bright edge that follows the cursor */
+.spot-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    var(--accent),
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.spot-grid.is-lit .spot-card::before,
+.spot-grid.is-lit .spot-card::after {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- */
+/* 2. Scroll carousel                                                */
+/* ---------------------------------------------------------------- */
+.carousel-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 8px 6vw 28px;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 6vw;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  outline-offset: -4px;
+}
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+.carousel-track.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.carousel-track:focus-visible {
+  outline: 2px solid var(--gold);
+}
+
+.carousel-item {
+  flex: 0 0 min(82vw, 420px);
+  scroll-snap-align: start;
+  opacity: 0.55;
+  transform: scale(0.96);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.carousel-item[data-active='true'] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 6vw;
+}
+.carousel-bar {
+  flex: 1;
+  background: var(--border);
+}
+.carousel-bar span {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transform-origin: left;
+  transition: transform 0.15s linear;
+}
+.carousel-btn {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.carousel-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--surface-soft);
+}
+.carousel-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.carousel-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.carousel-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- */
+/* 3. Horizontal scroll (pinned)                                     */
+/* ---------------------------------------------------------------- */
+.hscroll {
+  position: relative;
+}
+.hscroll-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.hscroll-track {
+  display: flex;
+  gap: 4vw;
+  padding: 0 8vw;
+  will-change: transform;
+}
+.hscroll-panel {
+  flex: 0 0 min(72vw, 880px);
+  height: 72vh;
+  opacity: calc(0.35 + 0.65 * var(--focus, 1));
+  transform: scale(calc(0.92 + 0.08 * var(--focus, 1)));
+  transform-origin: center;
+}
+/* optional parallax: <img data-depth="0.5" style="--depth:0.5"> */
+.hscroll [data-depth] {
+  transform: translate3d(calc(var(--p, 0) * var(--depth, 0) * -140px), 0, 0);
+}
+.hscroll-progress {
+  position: absolute;
+  left: 8vw;
+  right: 8vw;
+  bottom: 5vh;
+  background: var(--border);
+}
+.hscroll-progress span {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Fallback: phones and reduced motion become a normal swipeable row */
+.hscroll.is-static .hscroll-sticky {
+  position: static;
+  height: auto;
+  overflow: visible;
+  padding: 24px 0;
+}
+.hscroll.is-static .hscroll-track {
+  overflow-x: auto;
+  padding: 0 6vw 24px;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.hscroll.is-static .hscroll-track::-webkit-scrollbar {
+  display: none;
+}
+.hscroll.is-static .hscroll-panel {
+  flex: 0 0 84vw;
+  height: auto;
+  min-height: 56vh;
+  opacity: 1;
+  transform: none;
+  scroll-snap-align: center;
+}
+.hscroll.is-static .hscroll-progress {
+  display: none;
+}
+.hscroll.is-static [data-depth] {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-item,
+  .carousel-bar span,
+  .carousel-btn,
+  .spot-card::before,
+  .spot-card::after {
+    transition: none;
+  }
+}

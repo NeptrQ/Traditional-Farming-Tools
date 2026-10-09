@@ -1,22 +1,6 @@
-// EntryModal displays full details of a selected tool in an interactive popup.
 "use client";
 
 import { useEffect, useState } from "react";
-
-const styles = {
-  backdrop: { position: "fixed", inset: 0, backgroundColor: "rgba(30, 24, 18, 0.6)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 1000, boxSizing: "border-box" },
-  modal: { backgroundColor: "#FFFFFF", borderRadius: 20, border: "1px solid #E8E2D8", boxShadow: "0 20px 48px rgba(0, 0, 0, 0.18)", maxWidth: 580, width: "100%", maxHeight: "90vh", overflowY: "auto", position: "relative", boxSizing: "border-box", display: "flex", flexDirection: "column" },
-  closeBtn: { position: "absolute", top: 16, right: 16, background: "#F4EFEA", border: "1px solid #E4DDD3", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, cursor: "pointer", color: "#5C5248", zIndex: 10 },
-  contentWrapper: { padding: "28px 24px" },
-  title: { fontSize: 24, fontWeight: 800, color: "#2D241E", margin: "0 0 16px", paddingRight: 40 },
-  desc: { fontSize: 16, lineHeight: 1.8, color: "#4A3F35", whiteSpace: "pre-line", margin: "0 0 24px" },
-  footer: { display: "flex", flexWrap: "wrap", gap: 10, paddingTop: 18, borderTop: "1px solid #F0EAE1", justifyContent: "space-between", alignItems: "center" },
-  badgeWrap: { display: "flex", flexWrap: "wrap", gap: 10 },
-  badge: { display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12, backgroundColor: "#FAF7F2", border: "1px solid #E8E2D8", fontSize: 13, color: "#2D241E" },
-  imageContainer: { width: "100%", boxSizing: "border-box" },
-  image: { width: "100%", maxHeight: 360, objectFit: "contain", backgroundColor: "#F4F1EA", display: "block", boxSizing: "border-box", borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-  deleteBtn: { padding: "8px 14px", borderRadius: 12, backgroundColor: "transparent", border: "1px solid #E8E2D8", fontSize: 13, color: "#D32F2F", fontWeight: 700, cursor: "pointer" }
-};
 
 export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
   const [imgError, setImgError] = useState(false);
@@ -38,50 +22,65 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
   };
 
   return (
-    <div style={styles.backdrop} onClick={onClose} role="dialog" aria-modal="true">
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button style={styles.closeBtn} onClick={onClose} aria-label="Close details">✕</button>
+    <div className="page-animate" style={{ position: "fixed", inset: 0, backgroundColor: "var(--bg)", zIndex: 1000, overflowY: "auto", display: "flex", flexDirection: "column" }} role="dialog" aria-modal="true">
+      <div className="container" style={{ width: "100%", padding: "var(--space-40) 1.5rem", flex: 1, display: "flex", flexDirection: "column" }}>
         
-        <div style={styles.imageContainer}>
-          {entry.photo_url && !imgError ? (
-            <img 
-              src={entry.photo_url} 
-              alt={entry.title || "Archive item"} 
-              onError={() => setImgError(true)}
-              style={styles.image} 
-            />
-          ) : (
-            <div style={{ width: "100%", height: 360, backgroundColor: "#F4F1EA", borderTopLeftRadius: 20, borderTopRightRadius: 20, borderBottom: "1px solid #E5E2DC", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-              <span style={{ fontSize: 40, opacity: 0.6 }}>🌾</span>
-              <span style={{ color: "#8C827A", fontStyle: "italic", fontSize: 15, fontWeight: 500 }}>រូបថតកំពុងរៀបចំ / Photograph Being Documented</span>
-            </div>
-          )}
+        <div style={{ marginBottom: "var(--space-40)" }}>
+          <button onClick={onClose} className="focus-ring" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "var(--color-muted)", fontSize: 15, cursor: "pointer", padding: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Archive
+          </button>
         </div>
-        
-        <div style={styles.contentWrapper}>
-          <h2 style={styles.title}>{entry.title}</h2>
-          <p style={styles.desc}>{entry.description}</p>
-          <div style={styles.footer}>
-            <div style={styles.badgeWrap}>
-              {entry.contributor && <div style={styles.badge}><span>👤</span><span>{entry.contributor}</span></div>}
-              {entry.place && <div style={styles.badge}><span>📍</span><span>{entry.place}</span></div>}
+
+        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap-reverse", gap: "var(--space-64)", alignItems: "flex-start" }}>
+          
+          <div style={{ flex: "1 1 400px", display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
+            <div>
+              <h2 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: "clamp(32px, 5vw, 48px)", margin: "0 0 8px" }}>{entry.title}</h2>
+              <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "20px", color: "var(--color-muted)", margin: 0, fontWeight: 400 }}>{entry.english_name || "Traditional Tool"}</h3>
             </div>
+            
+            <div style={{ maxWidth: "70ch" }}>
+              <p style={{ fontSize: "16px", lineHeight: 1.6, color: "var(--color-paper)", whiteSpace: "pre-wrap", margin: "0 0 var(--space-24)", fontFamily: "var(--font-sans), var(--font-khmer)" }}>{entry.description}</p>
+              
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: "var(--space-24)" }}>
+                {entry.contributor && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>👤 {entry.contributor}</span>}
+                {entry.place && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>📍 {entry.place}</span>}
+              </div>
+            </div>
+
             {isOwner && (
-              <div style={{ display: "flex", gap: 10 }}>
-                <button
-                  style={{ ...styles.deleteBtn, color: "#5C5248" }}
-                  onClick={() => { onClose(); onEdit?.(entry); }}
-                >
-                  ✏️ កែប្រែ / Edit
-                </button>
-                <button style={styles.deleteBtn} onClick={handleDeleteClick}>
-                  🗑️ លុប / Delete
-                </button>
+              <div style={{ display: "flex", gap: 12, marginTop: "var(--space-24)" }}>
+                <button onClick={() => { onClose(); onEdit?.(entry); }} className="btn btn-secondary focus-ring">Edit Tool</button>
+                <button onClick={handleDeleteClick} className="btn focus-ring" style={{ background: "var(--surface-soft)", color: "var(--accent-2)", border: "1px solid var(--border)" }}>Delete</button>
               </div>
             )}
           </div>
+
+          <div style={{ flex: "1 1 400px", width: "100%" }}>
+            <div style={{ width: "100%", backgroundColor: "var(--surface-soft)", borderRadius: "var(--radius-md)", border: "1px solid var(--surface-soft)", overflow: "hidden" }}>
+              {entry.photo_url && !imgError ? (
+                <img src={entry.photo_url} alt={entry.title} onError={() => setImgError(true)} style={{ width: "100%", maxHeight: "60vh", objectFit: "contain", display: "block" }} />
+              ) : (
+                <div style={{ width: "100%", height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <defs>
+                      <pattern id="pat-modal" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M0 20L20 0ZM20 20L0 0" stroke="var(--color-straw-gold)" strokeWidth="1" fill="none" opacity="0.1"/>
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#pat-modal)" />
+                  </svg>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
   );
 }
+

@@ -6,6 +6,8 @@ import collection from "../collection.config.js";
 import EntryCard from "../components/EntryCard.js";
 import EntryModal from "../components/EntryModal.js";
 import { createClient } from "../utils/supabase/client.js";
+import { SpotlightGrid, ScrollCarousel, HorizontalScroll } from "./components/ImmersiveKit.jsx";
+import { useLanguage } from "./LanguageContext.js";
 
 function getLevenshteinDistance(a, b) {
   const m = a.length;
@@ -73,216 +75,128 @@ function findSuggestion(rawQuery, allEntries) {
 }
 
 const styles = {
-  wrap: {
-    maxWidth: 960,
-    margin: "0 auto",
-    padding: "24px 16px 40px",
-    boxSizing: "border-box",
-    color: "#44403C",
-    backgroundColor: "#F9F8F5",
-    width: "100%",
-    minHeight: "100vh",
-    fontFamily: "system-ui, sans-serif",
-  },
-  authBar: {
+  landingPage: {
+    flex: 1,
     display: "flex",
-    justifyContent: "flex-end",
     alignItems: "center",
-    gap: 10,
-    marginBottom: 24,
-    minHeight: 38,
-    flexWrap: "wrap",
+    justifyContent: "center",
+    padding: "var(--space-40) 0",
+    boxSizing: "border-box",
   },
-  authUserInfo: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 10,
-    fontSize: 14,
-    color: "#44403C",
-    flexWrap: "wrap",
-    justifyContent: "flex-end",
-  },
-  userBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    padding: "6px 12px",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    fontSize: 13,
-    color: "#1C1917",
-    maxWidth: 240,
+  splitLayout: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    backgroundColor: "var(--color-white)",
+    borderRadius: "var(--radius-md)",
     overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    border: "1px solid var(--border)",
+    boxShadow: "0 4px 6px var(--shadow)",
+    minHeight: 560,
   },
-  logoutBtn: {
-    padding: "6px 14px",
-    backgroundColor: "transparent",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    color: "#44403C",
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.2s ease",
+  landingContent: {
+    flex: 1,
+    padding: "var(--space-64) var(--space-40)",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
   },
-  primaryBtn: {
-    padding: "10px 20px",
-    backgroundColor: "#1C1917",
-    border: "1px solid #1C1917",
-    borderRadius: 4,
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
-  dashboardBanner: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 4,
-    padding: "32px 24px",
-    border: "1px solid #E5E2DC",
-    marginBottom: 48,
-    textAlign: "center",
-  },
-  dashboardGreeting: {
-    fontSize: 24,
-    fontWeight: 700,
-    fontFamily: "Georgia, 'Kantumruy Pro', serif",
-    color: "#1C1917",
-    margin: "0 0 12px",
-  },
-  dashboardSubtext: {
-    fontSize: 15,
-    color: "#44403C",
-    margin: "0 auto 20px",
-    maxWidth: 600,
-    lineHeight: 1.6,
-  },
-  statsPill: {
-    display: "inline-block",
-    padding: "6px 16px",
-    backgroundColor: "#F9F8F5",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    fontSize: 14,
-    color: "#44403C",
-    fontWeight: 600,
-    margin: "0 0 24px",
-  },
-  authLinks: {
+  greenPane: {
+    flex: 1,
+    backgroundColor: "var(--color-paddy-green)",
+    color: "var(--color-white)",
     display: "flex",
     alignItems: "center",
-    gap: 8,
+    justifyContent: "center",
+    padding: "var(--space-40)",
+    borderLeft: "1px solid var(--border)",
   },
-  loginLink: {
-    padding: "6px 14px",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    color: "#1C1917",
-    fontSize: 13,
-    fontWeight: 600,
-    textDecoration: "none",
-    backgroundColor: "#FFFFFF",
-    transition: "all 0.2s ease",
+  academicTitle: {
+    fontFamily: "var(--font-serif), var(--font-khmer-title), serif",
+    fontSize: "clamp(32px, 4vw, 48px)",
+    fontWeight: 700,
+    color: "var(--color-soil-brown)",
+    margin: "0 0 var(--space-16)",
+    lineHeight: 1.2,
   },
-  signupLink: {
-    padding: "6px 14px",
-    backgroundColor: "#1C1917",
-    border: "1px solid #1C1917",
-    borderRadius: 4,
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: 600,
-    textDecoration: "none",
-    transition: "all 0.2s ease",
+  academicKhmerTitle: {
+    fontFamily: "var(--font-serif), var(--font-khmer-title), serif",
+    fontSize: "clamp(24px, 3vw, 32px)",
+    color: "var(--color-clay-terracotta)",
+    margin: "0 0 var(--space-8)",
+    fontWeight: 700,
   },
-  inputWrap: { position: "relative", marginTop: 32 },
-  input: {
-    width: "100%",
-    padding: "14px 20px 14px 44px",
+  academicNote: {
     fontSize: 16,
-    fontFamily: "system-ui, sans-serif",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    color: "#1C1917",
-    boxSizing: "border-box",
-    outline: "none",
-    transition: "border-color 0.2s ease",
+    color: "var(--color-soil-brown)",
+    opacity: 0.9,
+    lineHeight: 1.7,
+    margin: "0 0 var(--space-24)",
   },
-  searchIcon: {
-    position: "absolute",
-    left: 16,
-    top: "50%",
-    transform: "translateY(-50%)",
-    fontSize: 16,
-    color: "#8C827A",
-    pointerEvents: "none",
+  landingQuote: {
+    borderLeft: "4px solid var(--color-clay-terracotta)",
+    paddingLeft: "var(--space-16)",
+    fontStyle: "italic",
+    marginBottom: "var(--space-40)",
+    color: "var(--color-soil-brown)",
+    opacity: 0.8,
   },
-  empty: {
-    padding: "48px 20px",
+  portalActions: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "var(--space-16)",
+  },
+  featuredTool: {
     textAlign: "center",
-    backgroundColor: "#FFFFFF",
-    border: "1px dashed #E5E2DC",
-    borderRadius: 4,
-    marginTop: 28,
+  },
+  featuredPhotoPlaceholder: {
+    width: "100%",
+    maxWidth: 300,
+    aspectRatio: "4/3",
+    backgroundColor: "var(--border)",
+    border: "2px dashed var(--border-strong)",
+    borderRadius: "var(--radius-md)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto var(--space-24)",
+    fontStyle: "italic",
+    padding: "var(--space-24)",
+  },
+  archiveGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gap: "var(--space-24)",
+    marginTop: "var(--space-40)",
   },
   emptyTitle: {
     margin: 0,
     fontSize: 16,
     fontWeight: 700,
-    fontFamily: "Georgia, 'Kantumruy Pro', serif",
-    color: "#1C1917",
+    fontFamily: "var(--font-serif), var(--font-khmer-title), serif",
+    color: "var(--color-soil-brown)",
   },
   emptySubtitle: {
     margin: "6px 0 0",
     fontSize: 14,
-    color: "#44403C",
-  },
-  suggestionWrap: {
-    marginTop: 16,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 8,
-  },
-  suggestionLabel: {
-    fontSize: 14,
-    color: "#44403C",
-    fontWeight: 500,
+    color: "var(--color-soil-brown)",
+    opacity: 0.8,
   },
   suggestionBtn: {
     display: "inline-flex",
     alignItems: "center",
     gap: 8,
     padding: "8px 18px",
-    backgroundColor: "#F9F8F5",
-    border: "1px solid #E5E2DC",
-    borderRadius: 4,
-    color: "#1C1917",
+    backgroundColor: "var(--color-warm-paper)",
+    border: "1px solid var(--border)",
+    borderRadius: "var(--radius-md)",
+    color: "var(--color-soil-brown)",
     fontSize: 15,
     fontWeight: 700,
     cursor: "pointer",
     transition: "all 0.2s ease",
-  },
-  count: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 13,
-    color: "#44403C",
-    marginTop: 40,
-    textAlign: "center",
-  },
-  footer: {
-    marginTop: 48,
-    paddingTop: 20,
-    borderTop: "1px solid #E5E2DC",
-    fontSize: 13,
-    color: "#8C827A",
-    textAlign: "center",
-  },
+    marginTop: "var(--space-16)",
+  }
 };
 
 export default function Home() {
@@ -293,6 +207,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [showArchive, setShowArchive] = useState(false);
+  const { lang } = useLanguage();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editEntry, setEditEntry] = useState(null);
@@ -509,348 +424,274 @@ export default function Home() {
 
   if (!showArchive) {
     return (
-      <main className="welcome-portal">
-        <style>{`
-          .welcome-portal {
-            min-height: 100vh;
-            background-color: #F9F8F5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            position: relative;
-            box-sizing: border-box;
-            font-family: system-ui, sans-serif;
-            color: #44403C;
-          }
-          .academic-title {
-            font-family: Georgia, 'Kantumruy Pro', serif;
-            font-size: clamp(32px, 5vw, 42px);
-            font-weight: 700;
-            color: #1C1917;
-            margin: 0 0 12px;
-            text-align: center;
-            line-height: 1.3;
-          }
-          .academic-subtitle {
-            font-family: Georgia, 'Kantumruy Pro', serif;
-            font-size: clamp(20px, 3vw, 24px);
-            font-weight: 400;
-            color: #44403C;
-            margin: 0 0 24px;
-            text-align: center;
-            font-style: italic;
-          }
-          .academic-note {
-            font-size: 15px;
-            color: #44403C;
-            line-height: 1.7;
-            max-width: 600px;
-            text-align: center;
-            margin: 0 0 48px;
-            border-top: 1px solid #E5E2DC;
-            border-bottom: 1px solid #E5E2DC;
-            padding: 24px 0;
-          }
-          .portal-btn-primary {
-            padding: 14px 28px;
-            background: #1C1917;
-            border: 1px solid #1C1917;
-            border-radius: 4px;
-            color: #FFFFFF;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-          }
-          .portal-btn-primary:hover {
-            background: #292524;
-          }
-          .portal-btn-secondary {
-            padding: 14px 28px;
-            background-color: transparent;
-            border: 1px solid #E5E2DC;
-            border-radius: 4px;
-            color: #1C1917;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-          }
-          .portal-btn-secondary:hover {
-            background-color: #FFFFFF;
-          }
-          .portal-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-          }
-          .portal-footer {
-            position: absolute;
-            bottom: 24px;
-            font-size: 13px;
-            color: #8C827A;
-            text-align: center;
-            width: 100%;
-          }
-        `}</style>
+      <main style={{ width: "100%", overflowX: "clip" }}>
+        {/* HERO SECTION */}
+        <section className="container" style={{ padding: "var(--space-64) 1.5rem", minHeight: "80vh", display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "var(--space-40)", position: "relative" }}>
+          
+          {/* Left Column */}
+          <div style={{ flex: "1 1 500px", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <div className="hero-mask">
+              <h1 className="hero-headline-line khmer-title" style={{ fontFamily: lang === 'KH' ? "var(--font-khmer-title)" : "var(--font-serif)", fontSize: "clamp(48px, 6vw, 72px)", color: "var(--color-paper)", margin: "0 0 var(--space-8)" }}>
+                {lang === 'KH' ? 'បណ្ណសារឧបករណ៍កសិកម្ម' : 'Traditional Farming Tools'}
+              </h1>
+            </div>
+            <h2 style={{ fontFamily: lang === 'KH' ? "var(--font-khmer)" : "var(--font-serif)", fontSize: "clamp(40px, 5vw, 72px)", color: "var(--color-paper)", margin: "0 0 var(--space-40)", fontWeight: 400, lineHeight: 1.2 }}>
+              {lang === 'KH' ? (
+                <>
+                  <span className="hero-word" style={{ animationDelay: "200ms" }}>ឧបករណ៍</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "245ms" }}>ដែល</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "290ms" }}>ដូនតា</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "335ms" }}>របស់</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "380ms" }}>ខ្ញុំ</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "425ms", color: "var(--accent)" }}>នៅតែប្រើ</span><span className="hero-word" style={{ animationDelay: "425ms" }}>។</span>
+                </>
+              ) : (
+                <>
+                  <span className="hero-word" style={{ animationDelay: "200ms" }}>The</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "245ms" }}>tools</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "290ms" }}>my</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "335ms" }}>grandparents</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "380ms" }}>still</span>{' '}
+                  <span className="hero-word" style={{ animationDelay: "425ms", fontStyle: "italic", color: "var(--accent)" }}>use</span><span className="hero-word" style={{ animationDelay: "425ms" }}>.</span>
+                </>
+              )}
+            </h2>
+            <div style={{ display: "flex", gap: "var(--space-16)", flexWrap: "wrap" }}>
+              <button onClick={() => setShowArchive(true)} className="btn btn-primary hero-button" style={{ animationDelay: "500ms" }}>
+                {lang === 'KH' ? 'ស្វែងរកបណ្ណសារ' : 'Browse Archive'}
+              </button>
+              <Link href="/login" className="btn btn-secondary hero-button" style={{ animationDelay: "550ms" }}>
+                Contributor Login
+              </Link>
+            </div>
+          </div>
 
-        <h1 className="academic-title">The Khmer Living Archive</h1>
-        <h2 className="academic-subtitle">Traditional Agricultural Implements of Cambodia</h2>
-        <div className="academic-note">
-          A student archive by Va Nuth for ICT 340 at American University of Phnom Penh. Documenting traditional farming tools and oral knowledge from my grandparents in Kampong Cham Province.
-        </div>
+          {/* Right Column: Featured Card */}
+          <div className="card spot-card hero-card" style={{ flex: "1 1 300px", padding: "var(--space-24)", maxWidth: "400px", display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "var(--input-bg)", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
+              {entries && entries.length > 0 && entries[0].photo_url ? (
+                <img src={entries[0].photo_url} alt={entries[0].title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <defs>
+                    <pattern id="pat-hero" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M0 20L20 0ZM20 20L0 0" stroke="var(--color-straw-gold)" strokeWidth="1" fill="none" opacity="0.3"/>
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#pat-hero)" />
+                </svg>
+              )}
+            </div>
+            <div>
+              <div style={{ fontSize: "14px", fontFamily: "var(--font-mono)", color: "var(--color-muted)", marginBottom: "4px" }}>FEATURED</div>
+              <h3 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: "24px", margin: "0 0 8px" }}>
+                {entries && entries.length > 0 ? entries[0].title : "នង្គ័ល / Nongkol"}
+              </h3>
+              <p style={{ color: "var(--color-muted)", fontSize: "15px", margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                {entries && entries.length > 0 ? entries[0].description : "The traditional ox-drawn plow. Pulled by a pair of oxen, the wooden plough turns the hard earth into soft furrows ready for the rains."}
+              </p>
+            </div>
+          </div>
+          
+          {/* Scroll Hint */}
+          <div style={{ position: "absolute", bottom: "var(--space-24)", left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+            <div className="hero-scroll-line" />
+          </div>
+        </section>
 
-        <div className="portal-actions">
-          <button onClick={() => setShowArchive(true)} className="portal-btn-primary">
-            Enter Archive Collection
-          </button>
-          <Link href="/login" className="portal-btn-secondary">
-            Contributor Portal
-          </Link>
-        </div>
+        {/* HORIZONTAL SCROLL: A year in the rice field */}
+        <HorizontalScroll label="A year in the rice field">
+          <div className="card spot-card" style={{ width: "clamp(340px, 80vw, 420px)", flexShrink: 0, scrollSnapAlign: "center", padding: "var(--space-40)", backgroundColor: "var(--color-glass)", border: "1px solid var(--color-glass-border)", borderRadius: "var(--radius-md)" }}>
+            <h3 style={{ fontSize: "32px", fontFamily: "var(--font-khmer-title)", color: "var(--color-straw-gold)", margin: "0 0 8px" }}>នង្គ័ល</h3>
+            <div style={{ fontSize: "14px", fontFamily: "var(--font-mono)", color: "var(--color-muted)", marginBottom: "var(--space-16)" }}>PLOUGH / PREPARING THE SOIL</div>
+            <p style={{ color: "var(--color-paper)", lineHeight: 1.6, marginBottom: "var(--space-24)" }}>
+              The first step of the season. Pulled by a pair of oxen, the wooden plough turns the hard earth into soft furrows ready for the rains.
+            </p>
+            <button onClick={() => { setShowArchive(true); setQuery("Nongkol"); }} style={{ background: "none", border: "none", color: "var(--color-straw-gold)", textDecoration: "underline", cursor: "pointer", padding: 0, font: "inherit" }}>View in archive →</button>
+          </div>
+          <div className="card spot-card" style={{ width: "clamp(340px, 80vw, 420px)", flexShrink: 0, scrollSnapAlign: "center", padding: "var(--space-40)", backgroundColor: "var(--color-glass)", border: "1px solid var(--color-glass-border)", borderRadius: "var(--radius-md)" }}>
+            <h3 style={{ fontSize: "32px", fontFamily: "var(--font-khmer-title)", color: "var(--color-straw-gold)", margin: "0 0 8px" }}>រនាស់</h3>
+            <div style={{ fontSize: "14px", fontFamily: "var(--font-mono)", color: "var(--color-muted)", marginBottom: "var(--space-16)" }}>HARROW / LEVELING</div>
+            <p style={{ color: "var(--color-paper)", lineHeight: 1.6, marginBottom: "var(--space-24)" }}>
+              Following the plough, the harrow breaks up large clods of soil and creates a smooth, level bed for planting rice seedlings.
+            </p>
+            <button onClick={() => { setShowArchive(true); setQuery("Ronoas"); }} style={{ background: "none", border: "none", color: "var(--color-straw-gold)", textDecoration: "underline", cursor: "pointer", padding: 0, font: "inherit" }}>View in archive →</button>
+          </div>
+          <div className="card spot-card" style={{ width: "clamp(340px, 80vw, 420px)", flexShrink: 0, scrollSnapAlign: "center", padding: "var(--space-40)", backgroundColor: "var(--color-glass)", border: "1px solid var(--color-glass-border)", borderRadius: "var(--radius-md)" }}>
+            <h3 style={{ fontSize: "32px", fontFamily: "var(--font-khmer-title)", color: "var(--color-straw-gold)", margin: "0 0 8px" }}>កណ្តៀវ</h3>
+            <div style={{ fontSize: "14px", fontFamily: "var(--font-mono)", color: "var(--color-muted)", marginBottom: "var(--space-16)" }}>SICKLE / HARVEST</div>
+            <p style={{ color: "var(--color-paper)", lineHeight: 1.6, marginBottom: "var(--space-24)" }}>
+              A curved blade honed to a razor edge. Used by hand, stalk by stalk, when the golden grains are finally ready to be gathered.
+            </p>
+            <button onClick={() => { setShowArchive(true); setQuery("Sickle"); }} style={{ background: "none", border: "none", color: "var(--color-straw-gold)", textDecoration: "underline", cursor: "pointer", padding: 0, font: "inherit" }}>View in archive →</button>
+          </div>
+          <div className="card spot-card" style={{ width: "clamp(340px, 80vw, 420px)", flexShrink: 0, scrollSnapAlign: "center", padding: "var(--space-40)", backgroundColor: "var(--color-glass)", border: "1px solid var(--color-glass-border)", borderRadius: "var(--radius-md)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+            <h3 style={{ fontSize: "28px", fontFamily: "var(--font-serif)", color: "var(--color-straw-gold)", margin: "0 0 16px" }}>
+              Explore the Full Archive
+            </h3>
+            <p style={{ color: "var(--color-paper)", lineHeight: 1.6, marginBottom: "var(--space-24)" }}>
+              Browse the complete collection of tools, categories, and oral histories.
+            </p>
+            <button onClick={() => setShowArchive(true)} className="btn btn-primary focus-ring">
+              Browse Archive
+            </button>
+          </div>
+        </HorizontalScroll>
 
-        <footer className="portal-footer">
-          Kampong Cham Province • AUPP Software Development • Curated by {collection.curator}
-        </footer>
+        {/* CAROUSEL: Stories from my grandparents */}
+        <section className="container" style={{ padding: "var(--space-64) 0", borderTop: "1px solid var(--color-glass-border)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "var(--space-40)" }}>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 400, color: "var(--color-paper)", margin: 0 }}>
+              Passed down by <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--color-straw-gold)" }}>voice</span>
+            </h2>
+            <div style={{ fontSize: "14px", color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}>STORIES FROM MY GRANDPARENTS</div>
+          </div>
+          <ScrollCarousel label="Stories from my grandparents">
+            <div className="spot-card card" style={{ padding: "var(--space-40)", width: "300px", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: "3rem", color: "var(--color-straw-gold)", opacity: 0.2, lineHeight: 0.8 }}>&ldquo;</div>
+              <p style={{ flex: 1, fontSize: "1.125rem", fontStyle: "italic", color: "var(--color-paper)", margin: "0 0 var(--space-24)" }}>[Placeholder] A story about how the sickle was forged by a local blacksmith in the village.</p>
+              <div style={{ fontSize: "0.875rem", fontFamily: "var(--font-mono)", color: "var(--color-straw-gold)" }}>— GRANDFATHER SOK (SICKLE)</div>
+            </div>
+            <div className="spot-card card" style={{ padding: "var(--space-40)", width: "300px", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: "3rem", color: "var(--color-straw-gold)", opacity: 0.2, lineHeight: 0.8 }}>&ldquo;</div>
+              <p style={{ flex: 1, fontSize: "1.125rem", fontStyle: "italic", color: "var(--color-paper)", margin: "0 0 var(--space-24)" }}>[Placeholder] I remember learning to weave the winnowing fan when I was just ten years old.</p>
+              <div style={{ fontSize: "0.875rem", fontFamily: "var(--font-mono)", color: "var(--color-straw-gold)" }}>— GRANDMOTHER CHEA (WINNOWING FAN)</div>
+            </div>
+            <div className="spot-card card" style={{ padding: "var(--space-40)", width: "300px", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: "3rem", color: "var(--color-straw-gold)", opacity: 0.2, lineHeight: 0.8 }}>&ldquo;</div>
+              <p style={{ flex: 1, fontSize: "1.125rem", fontStyle: "italic", color: "var(--color-paper)", margin: "0 0 var(--space-24)" }}>[Placeholder] The rains came late that year, and the plough felt twice as heavy in the dry earth.</p>
+              <div style={{ fontSize: "0.875rem", fontFamily: "var(--font-mono)", color: "var(--color-straw-gold)" }}>— GRANDFATHER SOK (PLOUGH)</div>
+            </div>
+            <div className="spot-card card" style={{ padding: "var(--space-40)", width: "300px", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: "3rem", color: "var(--color-straw-gold)", opacity: 0.2, lineHeight: 0.8 }}>&ldquo;</div>
+              <p style={{ flex: 1, fontSize: "1.125rem", fontStyle: "italic", color: "var(--color-paper)", margin: "0 0 var(--space-24)" }}>[Placeholder] We built the granary high to keep out the floods. It still stands today.</p>
+              <div style={{ fontSize: "0.875rem", fontFamily: "var(--font-mono)", color: "var(--color-straw-gold)" }}>— GRANDMOTHER CHEA (GRANARY)</div>
+            </div>
+          </ScrollCarousel>
+        </section>
+
+        {/* ARCHIVE IN NUMBERS */}
+        <section className="container" style={{ padding: "var(--space-64) 0" }}>
+          <div style={{ textAlign: "center", marginBottom: "var(--space-40)" }}>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 400, color: "var(--color-paper)", margin: 0 }}>
+              The archive in <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--color-straw-gold)" }}>numbers</span>
+            </h2>
+          </div>
+          <SpotlightGrid className="museum-grid">
+            <div className="card spot-card" style={{ padding: "var(--space-40)", textAlign: "center" }}>
+              <div style={{ fontSize: "3rem", fontFamily: "var(--font-serif)", color: "var(--color-straw-gold)", marginBottom: "var(--space-8)" }}>{entries.length || 24}</div>
+              <div style={{ fontSize: "1rem", color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}>TOOLS DOCUMENTED</div>
+            </div>
+            <div className="card spot-card" style={{ padding: "var(--space-40)", textAlign: "center" }}>
+              <div style={{ fontSize: "3rem", fontFamily: "var(--font-serif)", color: "var(--color-straw-gold)", marginBottom: "var(--space-8)" }}>12</div>
+              <div style={{ fontSize: "1rem", color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}>ORAL STORIES</div>
+            </div>
+            <div className="card spot-card" style={{ padding: "var(--space-40)", textAlign: "center" }}>
+              <div style={{ fontSize: "3rem", fontFamily: "var(--font-serif)", color: "var(--color-straw-gold)", marginBottom: "var(--space-8)" }}>85+</div>
+              <div style={{ fontSize: "1rem", color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}>YEARS OF KNOWLEDGE</div>
+            </div>
+          </SpotlightGrid>
+        </section>
+
+        {/* CALL TO ACTION */}
+        <section className="container" style={{ padding: "var(--space-64) 0", marginBottom: "var(--space-64)" }}>
+          <div className="card spot-card" style={{ padding: "var(--space-40)", textAlign: "center", border: "1px solid var(--color-straw-gold)" }}>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontSize: "clamp(24px, 4vw, 36px)", fontWeight: 400, color: "var(--color-paper)", margin: "0 0 var(--space-16)" }}>
+              Know a tool we missed? <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--color-straw-gold)" }}>Tell us</span>
+            </h2>
+            <Link href="/login" className="btn btn-primary" style={{ marginTop: "var(--space-16)" }}>Contribute to Archive</Link>
+          </div>
+        </section>
       </main>
     );
   }
 
   return (
-    <main style={styles.wrap}>
+    <main className="container" style={{ padding: "var(--space-40) var(--space-24)", flex: 1, width: "100%", boxSizing: "border-box" }}>
       <button onClick={() => setShowArchive(false)} style={{
         display: "inline-flex",
         alignItems: "center",
         gap: "6px",
-        padding: "8px 16px",
+        padding: "8px 0",
         backgroundColor: "transparent",
-        border: "1px solid #E8E2D8",
-        borderRadius: "20px",
-        color: "#5C5248",
+        border: "none",
+        color: "var(--color-soil-brown)",
         fontSize: "14px",
         fontWeight: "600",
         cursor: "pointer",
-        marginBottom: "24px",
-        transition: "all 0.2s ease"
+        marginBottom: "var(--space-24)",
+        opacity: 0.8
       }}>
         ← ត្រឡប់ទៅទំព័រដើម / Back to Welcome
       </button>
 
       <style>{`
-        /* Museum Gallery Grid */
         .museum-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 24px;
-          margin-top: 40px;
-          padding: 0 16px;
+          grid-template-columns: 1fr;
+          gap: var(--space-24);
+          margin-top: var(--space-40);
         }
-
-        /* EntryCard Hover Interactions */
-        .entry-card {
-          background-color: #FFFFFF;
-          border: 1px solid #E5E2DC;
-          border-radius: 12px;
-          display: flex;
-          flex-direction: column;
-          box-sizing: border-box;
-          overflow-wrap: break-word;
-          word-break: break-word;
-          cursor: pointer;
-          transition: all 0.4s ease;
-          position: relative;
+        @media (min-width: 768px) {
+          .museum-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        
-        .entry-card:hover {
-          border-color: #D4A373;
-          transform: translateY(-6px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        @media (min-width: 1024px) {
+          .museum-grid { grid-template-columns: repeat(3, 1fr); }
         }
-        
-        .entry-card:hover .entry-image {
-          transform: scale(1.03);
-        }
-        
-        .entry-title {
-          font-family: Georgia, 'Kantumruy Pro', serif;
-          font-size: 20px;
-          font-weight: 700;
-          color: #1C1917;
-          margin: 0 0 10px;
-        }
-        
-        .entry-desc {
-          font-size: 15px;
-          line-height: 1.8;
-          color: #44403C;
-          white-space: pre-line;
-          margin: 0;
-          flex-grow: 1;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          transition: all 0.2s ease;
-        }
-        
-        .entry-card:hover .entry-desc {
-          -webkit-line-clamp: unset;
-          margin-bottom: 24px;
-        }
-        
-        .entry-empty-desc {
-          font-size: 15px;
-          font-style: italic;
-          color: #8C827A;
-          margin: 0 0 16px;
-        }
-        
-        .entry-footer {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-top: 0;
-          padding-top: 0;
-          border-top: 1px solid transparent;
-          opacity: 0;
-          max-height: 0;
-          overflow: hidden;
-          transition: all 0.2s ease;
-        }
-        
-        .entry-card:hover .entry-footer {
-          opacity: 1;
-          max-height: 100px;
-          padding-top: 16px;
-          margin-top: auto;
-          border-top-color: #E5E2DC;
-        }
-        
-        .entry-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 4px 8px;
-          border-radius: 4px;
-          background-color: #F9F8F5;
-          border: 1px solid #E5E2DC;
-          font-size: 12px;
-          color: #44403C;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        
-        .entry-view-hint {
-          font-size: 13px;
-          color: #1C1917;
-          font-weight: 600;
-          margin-top: 0;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          opacity: 0;
-          max-height: 0;
-          overflow: hidden;
-          transition: all 0.2s ease;
-        }
-        
-        .entry-card:hover .entry-view-hint {
-          opacity: 1;
-          max-height: 50px;
-          margin-top: 16px;
+        @media (min-width: 1280px) {
+          .museum-grid { grid-template-columns: repeat(4, 1fr); }
         }
       `}</style>
 
-      <div style={styles.authBar}>
-        {!loadingUser &&
-          (user ? (
-            <div style={styles.authUserInfo}>
-              <span style={styles.userBadge} title={user.email}>
-                👤 អ្នករួមចំណែក: {user.email}
-              </span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                style={styles.logoutBtn}
-                className="auth-btn"
-              >
-                ចាកចេញ / Log Out
-              </button>
-            </div>
-          ) : (
-            <div style={styles.authLinks}>
-              <Link href="/login" style={styles.loginLink} className="auth-btn">
-                ចូល / Log In
-              </Link>
-              <Link
-                href="/signup"
-                style={styles.signupLink}
-                className="auth-btn-primary"
-              >
-                ចុះឈ្មោះ / Sign Up
-              </Link>
-            </div>
-          ))}
-      </div>
-
-      {!loadingUser && user && (
-        <section style={styles.dashboardBanner}>
-          <h2 style={styles.dashboardGreeting}>ស្វាគមន៍មកកាន់ផ្ទាំងគ្រប់គ្រង / Welcome to your Contributor Dashboard</h2>
-          <p style={styles.dashboardSubtext}>
-            You are logged in as an official archive contributor. You can contribute new traditional tools and manage your submissions.
-          </p>
-          <div style={styles.statsPill}>🌾 My Contributions: 0 tools submitted</div>
-          <div>
-            <button style={styles.primaryBtn} onClick={() => { setShowAddModal(true); setPhotoError(""); }}>
-              ＋ បន្ថែមឧបករណ៍ថ្មី / Add New Farming Tool
-            </button>
-          </div>
-        </section>
-      )}
-
-      <div style={styles.inputWrap}>
-        {!loadingUser && !user && (
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ display: "inline-block", padding: "6px 14px", backgroundColor: "#FDF9F3", border: "1px solid #E4DDD3", borderRadius: 20, fontSize: 13, color: "#B87314", fontWeight: 700, marginBottom: 16 }}>
-              👀 កំពុងមើលជាភ្ញៀវ (Guest Mode) • ចូលគណនីដើម្បីបន្ថែមឧបករណ៍ / Log in to contribute
-            </div>
-            <div>
-              <button onClick={() => alert("សូមចូលគណនីជាមុនសិន / Please log in to add new tools.")} style={styles.primaryBtn}>
-                ＋ បន្ថែមឧបករណ៍ថ្មី / Add New Farming Tool
-              </button>
-            </div>
-          </div>
+      {/* Filter and Search Bar */}
+      <div style={{ display: "flex", gap: "var(--space-16)", marginBottom: "var(--space-40)", flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ position: "relative", flex: "1 1 300px" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", color: "var(--color-soil-brown)", opacity: 0.5 }}>
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21L16.65 16.65" />
+          </svg>
+          <input
+            type="search"
+            placeholder="ស្វែងរកឧបករណ៍... / Search tools..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="input focus-ring"
+            style={{ paddingLeft: 48, background: "var(--input-bg)", border: "1px solid var(--border-strong)", color: "var(--color-paper)" }}
+          />
+        </div>
+        <select className="input focus-ring" style={{ width: "auto", minWidth: 160, background: "var(--input-bg)", border: "1px solid var(--border-strong)", color: "var(--color-paper)" }}>
+          <option value="">Category: All</option>
+          <option value="farming">Farming</option>
+          <option value="harvesting">Harvesting</option>
+          <option value="household">Household</option>
+        </select>
+        <select className="input focus-ring" style={{ width: "auto", minWidth: 160, background: "var(--input-bg)", border: "1px solid var(--border-strong)", color: "var(--color-paper)" }}>
+          <option value="">Use: All</option>
+          <option value="cutting">Cutting</option>
+          <option value="digging">Digging</option>
+          <option value="carrying">Carrying</option>
+        </select>
+        <select className="input focus-ring" style={{ width: "auto", minWidth: 160, background: "var(--input-bg)", border: "1px solid var(--border-strong)", color: "var(--color-paper)" }}>
+          <option value="">Region: All</option>
+          <option value="kampong-cham">Kampong Cham</option>
+          <option value="siem-reap">Siem Reap</option>
+          <option value="battambang">Battambang</option>
+        </select>
+        {user && (
+          <button className="btn btn-primary" onClick={() => { setShowAddModal(true); setPhotoError(""); }}>
+            ＋ Add Tool
+          </button>
         )}
-        <span style={styles.searchIcon}>🔍</span>
-        <input
-          type="search"
-          placeholder="ស្វែងរកឧបករណ៍កសិកម្ម... / Search farming tools..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={styles.input}
-          className="search-input"
-        />
       </div>
 
       {loading ? (
-        <div style={styles.empty}>
+        <div style={{ textAlign: "center", padding: "var(--space-64)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
           <p style={styles.emptyTitle}>
             🌾 កំពុងទាញយកទិន្នន័យ... / Loading archive...
           </p>
         </div>
       ) : filtered.length > 0 ? (
-        <div id="collection" className="museum-grid">
+        <SpotlightGrid className="museum-grid">
           {filtered.map((entry, index) => (
             <EntryCard
               key={entry.id}
@@ -862,35 +703,30 @@ export default function Home() {
               onEdit={handleEditClick}
             />
           ))}
-        </div>
+        </SpotlightGrid>
       ) : suggestion ? (
-        <div style={styles.empty}>
+        <div style={{ textAlign: "center", padding: "var(--space-64)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
           <p style={styles.emptyTitle}>
             រកមិនឃើញឧបករណ៍កសិកម្មទេ / No farming tools found matching &ldquo;{trimmedQuery}&rdquo;
           </p>
-          <div style={styles.suggestionWrap}>
-            <button
-              type="button"
-              style={styles.suggestionBtn}
-              className="suggestion-btn"
-              onClick={() => setQuery(suggestion.title)}
-            >
-              🔍 Did you mean: <strong>{suggestion.title}</strong>?
-            </button>
-          </div>
+          <button
+            type="button"
+            style={styles.suggestionBtn}
+            onClick={() => setQuery(suggestion.title)}
+          >
+            Did you mean: {suggestion.title}?
+          </button>
         </div>
       ) : (
-        <div style={styles.empty}>
+        <div style={{ textAlign: "center", padding: "var(--space-64)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
           <p style={styles.emptyTitle}>រកមិនឃើញឧបករណ៍កសិកម្មទេ។</p>
           <p style={styles.emptySubtitle}>No farming tools found.</p>
         </div>
       )}
 
-      <p style={styles.count}>entries in the archive: {filtered.length}</p>
-
-      <footer style={styles.footer}>
-        Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall 2026. This archive is under construction all semester.
-      </footer>
+      <p style={{ textAlign: "center", marginTop: "var(--space-40)", fontSize: 13, color: "var(--color-soil-brown)", opacity: 0.6 }}>
+        {filtered.length} entries in the archive
+      </p>
 
       <EntryModal
         entry={selectedEntry}
@@ -904,7 +740,7 @@ export default function Home() {
         <div
           style={{
             position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: "rgba(45, 36, 30, 0.4)",
+            backgroundColor: "var(--bg)",
             display: "flex", alignItems: "center", justifyContent: "center",
             padding: 20, zIndex: 1000,
           }}
@@ -912,36 +748,36 @@ export default function Home() {
         >
           <div
             style={{
-              backgroundColor: "#FFFFFF", borderRadius: 16, padding: "32px 28px",
+              background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)",
               width: "100%", maxWidth: 460, boxSizing: "border-box",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              boxShadow: "var(--shadow)",
               maxHeight: "90vh", overflowY: "auto"
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>បន្ថែមឧបករណ៍ថ្មី<br /><span style={{ fontSize: 15, color: "#8C827A", fontWeight: 500 }}>Add New Tool</span></h3>
-              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C827A", padding: 0 }}>×</button>
+              <h3 style={{ margin: 0, fontSize: 20, color: "var(--color-paper)", fontWeight: 800 }}>បន្ថែមឧបករណ៍ថ្មី<br /><span style={{ fontSize: 15, color: "var(--color-muted)", fontWeight: 500 }}>Add New Tool</span></h3>
+              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "var(--color-muted)", padding: 0 }}>×</button>
             </div>
             <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title *</label>
-                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ចំណងជើង / Tool Title *</label>
+                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description *</label>
-                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", resize: "vertical", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ការពិពណ៌នា / Description *</label>
+                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", resize: "vertical", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>អ្នករួមចំណែក / Contributor *</label>
-                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>អ្នករួមចំណែក / Contributor *</label>
+                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin *</label>
-                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ទីកន្លែង / Place of Origin *</label>
+                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload</label>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>រូបភាព / Photo Upload</label>
                 <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => {
                   const file = e.target.files[0];
                   if (!file) {
@@ -964,12 +800,12 @@ export default function Home() {
                   }
                   setNewPhotoFile(file);
                   setPhotoError("");
-                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
-                {photoError && <span style={{ color: "#D32F2F", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
+                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
+                {photoError && <span style={{ color: "var(--accent-2)", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => { setShowAddModal(false); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" disabled={isSubmitting || !!photoError} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Tool"}</button>
+                <button type="button" onClick={() => { setShowAddModal(false); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "var(--color-muted)" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting || !!photoError} className="btn btn-primary" style={{ borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Tool"}</button>
               </div>
             </form>
           </div>
@@ -980,7 +816,7 @@ export default function Home() {
         <div
           style={{
             position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: "rgba(45, 36, 30, 0.4)",
+            backgroundColor: "var(--bg)",
             display: "flex", alignItems: "center", justifyContent: "center",
             padding: 20, zIndex: 1000,
           }}
@@ -988,36 +824,36 @@ export default function Home() {
         >
           <div
             style={{
-              backgroundColor: "#FFFFFF", borderRadius: 16, padding: "32px 28px",
+              background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)",
               width: "100%", maxWidth: 460, boxSizing: "border-box",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              boxShadow: "var(--shadow)",
               maxHeight: "90vh", overflowY: "auto"
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <h3 style={{ margin: 0, fontSize: 20, color: "#2D241E", fontWeight: 800 }}>កែប្រែឧបករណ៍<br /><span style={{ fontSize: 15, color: "#8C827A", fontWeight: 500 }}>Edit Tool</span></h3>
-              <button onClick={() => setEditEntry(null)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "#8C827A", padding: 0 }}>×</button>
+              <h3 style={{ margin: 0, fontSize: 20, color: "var(--color-paper)", fontWeight: 800 }}>កែប្រែឧបករណ៍<br /><span style={{ fontSize: 15, color: "var(--color-muted)", fontWeight: 500 }}>Edit Tool</span></h3>
+              <button onClick={() => setEditEntry(null)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer", color: "var(--color-muted)", padding: 0 }}>×</button>
             </div>
             <form onSubmit={handleEditSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ចំណងជើង / Tool Title *</label>
-                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ចំណងជើង / Tool Title *</label>
+                <input required value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Enter tool name" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ការពិពណ៌នា / Description *</label>
-                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", resize: "vertical", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ការពិពណ៌នា / Description *</label>
+                <textarea required value={newDesc} onChange={e => setNewDesc(e.target.value)} rows={4} placeholder="Describe the tool..." style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", resize: "vertical", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>អ្នករួមចំណែក / Contributor *</label>
-                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>អ្នករួមចំណែក / Contributor *</label>
+                <input required value={newContributor} onChange={e => setNewContributor(e.target.value)} placeholder={user?.email || "e.g. Grandfather Sok"} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>ទីកន្លែង / Place of Origin *</label>
-                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>ទីកន្លែង / Place of Origin *</label>
+                <input required value={newPlace} onChange={e => setNewPlace(e.target.value)} placeholder="e.g. Kampong Cham" style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 700, color: "#2D241E" }}>រូបភាព / Photo Upload (Optional)</label>
+                <label style={{ fontSize: 13, fontWeight: 700, color: "var(--color-paper)" }}>រូបភាព / Photo Upload (Optional)</label>
                 <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => {
                   const file = e.target.files[0];
                   if (!file) {
@@ -1040,12 +876,12 @@ export default function Home() {
                   }
                   setNewPhotoFile(file);
                   setPhotoError("");
-                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid #E8E2D8", outline: "none", backgroundColor: "#FAF7F2", fontSize: 15 }} className="search-input" />
-                {photoError && <span style={{ color: "#D32F2F", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
+                }} style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15 }} className="input focus-ring" />
+                {photoError && <span style={{ color: "var(--accent-2)", fontSize: "13px", marginTop: "4px" }}>{photoError}</span>}
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => { setEditEntry(null); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid #E8E2D8", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "#5C5248" }}>Cancel</button>
-                <button type="submit" disabled={isSubmitting || !!photoError} style={{ ...styles.primaryBtn, borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Save Changes"}</button>
+                <button type="button" onClick={() => { setEditEntry(null); setPhotoError(""); }} disabled={isSubmitting} style={{ padding: "12px 16px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", cursor: isSubmitting ? "default" : "pointer", fontWeight: 600, color: "var(--color-muted)" }}>Cancel</button>
+                <button type="submit" disabled={isSubmitting || !!photoError} className="btn btn-primary" style={{ borderRadius: 10, padding: "12px 24px", opacity: (isSubmitting || !!photoError) ? 0.7 : 1, cursor: (isSubmitting || !!photoError) ? "default" : "pointer" }}>{isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Save Changes"}</button>
               </div>
             </form>
           </div>
@@ -1054,3 +890,9 @@ export default function Home() {
     </main>
   );
 }
+
+
+
+
+
+
