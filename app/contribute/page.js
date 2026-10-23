@@ -20,6 +20,7 @@ export default function ContributePage() {
   
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
@@ -143,8 +144,14 @@ export default function ContributePage() {
         
       if (insertError) throw insertError;
       
-      router.push("/");
-      router.refresh();
+      setSubmitted(true);
+      setFormData({
+        title: "",
+        description: "",
+        contributor: "",
+        place: "",
+      });
+      setPhoto(null);
       
     } catch (err) {
       console.error(err);
@@ -174,84 +181,117 @@ export default function ContributePage() {
       <div style={{ background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", width: "100%", maxWidth: 600 }}>
         <h1 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: 32, margin: "0 0 24px", textAlign: "center" }}>Add New Entry</h1>
         
-        {submitError && <div style={{ backgroundColor: "var(--surface-soft)", border: "1px solid var(--color-ember-clay)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{submitError}</div>}
-        
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label htmlFor="title" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Title</label>
-            <input
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              maxLength={200}
-              className="input focus-ring"
-              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
-            />
-            {errors.title && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.title}</span>}
+        {submitted ? (
+          <div style={{ textAlign: "center", padding: "var(--space-24) 0" }}>
+            <div style={{ fontSize: 44, marginBottom: "var(--space-16)" }}>🌾</div>
+            <p style={{
+              fontSize: 16,
+              lineHeight: 1.6,
+              color: "var(--color-paper)",
+              marginBottom: "var(--space-32)",
+              fontFamily: "var(--font-sans), var(--font-khmer)",
+              padding: "16px 20px",
+              backgroundColor: "rgba(232, 176, 74, 0.12)",
+              border: "1px solid var(--accent)",
+              borderRadius: "var(--radius-md)"
+            }}>
+              សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ! / Your entry has been submitted for review! It will be verified by an archivist before appearing in the public collection.
+            </p>
+            <div style={{ display: "flex", gap: "var(--space-16)", justifyContent: "center", flexWrap: "wrap" }}>
+              <Link href="/my-entries" className="btn btn-primary focus-ring">
+                My Entries / កំណត់ត្រារបស់ខ្ញុំ
+              </Link>
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="btn btn-secondary focus-ring"
+              >
+                បន្ថែមឧបករណ៍ផ្សេងទៀត / Submit Another Tool
+              </button>
+            </div>
           </div>
+        ) : (
+          <>
+            {submitError && <div style={{ backgroundColor: "var(--surface-soft)", border: "1px solid var(--color-ember-clay)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{submitError}</div>}
+            
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <label htmlFor="title" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Title</label>
+                <input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  maxLength={200}
+                  className="input focus-ring"
+                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                />
+                {errors.title && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.title}</span>}
+              </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label htmlFor="description" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Description</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              maxLength={2000}
-              className="input focus-ring"
-              style={{ minHeight: 120, padding: 12, resize: "vertical", background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
-            />
-            {errors.description && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.description}</span>}
-          </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <label htmlFor="description" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Description</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  maxLength={2000}
+                  className="input focus-ring"
+                  style={{ minHeight: 120, padding: 12, resize: "vertical", background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                />
+                {errors.description && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.description}</span>}
+              </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label htmlFor="contributor" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Contributor (Elder/Source)</label>
-            <input
-              id="contributor"
-              name="contributor"
-              value={formData.contributor}
-              onChange={handleInputChange}
-              className="input focus-ring"
-              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
-            />
-            {errors.contributor && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.contributor}</span>}
-          </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <label htmlFor="contributor" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Contributor (Elder/Source)</label>
+                <input
+                  id="contributor"
+                  name="contributor"
+                  value={formData.contributor}
+                  onChange={handleInputChange}
+                  className="input focus-ring"
+                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                />
+                {errors.contributor && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.contributor}</span>}
+              </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label htmlFor="place" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Place (Province/Origin)</label>
-            <input
-              id="place"
-              name="place"
-              value={formData.place}
-              onChange={handleInputChange}
-              className="input focus-ring"
-              style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
-            />
-            {errors.place && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.place}</span>}
-          </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <label htmlFor="place" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Place (Province/Origin)</label>
+                <input
+                  id="place"
+                  name="place"
+                  value={formData.place}
+                  onChange={handleInputChange}
+                  className="input focus-ring"
+                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                />
+                {errors.place && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.place}</span>}
+              </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <label htmlFor="photo" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Photo</label>
-            <input
-              id="photo"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handleFileChange}
-              style={{ color: "var(--color-paper)" }}
-            />
-            {errors.photo && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.photo}</span>}
-          </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <label htmlFor="photo" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Photo</label>
+                <input
+                  id="photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleFileChange}
+                  style={{ color: "var(--color-paper)" }}
+                />
+                {errors.photo && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.photo}</span>}
+              </div>
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="btn btn-primary focus-ring"
-            style={{ width: "100%", height: 48, marginTop: 16, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
-          >
-            {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry"}
-          </button>
-        </form>
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="btn btn-primary focus-ring"
+                style={{ width: "100%", height: 48, marginTop: 16, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
+              >
+                {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry"}
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </main>
   );

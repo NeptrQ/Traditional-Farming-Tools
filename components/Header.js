@@ -77,6 +77,11 @@ export default function Header() {
           <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: "24px" }}>
             <NavLink href="/" active={pathname === "/"} lang={lang}>{lang === 'KH' ? 'បណ្ណសារ' : 'Archive'}</NavLink>
             <NavLink href="/about" active={pathname === "/about"} lang={lang}>{lang === 'KH' ? 'អំពីយើង' : 'About'}</NavLink>
+            {user && (
+              <NavLink href="/my-entries" active={pathname === "/my-entries"} lang={lang}>
+                My Entries / កំណត់ត្រារបស់ខ្ញុំ
+              </NavLink>
+            )}
             
             <button onClick={() => setLang(lang === "EN" ? "KH" : "EN")} className="focus-ring" style={{
               display: "flex", alignItems: "center", padding: "2px", borderRadius: "12px", background: "var(--input-bg)", border: "1px solid var(--border)", cursor: "pointer"
@@ -120,6 +125,11 @@ export default function Header() {
           <div className="container" style={{ display: "flex", flexDirection: "column" }}>
             <MobileNavLink href="/" active={pathname === "/"}>{lang === 'KH' ? 'បណ្ណសារ' : 'Archive'}</MobileNavLink>
             <MobileNavLink href="/about" active={pathname === "/about"}>{lang === 'KH' ? 'អំពីយើង' : 'About'}</MobileNavLink>
+            {user && (
+              <MobileNavLink href="/my-entries" active={pathname === "/my-entries"}>
+                My Entries / កំណត់ត្រារបស់ខ្ញុំ
+              </MobileNavLink>
+            )}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "48px" }}>
               <span style={{ color: "var(--color-muted)", fontSize: "15px" }}>{lang === 'KH' ? 'ភាសា' : 'Language'}</span>
               <button onClick={() => setLang(lang === "EN" ? "KH" : "EN")} style={{ display: "flex", alignItems: "center", padding: "2px", borderRadius: "12px", background: "var(--input-bg)", border: "1px solid var(--border)", cursor: "pointer" }}>

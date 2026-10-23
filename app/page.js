@@ -259,16 +259,13 @@ export default function Home() {
     if (error) {
       alert(`Error adding entry: ${error.message}`);
     } else {
-      alert("Success! Entry added.");
+      alert("សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ! / Your entry has been submitted for review! It will be verified by an archivist before appearing in the public collection.");
       setShowAddModal(false);
       setNewTitle("");
       setNewDesc("");
       setNewPlace("");
       setNewContributor("");
       setNewPhotoFile(null);
-      if (data && data.length > 0) {
-        setEntries((prev) => [data[0], ...prev]);
-      }
     }
   };
 
@@ -321,13 +318,21 @@ export default function Home() {
       publicUrl = url;
     }
 
-    const { data, error } = await supabase.from('entries').update({
+    const { data: isReviewer } = await supabase.rpc('is_reviewer');
+
+    const updatePayload = {
       title: newTitle,
       description: newDesc,
       place: newPlace,
       contributor: newContributor,
       photo_url: publicUrl
-    }).eq('id', editEntry.id).select();
+    };
+
+    if (!isReviewer) {
+      updatePayload.status = 'pending';
+    }
+
+    const { data, error } = await supabase.from('entries').update(updatePayload).eq('id', editEntry.id).select();
 
     setIsSubmitting(false);
 
@@ -344,9 +349,18 @@ export default function Home() {
       setNewPlace("");
       setNewContributor("");
       setNewPhotoFile(null);
-      setEntries((prev) => prev.map(e => e.id === editEntry.id ? data[0] : e));
+      setEntries((prev) => {
+        if (data[0].status !== 'published') {
+          return prev.filter(e => e.id !== editEntry.id);
+        }
+        return prev.map(e => e.id === editEntry.id ? data[0] : e);
+      });
       if (selectedEntry?.id === editEntry.id) {
-        setSelectedEntry(data[0]);
+        if (data[0].status !== 'published') {
+          setSelectedEntry(null);
+        } else {
+          setSelectedEntry(data[0]);
+        }
       }
     }
   };
@@ -386,6 +400,7 @@ export default function Home() {
       const { data, error } = await supabase
         .from("entries")
         .select("*")
+        .eq("status", "published")
         .order("created_at", { ascending: false });
 
       if (data) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import StatusBadge from './StatusBadge.js';
 
-export default function EntryCard({ entry, index, onSelect, currentUser, onDelete, onEdit }) {
+export default function EntryCard({ entry, index, onSelect, currentUser, onDelete, onEdit, showStatus = false }) {
   const [imgError, setImgError] = useState(false);
   if (!entry) {
     return (
@@ -57,6 +58,12 @@ export default function EntryCard({ entry, index, onSelect, currentUser, onDelet
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect?.(entry)}
       style={{ padding: 0, overflow: "hidden", position: "relative", cursor: "pointer", display: "flex", flexDirection: "column" }}
     >
+      {showStatus && entry.status && (
+        <div style={{ position: "absolute", top: 12, left: 12, zIndex: 10 }}>
+          <StatusBadge status={entry.status} />
+        </div>
+      )}
+
       {isOwner && (
         <div style={{
           position: "absolute", top: 12, right: 12, zIndex: 10,

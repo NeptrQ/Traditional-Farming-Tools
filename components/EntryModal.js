@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import StatusBadge from "./StatusBadge.js";
 
 export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
   const [imgError, setImgError] = useState(false);
@@ -38,6 +39,11 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
           
           <div style={{ flex: "1 1 400px", display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
             <div>
+              {entry.status && (
+                <div style={{ marginBottom: "var(--space-16)" }}>
+                  <StatusBadge status={entry.status} />
+                </div>
+              )}
               <h2 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: "clamp(32px, 5vw, 48px)", margin: "0 0 8px" }}>{entry.title}</h2>
               <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "20px", color: "var(--color-muted)", margin: 0, fontWeight: 400 }}>{entry.english_name || "Traditional Tool"}</h3>
             </div>
