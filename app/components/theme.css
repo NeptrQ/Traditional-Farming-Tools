@@ -6,22 +6,24 @@
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #14100d;
+  --bg: #110F0D; /* Deep Smoked Teak */
   --text: #f3ece0; /* 16.1:1 on bg */
   --text-muted: #bdb1a1; /* 9.0:1 */
-  --accent: #e8b04a; /* gold: buttons, highlights, focus rings */
-  --accent-hover: #f0bf62;
-  --accent-contrast: #14100d; /* text on gold buttons, 9.7:1 */
-  --accent-text: #e8b04a; /* gold used as TEXT, 9.7:1 */
-  --accent-2: #c8553d; /* clay */
-  --surface: rgba(28, 23, 19, 0.72); /* cards, header, panels (no blur) */
+  --accent: #EA580C; /* Kampong Cham Terracotta */
+  --accent-hover: #C2410C;
+  --accent-contrast: #ffffff; /* text on terracotta buttons */
+  --accent-text: #F59E0B; /* Harvest Amber Gold used as TEXT */
+  --accent-gold: #F59E0B; /* Harvest Amber Gold */
+  --accent-2: #EA580C; /* Kampong Cham Terracotta */
+  --surface: rgba(28, 24, 22, 0.95); /* Charcoal Wood #1C1816 */
   --surface-soft: rgba(255, 255, 255, 0.04);
-  --surface-solid: #1c1713;
-  --input-bg: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --vignette-rgb: 20, 16, 13;
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --surface-solid: #1C1816; /* Charcoal Wood */
+  --input-bg: rgba(28, 24, 22, 0.85);
+  --border: #3D2820; /* Card border */
+  --border-pill: #3A2922; /* Floating pill border */
+  --border-strong: #4D342A;
+  --vignette-rgb: 17, 15, 13;
+  --shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
 }
 
 :root[data-theme='light'] {

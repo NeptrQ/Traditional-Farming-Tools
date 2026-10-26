@@ -1,4 +1,13 @@
 :root {
+  /* Kampong Cham Red Earth & Smoked Teak Tokens */
+  --bg-deep-teak: #110F0D;
+  --card-charcoal-wood: #1C1816;
+  --border-wood: #3D2820;
+  --border-pill: #3A2922;
+  --accent-terracotta: #EA580C;
+  --accent-terracotta-hover: #C2410C;
+  --accent-amber-gold: #F59E0B;
+
   /* Colors (Aliased to theme tokens) */
   --color-soil: var(--bg);
   --color-surface: var(--surface-solid);
@@ -6,8 +15,8 @@
   --color-glass-border: var(--border);
   --color-paper: var(--text);
   --color-muted: var(--text-muted);
-  --color-straw-gold: var(--accent);
-  --color-ember-clay: var(--accent-2);
+  --color-straw-gold: #F59E0B;
+  --color-ember-clay: #EA580C;
 
   /* Spacing Scale */
   --space-4: 4px;
@@ -117,13 +126,111 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-headline-line, .hero-word, .hero-card, .hero-scroll-line, .hero-button {
+  .hero-headline-line, .hero-word, .hero-card, .hero-scroll-line, .hero-button, .rice-chaff {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
   }
 }
+
+/* PURE CSS BACKGROUND PARTICLES (Harvest Rice Chaff) */
+@keyframes floatChaff {
+  0% { transform: translateY(105vh) translateX(0px) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.5; }
+  100% { transform: translateY(-10vh) translateX(35px) rotate(360deg); opacity: 0; }
+}
+.rice-chaff {
+  position: absolute;
+  border-radius: 50% 10% 50% 10%;
+  background: radial-gradient(circle, #F59E0B 0%, rgba(234, 88, 12, 0.2) 100%);
+  pointer-events: none;
+  animation: floatChaff linear infinite;
+}
+
+/* Floating Pill Navbar */
+.floating-pill-nav {
+  max-width: 64rem; /* max-w-5xl */
+  margin: 1rem auto;
+  border-radius: 9999px;
+  background-color: rgba(28, 24, 22, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #3A2922;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 100;
+}
+
+/* 50/50 Split Hero Grid */
+.hero-split-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .hero-split-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .hero-col-left {
+    grid-column: span 7 / span 7;
+  }
+  .hero-col-right {
+    grid-column: span 5 / span 5;
+  }
+}
+/* 3-Column Seasons Grid */
+.seasons-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .seasons-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .seasons-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Category Pills & Tab styling */
+.season-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: 1px solid #3A2922;
+  background-color: rgba(28, 24, 22, 0.6);
+  color: #bdb1a1;
+}
+.season-tab-btn:hover {
+  border-color: #EA580C;
+  color: #ffffff;
+}
+.season-tab-btn.active {
+  background-color: #EA580C;
+  border-color: #EA580C;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
+}
+
 
 
 /* Base Components for Design System */
@@ -156,32 +263,34 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background-color: var(--accent);
-  color: var(--accent-contrast);
-  border: 1px solid var(--accent);
+  background-color: #EA580C;
+  color: #ffffff;
+  border: 1px solid #EA580C;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
 }
 
 .btn-primary:hover, .btn-primary:focus {
-  background-color: var(--accent-hover);
-  border-color: var(--accent-hover);
+  background-color: #C2410C;
+  border-color: #C2410C;
 }
 
 .btn-secondary {
-  background-color: var(--color-glass);
-  color: var(--color-straw-gold);
-  border: 1px solid var(--color-glass-border);
+  background-color: transparent;
+  color: #F59E0B;
+  border: 1px solid #3D2820;
 }
 
 .btn-secondary:hover, .btn-secondary:focus {
-  background-color: var(--surface-soft);
+  background-color: #1C1816;
+  border-color: #EA580C;
 }
 
 .card {
-  background-color: var(--color-glass);
-  border: 1px solid var(--color-glass-border);
+  background-color: #1C1816;
+  border: 1px solid #3D2820;
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .input {
