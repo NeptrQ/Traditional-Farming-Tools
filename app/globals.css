@@ -359,3 +359,53 @@ h1, h2, h3, h4, h5, h6 {
   .page-animate { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 
+
+/* Smooth Scroll & Cinematic Bi-Directional Scroll Wave Transitions */
+html {
+  scroll-behavior: smooth;
+}
+
+.reveal-on-scroll {
+  opacity: 0.15;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Bi-directional entrance: when scrolling up, elements glide in smoothly from top */
+[data-scroll-dir="up"] .reveal-on-scroll:not(.in-view) {
+  transform: translateY(-20px);
+}
+
+.reveal-on-scroll.in-view {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Premium Museum Card Glassmorphism & Hover Glow */
+.museum-card {
+  position: relative;
+  background: linear-gradient(180deg, #181310 0%, #110E0B 100%);
+  border: 1px solid rgba(82, 54, 42, 0.7);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.3s ease;
+}
+
+.museum-card:hover {
+  transform: translateY(-5px);
+  border-color: #EA580C !important;
+  box-shadow: 0 16px 36px -10px rgba(234, 88, 12, 0.4), 0 0 20px rgba(234, 88, 12, 0.15);
+}

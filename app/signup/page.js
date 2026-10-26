@@ -16,9 +16,19 @@ export default function SignupPage() {
 
   useEffect(() => {
     async function fetchFeatured() {
-      const supabase = createClient();
-      const { data } = await supabase.from('archive_entries').select('*').not('photo_url', 'is', null).limit(1);
-      if (data && data.length > 0) setFeatured(data[0]);
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("entries")
+          .select("*")
+          .not("photo_url", "is", null)
+          .limit(1);
+        if (data && data.length > 0) {
+          setFeatured(data[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching featured artifact:", err);
+      }
     }
     fetchFeatured();
   }, []);
@@ -42,73 +52,359 @@ export default function SignupPage() {
         return;
       }
 
-      setMessage("Registration successful. You can now log in.");
+      setMessage("Registration successful! You can now sign in.");
       setLoading(false);
     } catch {
-      setError("An unexpected error occurred");
+      setError("An unexpected error occurred. Please try again.");
       setLoading(false);
     }
   }
 
   return (
-    <main className="container" style={{ flex: 1, display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: "var(--space-64)", padding: "var(--space-64) 1.5rem" }}>
-      <div className="page-animate" style={{ flex: "1 1 400px", display: "flex", flexDirection: "column" }}>
-        <h1 className="khmer-title" style={{ fontFamily: "var(--font-khmer-title)", fontSize: "clamp(32px, 5vw, 48px)", color: "var(--color-paper)", margin: "0 0 8px" }}>
-          បង្កើតគណនី
-        </h1>
-        <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "28px", color: "var(--color-muted)", margin: "0 0 var(--space-40)", fontWeight: 400 }}>
-          Join the Archive
-        </h2>
+    <main
+      style={{
+        minHeight: "calc(100vh - 80px)",
+        backgroundColor: "#0C0A09",
+        color: "#E7E3DF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px 20px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background Ambient Glow */}
+      <div
+        style={{
+          position: "fixed",
+          top: "10%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "700px",
+          height: "450px",
+          background: "radial-gradient(ellipse at center, rgba(234, 88, 12, 0.15) 0%, transparent 70%)",
+          filter: "blur(90px)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
 
-        <div className="page-animate" style={{ background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", animationDelay: "80ms" }}>
-          {error && <div style={{ backgroundColor: "var(--surface-soft)", border: "1px solid var(--color-ember-clay)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{error}</div>}
-          {message && <div style={{ backgroundColor: "var(--border)", border: "1px solid var(--border-strong)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{message}</div>}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "960px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "40px",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {/* Left: Signup Form Card */}
+        <div
+          style={{
+            flex: "1 1 380px",
+            maxWidth: "460px",
+            backgroundColor: "#16120F",
+            border: "1px solid rgba(82, 54, 42, 0.8)",
+            borderRadius: "24px",
+            padding: "36px 32px",
+            boxShadow: "0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 24px rgba(234, 88, 12, 0.08)",
+          }}
+        >
+          <div style={{ marginBottom: "28px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                padding: "4px 10px",
+                borderRadius: "999px",
+                backgroundColor: "#241610",
+                border: "1px solid #4D2D20",
+                color: "#F59E0B",
+                fontSize: "11px",
+                fontFamily: "monospace",
+                letterSpacing: "1px",
+                marginBottom: "12px",
+              }}
+            >
+              COMMUNITY REGISTRATION
+            </span>
+            <h1
+              style={{
+                margin: "0 0 6px 0",
+                fontSize: "28px",
+                fontWeight: 600,
+                color: "#FFFFFF",
+                fontFamily: "var(--font-serif), Georgia, serif",
+              }}
+            >
+              បង្កើតគណនី / Join
+            </h1>
+            <p style={{ margin: 0, fontSize: "13px", color: "#A8A29E" }}>
+              Register as a contributor to preserve Kampong Cham&apos;s agricultural heritage.
+            </p>
+          </div>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label htmlFor="email" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Email</label>
-              <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@domain.com" className="input focus-ring" style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }} />
+          {error && (
+            <div
+              style={{
+                backgroundColor: "rgba(220, 38, 38, 0.12)",
+                border: "1px solid rgba(239, 68, 68, 0.4)",
+                color: "#FCA5A5",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                fontSize: "13px",
+                marginBottom: "20px",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {message && (
+            <div
+              style={{
+                backgroundColor: "rgba(16, 185, 129, 0.12)",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                color: "#6EE7B7",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                fontSize: "13px",
+                marginBottom: "20px",
+              }}
+            >
+              {message}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <div>
+              <label
+                htmlFor="email"
+                style={{
+                  display: "block",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#D6D3D1",
+                  fontFamily: "monospace",
+                  marginBottom: "8px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="contributor@aupp.edu.kh"
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  backgroundColor: "#0D0A08",
+                  border: "1px solid #3A241C",
+                  borderRadius: "12px",
+                  padding: "0 14px",
+                  color: "#FFFFFF",
+                  fontSize: "14px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label htmlFor="password" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Password (Min 6 chars)</label>
-              <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="input focus-ring" style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }} />
+            <div>
+              <label
+                htmlFor="password"
+                style={{
+                  display: "block",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#D6D3D1",
+                  fontFamily: "monospace",
+                  marginBottom: "8px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Password (Min 6 Characters)
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  backgroundColor: "#0D0A08",
+                  border: "1px solid #3A241C",
+                  borderRadius: "12px",
+                  padding: "0 14px",
+                  color: "#FFFFFF",
+                  fontSize: "14px",
+                  boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
             </div>
 
-            <button type="submit" disabled={loading} className="btn btn-primary focus-ring" style={{ width: "100%", height: 48, marginTop: 8, opacity: loading ? 0.7 : 1, cursor: loading ? "not-allowed" : "pointer" }}>
-              {loading ? "Creating Account..." : "Sign Up"}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%",
+                height: "48px",
+                marginTop: "10px",
+                borderRadius: "12px",
+                backgroundColor: "#EA580C",
+                backgroundImage: "linear-gradient(to right, #EA580C, #C2410C)",
+                border: "none",
+                color: "#FFFFFF",
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                boxShadow: "0 12px 24px -8px rgba(234, 88, 12, 0.4)",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+              }}
+            >
+              {loading ? "Registering..." : "Create Contributor Account"}
             </button>
           </form>
 
-          <div style={{ marginTop: "var(--space-24)", textAlign: "center", fontSize: 14, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>
-            Already have an account? <Link href="/login" className="focus-ring" style={{ color: "var(--color-straw-gold)", textDecoration: "none", fontWeight: 500 }}>Log in</Link>
+          <div
+            style={{
+              marginTop: "24px",
+              paddingTop: "18px",
+              borderTop: "1px solid #281D17",
+              textAlign: "center",
+              fontSize: "13px",
+              color: "#A8A29E",
+            }}
+          >
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              style={{
+                color: "#F59E0B",
+                textDecoration: "none",
+                fontWeight: 600,
+              }}
+            >
+              Log in here &rarr;
+            </Link>
           </div>
         </div>
-      </div>
 
-      <div className="page-animate" style={{ flex: "1 1 400px", display: "flex", justifyContent: "center", animationDelay: "160ms" }}>
-        <div className="card spot-card" style={{ width: "100%", maxWidth: "400px", padding: "var(--space-24)", display: "flex", flexDirection: "column", gap: "16px", backgroundColor: "var(--surface-soft)", border: "1px solid var(--surface-soft)" }}>
-          <div style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "var(--input-bg)", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
+        {/* Right: Archival Information Card */}
+        <div
+          style={{
+            flex: "1 1 360px",
+            maxWidth: "420px",
+            backgroundColor: "#14100D",
+            border: "1px solid rgba(75, 48, 36, 0.7)",
+            borderRadius: "24px",
+            padding: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              height: "220px",
+              backgroundColor: "#0A0807",
+              borderRadius: "16px",
+              border: "1px solid #2A1D16",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
             {featured && featured.photo_url ? (
-              <img src={featured.photo_url} alt={featured.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <img
+                src={featured.photo_url}
+                alt={featured.title}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             ) : (
-              <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                  <pattern id="pat-signup" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M0 20L20 0ZM20 20L0 0" stroke="var(--color-straw-gold)" strokeWidth="1" fill="none" opacity="0.3"/>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#pat-signup)" />
-              </svg>
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "20px",
+                  textAlign: "center",
+                }}
+              >
+                <svg
+                  style={{ width: "64px", height: "64px", color: "rgba(234, 88, 12, 0.75)" }}
+                  viewBox="0 0 100 80"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M 15,65 Q 40,65 60,35 L 85,15" strokeLinecap="round" />
+                  <path d="M 50,45 L 35,70 L 65,70 Z" fill="rgba(234, 88, 12, 0.22)" />
+                </svg>
+                <span style={{ fontSize: "11px", color: "#A8A29E", fontFamily: "monospace", marginTop: "8px" }}>
+                  KAMPONG CHAM ORAL HERITAGE
+                </span>
+              </div>
             )}
+            <span
+              style={{
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+                padding: "2px 8px",
+                borderRadius: "6px",
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                fontSize: "10px",
+                fontFamily: "monospace",
+                color: "#F59E0B",
+              }}
+            >
+              COMMUNITY STEWARDSHIP
+            </span>
           </div>
+
           <div>
-            <div style={{ fontSize: "14px", fontFamily: "var(--font-mono)", color: "var(--color-muted)", marginBottom: "4px" }}>FEATURED</div>
-            <h3 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: "24px", margin: "0 0 8px" }}>
-              {featured ? featured.title : "នង្គ័ល / Nongkol"}
+            <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#EA580C", marginBottom: "4px" }}>
+              WHY WE PRESERVE
+            </div>
+            <h3
+              style={{
+                fontSize: "20px",
+                color: "#FFFFFF",
+                margin: "0 0 8px 0",
+                fontFamily: "var(--font-serif), Georgia, serif",
+              }}
+            >
+              {featured ? featured.title : "Oral Knowledge from Grandparents"}
             </h3>
-            <p style={{ color: "var(--color-muted)", fontSize: "15px", margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-              {featured ? featured.description : "The traditional ox-drawn plow. Pulled by a pair of oxen, the wooden plough turns the hard earth into soft furrows ready for the rains."}
+            <p
+              style={{
+                fontSize: "13px",
+                color: "#A8A29E",
+                margin: 0,
+                lineHeight: 1.6,
+              }}
+            >
+              As combine harvesters and walking tractors take over the fields of Kampong Cham, the names and making techniques of ironwood implements are disappearing. Contributors help document oral memories directly from elders.
             </p>
           </div>
         </div>
@@ -116,4 +412,3 @@ export default function SignupPage() {
     </main>
   );
 }
-

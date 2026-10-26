@@ -1,1382 +1,866 @@
-"use client";
+'use client';
+import { useEffect, useState } from 'react';
+import AtmosphereCanvas from '../components/AtmosphereCanvas';
+import EntryModal from '../components/EntryModal';
+import { createClient } from '../utils/supabase/client';
 
-import { useState, useEffect } from "react";
-import collection from "../collection.config.js";
-import EntryModal from "../components/EntryModal.js";
-import { createClient } from "../utils/supabase/client.js";
-
-// Canonical list of 10 Traditional Implements from Kampong Cham
-const CANONICAL_TOOLS = [
+// 10 Canonical Kampong Cham Implements with Authentic Oral Lore & Provenance
+const DEFAULT_TOOLS = [
   {
-    id: "eb2d63ea-1ac0-4570-8d54-3f98ab3ccdd5",
-    title: "នង្គ័ល (Plough)",
-    khmer_name: "នង្គ័ល",
-    english_name: "Traditional Plough",
-    season_id: "soil",
-    season_label: "Soil Prep",
-    description: "ឧបករណ៍ធ្វើពីឈើមានផ្លែដែកមុត ប្រើសម្រាប់ភ្ជួររាស់ដីស្រែឱ្យផុស និងត្រឡប់ដីមុនពេលព្រោះឬស្ទូង។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Cambodian_oxen_plowing_rice_field.jpg/640px-Cambodian_oxen_plowing_rice_field.jpg",
-    status: "published"
+    id: '1',
+    title: 'នង្គ័លបុរាណ',
+    english_name: 'Traditional Kokir Plough',
+    category: 'SOIL PREPARATION',
+    season: 'Early Monsoon (May - June)',
+    material: 'Kokir Ironwood · Spring Steel Tip',
+    place: 'Kampong Siem, Kampong Cham',
+    description: 'Carved from aged Kokir ironwood. Specially angled to slice 20cm deep into sticky basalt red soil without snapping under draft tension.',
+    photo_url: '/images/traditional_plough.jpg'
   },
   {
-    id: "9d3d4295-8105-42a3-aecd-a85e073dcbbf",
-    title: "រនាស់ (Harrow)",
-    khmer_name: "រនាស់",
-    english_name: "Field Harrow",
-    season_id: "soil",
-    season_label: "Soil Prep",
-    description: "ឧបករណ៍ដែលមានធ្មេញឈើ ឬដែកជាជួរ ប្រើសម្រាប់រាស់បំបែកដីដុំៗឱ្យល្អិត និងពង្រាបដីស្រែឱ្យរាបស្មើ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Harrowing_rice_fields.jpg/640px-Harrowing_rice_fields.jpg",
-    status: "published"
+    id: '2',
+    title: 'រាស់ឈើបុរាណ',
+    english_name: '7-Tooth Ironwood Harrow',
+    category: 'LEVELING FIELD',
+    season: 'Field Leveling (June)',
+    material: 'Ironwood Frame · Chiseled Teeth',
+    place: 'Batheay, Kampong Cham',
+    description: 'Hand-chiseled ironwood comb with 7 teeth that pulverize hardened mud clods so baby rice seedlings can take root and breathe.',
+    photo_url: ''
   },
   {
-    id: "32d34b77-afcb-4088-b953-e77204e160b6",
-    title: "នឹម (Yoke)",
-    khmer_name: "នឹម",
-    english_name: "Double Ox Yoke",
-    season_id: "soil",
-    season_label: "Soil Prep",
-    description: "ឈើកោងសម្រាប់ដាក់លើកញ្ចឹងកគោ ឬក្របីមួយនឹម ដើម្បីទាញនង្គ័ល រនាស់ ឬរទេះ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Plough_and_yoke.jpg/640px-Plough_and_yoke.jpg",
-    status: "published"
+    id: '3',
+    title: 'នឹមគោភ្លោះ',
+    english_name: 'Double Ox Yoke',
+    category: 'OXEN HARNESS',
+    season: 'Plowing Season (May - July)',
+    material: 'Curved Tamarind Wood · Rawhide Ties',
+    place: 'Kampong Siem, Kampong Cham',
+    description: 'Curved neck beam designed to balance pulling tension across twin draft cattle over 8 continuous hours of muddy drag.',
+    photo_url: ''
   },
   {
-    id: "ee098f5c-1ef6-4437-b4a2-33b55c6c6b8c",
-    title: "ស្នប់បាចទឹក / ធុងបាចទឹក (Water Scoop)",
-    khmer_name: "ស្នប់បាចទឹក / ធុងបាចទឹក",
-    english_name: "Water Scoop (Snap)",
-    season_id: "planting",
-    season_label: "Planting & Water",
-    description: "ឧបករណ៍ធ្វើពីឫស្សី ឬដែកសម្រាប់ទាញបាចទឹកពីប្រឡាយចូលក្នុងស្រែនៅពេលខ្វះខាតទឹក។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Water_scoop_irrigation.jpg/640px-Water_scoop_irrigation.jpg",
-    status: "published"
+    id: '4',
+    title: 'ចបកាប់ដីក្រហម',
+    english_name: 'Heavy Basalt Field Hoe',
+    category: 'CANAL DITCHING',
+    season: 'Dike Maintenance (Monsoon)',
+    material: 'Blacksmith Carbon Steel · Tamarind Shaft',
+    place: 'Prey Chhor, Kampong Cham',
+    description: 'Heavy steel blade hand-forged by village blacksmiths for digging irrigation ditches and repairing earthen paddy bunds.',
+    photo_url: ''
   },
   {
-    id: "6ebe1471-9f6d-4014-a291-2b817f0b5755",
-    title: "កណ្ដៀវ (Sickle)",
-    khmer_name: "កណ្ដៀវ",
-    english_name: "Hand Sickle",
-    season_id: "harvest",
-    season_label: "Harvest",
-    description: "ឧបករណ៍កសិកម្មបុរាណដែលមានដងឈើ និងផ្លែកោងមានធ្មេញល្អិត ប្រើសម្រាប់ច្រូតកាត់ស្រូវ និងស្មៅ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Sickle_%28PSF%29.png/640px-Sickle_%28PSF%29.png",
-    status: "published"
+    id: '5',
+    title: 'រទេះគោបុរាណ',
+    english_name: 'Traditional Ox Cart',
+    category: 'HAULING HARVEST',
+    season: 'Harvest Hauling (Nov - Jan)',
+    material: 'Solid Spoke Hubs · Woven Bamboo Rack',
+    place: 'Chamkar Leu, Kampong Cham',
+    description: 'Solid high-clearance spoke wheels engineered to roll through deep wet mud during monsoon season carrying 30 sacks of unhusked rice.',
+    photo_url: ''
   },
   {
-    id: "f9f10673-a658-4fc3-ba1b-7484fb3ecb8e",
-    title: "កញ្ជើ (Harvest Basket)",
-    khmer_name: "កញ្ជើ",
-    english_name: "Woven Harvest Basket",
-    season_id: "harvest",
-    season_label: "Harvest",
-    description: "ប្រដាប់ត្បាញពីបន្ទះឫស្សីរាងមូល មានមាត់ធំ ប្រើសម្រាប់ដាក់ស្រូវ គ្រាប់ធញ្ញជាតិ ឬផ្លែឈើក្នុងពេលប្រមូលផល។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Bamboo_basket_harvest.jpg/640px-Bamboo_basket_harvest.jpg",
-    status: "published"
+    id: '6',
+    title: 'កណ្ដៀវច្រូតស្រូវ',
+    english_name: 'Serrated Harvest Sickle',
+    category: 'CUTTING PADDY',
+    season: 'Dry Season Harvest (Dec - Jan)',
+    material: 'Serrated Blacksmith Steel · Bamboo Grip',
+    place: 'Kang Meas, Kampong Cham',
+    description: 'Fine-toothed curved steel blade forged to slice rice stalks in rapid one-handed sweeps during the golden dry season harvest.',
+    photo_url: ''
   },
   {
-    id: "eb83aca9-f2c7-4030-8233-1528a4bad8a1",
-    title: "រហាត់បក់ស្រូវ (Winnowing Fan)",
-    khmer_name: "រហាត់បក់ស្រូវ",
-    english_name: "Winnowing Fan",
-    season_id: "harvest",
-    season_label: "Harvest",
-    description: "ឧបករណ៍ប្រើសម្រាប់បក់កង្ហារយកកំទេចកំទី ធ្យូង ឬគ្រាប់ស្រូវស្កកចេញពីគ្រាប់ស្រូវពេញ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Winnowing_fan.jpg/640px-Winnowing_fan.jpg",
-    status: "published"
+    id: '7',
+    title: 'អង្រែ និងកញ្ជើ',
+    english_name: 'Woven Winnowing Platter',
+    category: 'GRAIN SEPARATION',
+    season: 'Grain Threshing (January)',
+    material: 'Smoked Bamboo Splints · Rattan Trim',
+    place: 'Cheung Prey, Kampong Cham',
+    description: 'Woven bamboo platter tossed into evening Mekong breezes to separate empty husks from golden grain by natural aerodynamics.',
+    photo_url: ''
   },
   {
-    id: "c9626540-ffae-4c24-b7c0-964d76d5287a",
-    title: "ត្បាល់ជាន់ (Foot Mortar)",
-    khmer_name: "ត្បាល់ជាន់",
-    english_name: "Treadle Foot Mortar",
-    season_id: "storage",
-    season_label: "Storage & Daily Life",
-    description: "ត្បាល់បុរាណដែលប្រើកម្លាំងជើងជាន់ដងឈើឱ្យក្បាលត្បាល់ធ្លាក់បុកស្រូវ ដើម្បីកិនយកអង្ករ ឬបុកម្សៅ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Mortar_and_pestle_Cambodia.jpg/640px-Mortar_and_pestle_Cambodia.jpg",
-    status: "published"
+    id: '8',
+    title: 'ក្អមដីដុតបុរាណ',
+    english_name: 'Porous Field Terracotta Pot',
+    category: 'FIELD WATER',
+    season: 'Midday Fieldwork (All Seasons)',
+    material: 'Mekong River Basin Clay',
+    place: 'Kampong Siem, Kampong Cham',
+    description: 'Porous terracotta vessel that keeps well water icy cool under 38°C midday field heat through natural evaporative cooling.',
+    photo_url: ''
   },
   {
-    id: "bf0c1446-0df4-46a2-9a6a-40f2026ee145",
-    title: "ជង្រុកស្រូវ (Paddy Granary)",
-    khmer_name: "ជង្រុកស្រូវ",
-    english_name: "Elevated Paddy Granary",
-    season_id: "storage",
-    season_label: "Storage & Daily Life",
-    description: "សំណង់ឈើ ឬកន្លែងសម្រាប់ស្តុកទុកស្រូវក្រោយពេលប្រមូលផលឱ្យមានសុវត្ថិភាពពីទឹកភ្លៀង និងសត្វល្អិត។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Traditional_rice_barn.jpg/640px-Traditional_rice_barn.jpg",
-    status: "published"
+    id: '9',
+    title: 'ឈ្នាងដងត្រីស្រែ',
+    english_name: 'Bamboo Fish Scoop Trap',
+    category: 'MONSOON FORAGING',
+    season: 'Flood Recession (Aug - Oct)',
+    material: 'Fine Split Bamboo · Water Reed Mesh',
+    place: 'Koh Sotin, Kampong Cham',
+    description: 'Fine woven bamboo scoop used by farmers to catch climbing perch and mudfish swimming in flooded paddy furrows.',
+    photo_url: ''
   },
   {
-    id: "ab7261a3-5414-49f4-bd8e-dbc77eb208f9",
-    title: "រទេះគោ (Ox Cart)",
-    khmer_name: "រទេះគោ",
-    english_name: "Traditional Ox Cart",
-    season_id: "storage",
-    season_label: "Storage & Daily Life",
-    description: "មធ្យោបាយដឹកជញ្ជូនបុរាណទាញដោយគោ ឬក្របី ប្រើសម្រាប់ដឹកស្រូវ ចំបើង ជី និងកសិផលផ្សេងៗពីស្រែមកផ្ទះ។",
-    place: "ខេត្តកំពង់ចាម (Kampong Cham)",
-    contributor: "ជីតា និង ជីដូនរបស់ខ្ញុំ (Kampong Siem)",
-    photo_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Ox_cart_Cambodia.jpg/640px-Ox_cart_Cambodia.jpg",
-    status: "published"
+    id: '10',
+    title: 'ជង្រុកស្រូវបុរាណ',
+    english_name: 'High-Stilt Paddy Granary',
+    category: 'GRAIN PRESERVATION',
+    season: 'Year-Round Safe Storage',
+    material: 'Elevated Hardwood Stilts · Lime Mortar',
+    place: 'Srei Santhor, Kampong Cham',
+    description: 'Elevated wooden granary built high on stilts with natural lime plaster to protect stored rice from monsoon damp, insects, and mice.',
+    photo_url: ''
   }
 ];
 
-function getToolSeason(tool) {
-  if (tool.season_id) return tool.season_id;
-  const t = (tool.title || "").toLowerCase();
-  if (t.includes("នង្គ័ល") || t.includes("plough") || t.includes("រនាស់") || t.includes("harrow") || t.includes("នឹម") || t.includes("yoke")) {
-    return "soil";
-  }
-  if (t.includes("ស្នប់") || t.includes("scoop") || t.includes("ទឹក") || t.includes("water") || t.includes("ស្ទូង")) {
-    return "planting";
-  }
-  if (t.includes("កណ្ដៀវ") || t.includes("sickle") || t.includes("កញ្ជើ") || t.includes("basket") || t.includes("រហាត់") || t.includes("winnowing") || t.includes("ច្រូត")) {
-    return "harvest";
-  }
-  if (t.includes("ត្បាល់") || t.includes("mortar") || t.includes("ជង្រុក") || t.includes("granary") || t.includes("រទេះ") || t.includes("cart") || t.includes("ទុកដាក់")) {
-    return "storage";
-  }
-  return "soil";
-}
-
-function parseNames(title) {
-  const match = (title || "").match(/^(.*?)\s*\((.*?)\)$/);
-  if (match) {
-    return { khmer: match[1].trim(), english: match[2].trim() };
-  }
-  return { khmer: title || "ឧបករណ៍", english: title || "Traditional Implement" };
-}
-
-export default function Home() {
-  const [entries, setEntries] = useState(CANONICAL_TOOLS);
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState("all");
-  const [explorerTab, setExplorerTab] = useState("story"); // 'story' | 'season' | 'craft'
+export default function HomePage() {
+  const [entries, setEntries] = useState(DEFAULT_TOOLS);
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [user, setUser] = useState(null);
+  const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState('ALL');
+  const [spotlightTab, setSpotlightTab] = useState('story'); // 'story' | 'season' | 'craft'
 
-  // Add / Edit modals state
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editEntry, setEditEntry] = useState(null);
-  const [newTitle, setNewTitle] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-  const [newPlace, setNewPlace] = useState("");
-  const [newContributor, setNewContributor] = useState("");
-  const [newPhotoFile, setNewPhotoFile] = useState(null);
-  const [photoError, setPhotoError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  // Load from Supabase in background with 3-second guard (never stuck loading!)
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user ?? null));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => subscription?.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    async function loadEntries() {
+    async function loadData() {
       try {
         const supabase = createClient();
-        const { data, error } = await supabase
-          .from("entries")
-          .select("*")
-          .eq("status", "published")
-          .order("created_at", { ascending: false });
+        if (!supabase) return;
 
-        if (data && data.length > 0) {
-          // Filter out any test artifacts and enrich with canonical metadata
-          const validData = data.filter((d) => d.title !== "Feet" && d.title !== "j");
-          const merged = CANONICAL_TOOLS.map((canon) => {
-            const found = validData.find((d) => d.id === canon.id || d.title === canon.title);
-            return found ? { ...canon, ...found } : canon;
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
+        const fetchPromise = supabase
+          .from('entries')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
+        if (result && result.data && result.data.length > 0) {
+          // Merge local photo for plough if not present
+          const enhanced = result.data.map((item) => {
+            if ((!item.photo_url || item.photo_url.includes('wikipedia')) && item.title && (item.title.includes('នង្គ័ល') || item.title.includes('Plough'))) {
+              return { ...item, photo_url: '/images/traditional_plough.jpg' };
+            }
+            return item;
           });
-          const extraUserTools = validData.filter(
-            (d) => !CANONICAL_TOOLS.some((c) => c.id === d.id || c.title === d.title)
-          );
-          setEntries([...merged, ...extraUserTools]);
+          setEntries(enhanced);
         }
       } catch (err) {
-        console.error("Error loading tools:", err);
-      } finally {
-        setLoading(false);
+        console.warn('Using default 10 catalog entries:', err);
       }
     }
-    loadEntries();
+    loadData();
   }, []);
 
-  const handleAddSubmit = async (e) => {
-    e.preventDefault();
-    if (!user) {
-      alert("សូមចូលគណនីជាមុនសិន / Please log in to add new tools.");
-      return;
-    }
-    setIsSubmitting(true);
-    const supabase = createClient();
-    let publicUrl = null;
-    if (newPhotoFile) {
-      const fileExt = newPhotoFile.name.split(".").pop();
-      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage.from("photos").upload(filePath, newPhotoFile);
-      if (uploadError) {
-        alert(`Error uploading photo: ${uploadError.message}`);
-        setIsSubmitting(false);
-        return;
-      }
-      const { data: { publicUrl: url } } = supabase.storage.from("photos").getPublicUrl(filePath);
-      publicUrl = url;
-    }
-
-    const { data, error } = await supabase.from("entries").insert([{
-      title: newTitle,
-      description: newDesc,
-      place: newPlace || "ខេត្តកំពង់ចាម (Kampong Cham)",
-      contributor: newContributor || user.email,
-      photo_url: publicUrl,
-      owner: user.id
-    }]).select();
-
-    setIsSubmitting(false);
-    if (error) {
-      alert(`Error adding entry: ${error.message}`);
-    } else {
-      alert("សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ! / Your entry has been submitted for review!");
-      setShowAddModal(false);
-      setNewTitle("");
-      setNewDesc("");
-      setNewPlace("");
-      setNewContributor("");
-      setNewPhotoFile(null);
-    }
-  };
-
-  const handleDelete = async (entryId) => {
-    const supabase = createClient();
-    const { data, error } = await supabase.from("entries").delete().eq("id", entryId).select();
-    if (error) {
-      alert(`Error deleting entry: ${error.message}`);
-    } else {
-      setEntries((prev) => prev.filter((e) => e.id !== entryId));
-      if (selectedEntry?.id === entryId) setSelectedEntry(null);
-    }
-  };
-
-  const handleEditClick = (entry) => {
-    setEditEntry(entry);
-    setNewTitle(entry.title || "");
-    setNewDesc(entry.description || "");
-    setNewPlace(entry.place || "");
-    setNewContributor(entry.contributor || "");
-    setNewPhotoFile(null);
-    setPhotoError("");
-  };
-
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    if (!user || !editEntry) return;
-    setIsSubmitting(true);
-    const supabase = createClient();
-    let publicUrl = editEntry.photo_url;
-    if (newPhotoFile) {
-      const fileExt = newPhotoFile.name.split(".").pop();
-      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage.from("photos").upload(filePath, newPhotoFile);
-      if (uploadError) {
-        alert(`Error uploading photo: ${uploadError.message}`);
-        setIsSubmitting(false);
-        return;
-      }
-      const { data: { publicUrl: url } } = supabase.storage.from("photos").getPublicUrl(filePath);
-      publicUrl = url;
-    }
-
-    const updatePayload = {
-      title: newTitle,
-      description: newDesc,
-      place: newPlace,
-      contributor: newContributor,
-      photo_url: publicUrl
+  // Track scroll direction for true bi-directional fluid entrance
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const handleScrollDir = () => {
+      const currentY = window.scrollY;
+      const dir = currentY < lastY ? 'up' : 'down';
+      document.documentElement.setAttribute('data-scroll-dir', dir);
+      lastY = currentY;
     };
+    window.addEventListener('scroll', handleScrollDir, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollDir);
+  }, []);
 
-    const { data, error } = await supabase.from("entries").update(updatePayload).eq("id", editEntry.id).select();
-    setIsSubmitting(false);
-    if (error) {
-      alert(`Error updating entry: ${error.message}`);
-    } else {
-      setEditEntry(null);
-      if (data && data[0]) {
-        setEntries((prev) => prev.map((item) => (item.id === editEntry.id ? { ...item, ...data[0] } : item)));
-        if (selectedEntry?.id === editEntry.id) setSelectedEntry({ ...selectedEntry, ...data[0] });
-      }
+  // Filter entries by search query and category pills
+  const filteredEntries = entries.filter((e) => {
+    const q = search.toLowerCase().trim();
+    const matchesSearch = !q || (
+      (e.title && e.title.toLowerCase().includes(q)) ||
+      (e.english_name && e.english_name.toLowerCase().includes(q)) ||
+      (e.description && e.description.toLowerCase().includes(q)) ||
+      (e.category && e.category.toLowerCase().includes(q)) ||
+      (e.place && e.place.toLowerCase().includes(q))
+    );
+
+    if (activeFilter === 'ALL') return matchesSearch;
+    const cat = (e.category || '').toLowerCase();
+    const title = ((e.title || '') + ' ' + (e.english_name || '')).toLowerCase();
+    if (activeFilter === 'SOIL') {
+      return matchesSearch && (cat.includes('soil') || cat.includes('prep') || title.includes('នង្គ័ល') || title.includes('រាស់') || title.includes('ចប') || title.includes('plough') || title.includes('harrow'));
     }
-  };
-
-  // Filter tools by season and search query
-  const trimmed = query.trim().toLowerCase();
-  const filteredTools = entries.filter((tool) => {
-    const seasonMatch = selectedSeason === "all" || getToolSeason(tool) === selectedSeason;
-    if (!seasonMatch) return false;
-    if (!trimmed) return true;
-    const t = (tool.title || "").toLowerCase();
-    const d = (tool.description || "").toLowerCase();
-    const p = (tool.place || "").toLowerCase();
-    return t.includes(trimmed) || d.includes(trimmed) || p.includes(trimmed);
+    if (activeFilter === 'HARVEST') {
+      return matchesSearch && (cat.includes('harvest') || cat.includes('grain') || title.includes('កណ្ដៀវ') || title.includes('អង្រែ') || title.includes('ជង្រុក') || title.includes('sickle') || title.includes('winnowing'));
+    }
+    if (activeFilter === 'CATTLE') {
+      return matchesSearch && (cat.includes('ox') || cat.includes('harness') || title.includes('នឹម') || title.includes('រទេះ') || title.includes('yoke') || title.includes('cart'));
+    }
+    return matchesSearch;
   });
 
+  // BI-DIRECTIONAL SCROLL REVEAL OBSERVER (Works smoothly scrolling UP and DOWN!)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (items) => {
+        items.forEach((item) => {
+          if (item.isIntersecting) {
+            item.target.classList.add('in-view');
+          } else {
+            // Re-triggers smoothly when scrolling back into view
+            item.target.classList.remove('in-view');
+          }
+        });
+      },
+      {
+        threshold: 0.05,
+        rootMargin: '60px 0px 60px 0px' // Generous buffer prevents late pop-ins
+      }
+    );
+
+    const targets = document.querySelectorAll('.reveal-on-scroll');
+    targets.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [filteredEntries]);
+
   return (
-    <main style={{ width: "100%", overflowX: "clip", color: "#f3ece0" }}>
-      {/* ======================================================== */}
-      {/* 3. 50/50 HERO SECTION */}
-      {/* ======================================================== */}
-      <section
-        className="container"
+    <div style={{ minHeight: '100vh', backgroundColor: '#0C0A09', color: '#E7E3DF', fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', position: 'relative', overflowX: 'hidden' }}>
+      
+      {/* 1. Deep Atmospheric Dusk Glow */}
+      <div
         style={{
-          padding: "48px 1.5rem 64px",
-          minHeight: "75vh",
-          display: "flex",
-          alignItems: "center"
+          position: 'fixed',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '1000px',
+          height: '550px',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(234, 88, 12, 0.2) 0%, rgba(30, 16, 10, 0.75) 45%, transparent 75%)',
+          filter: 'blur(80px)',
+          pointerEvents: 'none',
+          zIndex: 0
         }}
-      >
-        <div className="hero-split-grid" style={{ width: "100%" }}>
-          {/* Left Column (7 cols on desktop) */}
-          <div className="hero-col-left" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
-            {/* Badge */}
-            <div
-              className="rounded-full bg-[#1C1816]/90 border border-[#3A2922] px-4 py-1.5 mb-5 flex items-center gap-2 text-xs font-semibold tracking-wider text-[#F59E0B]"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 14px",
-                borderRadius: "9999px",
-                backgroundColor: "rgba(28, 24, 22, 0.9)",
-                border: "1px solid #3A2922",
-                fontSize: "12px",
-                fontWeight: 600,
-                letterSpacing: "0.06em",
-                color: "#F59E0B",
-                marginBottom: "20px"
-              }}
-            >
-              <span style={{ color: "#EA580C", fontSize: "10px" }}>●</span>
-              <span>KAMPONG CHAM COLLECTION · 10 TOOLS PRESERVED</span>
+      />
+
+      {/* 2. Floating Particles & Cursor Glow */}
+      <AtmosphereCanvas />
+
+      {/* 3. Main Page Content */}
+      <main style={{ maxWidth: '1080px', margin: '0 auto', padding: '16px 20px 80px 20px', position: 'relative', zIndex: 10 }}>
+
+        {/* ======================================================== */}
+        {/* SECTION 1: HERO & INTERACTIVE IMPLEMENT SPOTLIGHT        */}
+        {/* ======================================================== */}
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))', gap: '36px', alignItems: 'center', marginBottom: '56px', paddingTop: '10px' }}>
+          
+          {/* Left: Narrative & Search (Reveals smoothly) */}
+          <div className="reveal-on-scroll in-view">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 14px', borderRadius: '9999px', backgroundColor: '#241610', border: '1px solid #522E1F', color: '#F59E0B', fontSize: '11px', fontFamily: 'monospace', marginBottom: '16px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EA580C' }}></span>
+              <span>LIVING ORAL ARCHIVE · 10 TOOLS PRESERVED</span>
             </div>
 
-            {/* Heading */}
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-normal text-[#f3ece0] mb-4 leading-tight"
-              style={{
-                fontFamily: "var(--font-serif), Georgia, serif",
-                fontSize: "clamp(34px, 4.4vw, 58px)",
-                fontWeight: 400,
-                lineHeight: 1.18,
-                color: "#f3ece0",
-                margin: "0 0 18px"
-              }}
-            >
-              The oral wisdom of <span className="text-[#F59E0B] italic" style={{ color: "#F59E0B", fontStyle: "italic" }}>Cambodia&apos;s fields</span> is a living treasure.
+            <h1 style={{ fontSize: '38px', fontWeight: 'normal', color: '#FFFFFF', margin: '0 0 14px 0', lineHeight: 1.2, fontFamily: 'var(--font-serif), Georgia, serif' }}>
+              The oral wisdom of <span style={{ color: '#F59E0B', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.4)', textUnderlineOffset: '8px' }}>Cambodia&apos;s fields</span> is a living treasure.
             </h1>
 
-            {/* Khmer Quote */}
-            <div
-              className="border-l-4 border-[#EA580C] pl-4 mb-5 text-[#f3ece0] font-normal leading-relaxed text-base md:text-lg"
-              style={{
-                borderLeft: "3.5px solid #EA580C",
-                paddingLeft: "16px",
-                margin: "0 0 20px",
-                fontFamily: "var(--font-khmer)",
-                fontSize: "16.5px",
-                lineHeight: 1.65,
-                color: "#e8dfd3"
-              }}
-            >
-              « នង្គ័ល រាស់ កណ្ដៀវ និងឧបករណ៍ដូនតា ថែរក្សាដង្ហើមស្រែខ្មែរពីជំនាន់មួយទៅជំនាន់មួយ »
-            </div>
-
-            {/* Description */}
-            <p
-              className="text-[#bdb1a1] text-base md:text-lg mb-8 max-w-xl leading-relaxed"
-              style={{
-                color: "#bdb1a1",
-                fontSize: "16px",
-                lineHeight: 1.7,
-                margin: "0 0 32px",
-                maxWidth: "580px"
-              }}
-            >
-              Preserving the tools, memories, and farming seasons of my grandparents before mechanized tractors replace them.
+            <p style={{ color: 'rgba(254, 215, 170, 0.95)', fontStyle: 'italic', fontSize: '15px', lineHeight: 1.7, margin: '0 0 14px 0', fontFamily: 'var(--font-serif), Georgia, serif' }}>
+              « រំលឹកដង្ហើមស្រែដូនតា និងកេរ្តិ៍ដំណែលឧបករណ៍កសិកម្មបុរាណ លើទឹកដីដីក្រហម »
             </p>
 
-            {/* Buttons */}
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
-              <a
-                href="#seasons"
-                className="rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-white px-7 py-3 font-semibold shadow-lg transition-all"
+            <p style={{ color: '#A8A29E', fontSize: '13px', lineHeight: 1.6, margin: '0 0 22px 0', maxWidth: '500px' }}>
+              Preserving traditional ironwood implements and oral field memories from Kampong Cham elders before mechanized tractors replace generational heritage.
+            </p>
+
+            {/* Quick Filter Pills (CLEAN NUMBERED TAXONOMY — ZERO EMOJIS) */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '16px' }}>
+              <button
+                type="button"
+                onClick={() => setActiveFilter('ALL')}
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "46px",
-                  padding: "0 28px",
-                  borderRadius: "9999px",
-                  backgroundColor: "#EA580C",
-                  color: "#ffffff",
-                  border: "1px solid #EA580C",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 14px rgba(234, 88, 12, 0.35)",
-                  transition: "all 0.2s ease"
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  border: activeFilter === 'ALL' ? '1px solid #EA580C' : '1px solid #38251C',
+                  backgroundColor: activeFilter === 'ALL' ? '#EA580C' : '#1A1410',
+                  color: activeFilter === 'ALL' ? '#FFFFFF' : '#A8A29E',
+                  fontSize: '11.5px',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                Explore Collection
-              </a>
-              <a
-                href="#seasons"
-                className="rounded-full border border-[#3A2922] hover:border-[#F59E0B] text-[#f3ece0] hover:text-[#F59E0B] px-6 py-3 font-medium transition-all"
+                ALL ({entries.length || 10})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveFilter('SOIL')}
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "46px",
-                  padding: "0 26px",
-                  borderRadius: "9999px",
-                  backgroundColor: "transparent",
-                  color: "#f3ece0",
-                  border: "1px solid #3A2922",
-                  fontSize: "15px",
-                  fontWeight: 500,
-                  textDecoration: "none",
-                  transition: "all 0.2s ease"
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  border: activeFilter === 'SOIL' ? '1px solid #EA580C' : '1px solid #38251C',
+                  backgroundColor: activeFilter === 'SOIL' ? '#EA580C' : '#1A1410',
+                  color: activeFilter === 'SOIL' ? '#FFFFFF' : '#A8A29E',
+                  fontSize: '11.5px',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                The 4 Seasons of Rice →
-              </a>
+                I. Soil Prep (ភ្ជួររាស់)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveFilter('HARVEST')}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  border: activeFilter === 'HARVEST' ? '1px solid #EA580C' : '1px solid #38251C',
+                  backgroundColor: activeFilter === 'HARVEST' ? '#EA580C' : '#1A1410',
+                  color: activeFilter === 'HARVEST' ? '#FFFFFF' : '#A8A29E',
+                  fontSize: '11.5px',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                II. Harvest (ប្រមូលផល)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveFilter('CATTLE')}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  border: activeFilter === 'CATTLE' ? '1px solid #EA580C' : '1px solid #38251C',
+                  backgroundColor: activeFilter === 'CATTLE' ? '#EA580C' : '#1A1410',
+                  color: activeFilter === 'CATTLE' ? '#FFFFFF' : '#A8A29E',
+                  fontSize: '11.5px',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                III. Draft Cattle (នឹម &amp; រទេះ)
+              </button>
+            </div>
+
+            {/* Search Input with Clean SVG Icon (NO EMOJI) */}
+            <div style={{ position: 'relative', width: '100%', maxWidth: '420px' }}>
+              <input
+                type="text"
+                placeholder="ស្វែងរកឧបករណ៍... / Search tools, village..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px 10px 36px',
+                  borderRadius: '12px',
+                  backgroundColor: '#15110E',
+                  border: '1px solid #3E251A',
+                  color: '#FFFFFF',
+                  fontSize: '13px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '14px', height: '14px', color: '#78716C' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
             </div>
           </div>
 
-          {/* Right Column (5 cols on desktop): UNIQUE INTERACTIVE TOOL EXPLORER */}
-          <div className="hero-col-right">
-            <div
-              className="rounded-2xl bg-[#1C1816] border border-[#3A2922] p-6 shadow-2xl flex flex-col"
-              style={{
-                backgroundColor: "#1C1816",
-                border: "1px solid #3A2922",
-                borderRadius: "16px",
-                padding: "24px",
-                boxShadow: "0 20px 45px rgba(0,0,0,0.6)",
-                display: "flex",
-                flexDirection: "column"
-              }}
-            >
-              {/* Header Badge */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-                <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em", color: "#F59E0B", textTransform: "uppercase" }}>
-                  INTERACTIVE IMPLEMENT EXPLORER
-                </span>
-                <span style={{ fontSize: "10.5px", padding: "3px 8px", borderRadius: "9999px", backgroundColor: "rgba(245, 158, 11, 0.12)", color: "#F59E0B", fontWeight: 700, border: "1px solid rgba(245, 158, 11, 0.25)" }}>
-                  CATALOG #01
-                </span>
-              </div>
-
-              {/* Photo Container */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16/10",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  border: "1px solid #3A2922",
-                  backgroundColor: "#110F0D",
-                  marginBottom: "16px"
-                }}
-              >
-                <img
-                  src="/images/traditional_plough.jpg"
-                  alt="Traditional Wooden Plough (នង្គ័ល)"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  onError={(e) => {
-                    e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Cambodian_oxen_plowing_rice_field.jpg/640px-Cambodian_oxen_plowing_rice_field.jpg";
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "10px",
-                    left: "10px",
-                    padding: "4px 10px",
-                    borderRadius: "9999px",
-                    backgroundColor: "rgba(17, 15, 13, 0.9)",
-                    backdropFilter: "blur(6px)",
-                    border: "1px solid #3A2922",
-                    color: "#F59E0B",
-                    fontSize: "11px",
-                    fontWeight: 600
-                  }}
-                >
-                  នង្គ័ល (Nongkol) · Traditional Ox-Plough
-                </div>
-              </div>
-
-              {/* 3 Interactive Tabs */}
-              <div
-                className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#110F0D] border border-[#3A2922] mb-4"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: "6px",
-                  padding: "4px",
-                  borderRadius: "10px",
-                  backgroundColor: "#110F0D",
-                  border: "1px solid #3A2922",
-                  marginBottom: "16px"
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setExplorerTab("story")}
-                  style={{
-                    padding: "7px 4px",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    border: "none",
-                    backgroundColor: explorerTab === "story" ? "#EA580C" : "transparent",
-                    color: explorerTab === "story" ? "#ffffff" : "#bdb1a1",
-                    transition: "all 0.2s ease",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  Oral Story
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setExplorerTab("season")}
-                  style={{
-                    padding: "7px 4px",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    border: "none",
-                    backgroundColor: explorerTab === "season" ? "#EA580C" : "transparent",
-                    color: explorerTab === "season" ? "#ffffff" : "#bdb1a1",
-                    transition: "all 0.2s ease",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  Farming Season
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setExplorerTab("craft")}
-                  style={{
-                    padding: "7px 4px",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    border: "none",
-                    backgroundColor: explorerTab === "craft" ? "#EA580C" : "transparent",
-                    color: explorerTab === "craft" ? "#ffffff" : "#bdb1a1",
-                    transition: "all 0.2s ease",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  Craftsmanship
-                </button>
-              </div>
-
-              {/* Swappable Content Box */}
-              <div
-                style={{
-                  minHeight: "135px",
-                  padding: "14px",
-                  backgroundColor: "rgba(17, 15, 13, 0.6)",
-                  border: "1px solid #3A2922",
-                  borderRadius: "10px",
-                  marginBottom: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center"
-                }}
-              >
-                {explorerTab === "story" && (
-                  <div>
-                    <div style={{ color: "#F59E0B", fontSize: "1.4rem", lineHeight: 0.8, marginBottom: "4px" }}>&ldquo;</div>
-                    <p style={{ margin: "0 0 8px", fontStyle: "italic", fontSize: "13.5px", lineHeight: 1.6, color: "#e5ded4", fontFamily: "var(--font-khmer)" }}>
-                      « នង្គ័លនេះ ធ្វើពីឈើគគីររឹងមាំណាស់ ប្រើជាមួយគោមួយនឹម ភ្ជួរដីក្រហមតាំងពីជំនាន់ឪពុកខ្ញុំមកម្ល៉េះ។ ពេលដីត្រូវទឹកភ្លៀងដំបូង ដីធ្ងន់ខ្លាំងណាស់ បើគ្មាននង្គ័លស្រួលទេ គោឆាប់ហត់ »
-                    </p>
-                    <div style={{ fontSize: "11.5px", color: "#F59E0B", fontWeight: 600 }}>
-                      — Grandfather Sok, Kampong Siem (Red soil district)
-                    </div>
-                  </div>
-                )}
-
-                {explorerTab === "season" && (
-                  <div>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#F59E0B", letterSpacing: "0.06em", marginBottom: "4px" }}>
-                      EARLY MONSOON (MAY – JUNE) · ដើមរដូវវស្សា
-                    </div>
-                    <p style={{ margin: "0 0 6px", fontSize: "13px", lineHeight: 1.6, color: "#e5ded4" }}>
-                      When the ground is first softened by rain after the scorching dry season, the plough is brought out at dawn. The soil must be turned before weed seeds sprout and dry clods harden.
-                    </p>
-                    <div style={{ fontSize: "11.5px", color: "#bdb1a1" }}>
-                      Cycle: ភ្ជួរប្រាំង (Opening dry-furrow) &amp; ភ្ជួរវស្សា (Wet-soil preparation)
-                    </div>
-                  </div>
-                )}
-
-                {explorerTab === "craft" && (
-                  <div>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#EA580C", letterSpacing: "0.06em", marginBottom: "4px" }}>
-                      HEWN IRONWOOD &amp; BLACKSMITH-FORGED STEEL
-                    </div>
-                    <p style={{ margin: "0 0 6px", fontSize: "13px", lineHeight: 1.6, color: "#e5ded4" }}>
-                      Hand-carved from Kokir (គគីរ / Ironwood) renowned for timber durability in muddy paddy conditions. Fitted with a forged-steel plowshare shaped by village blacksmiths to cut clean 15cm furrows.
-                    </p>
-                    <div style={{ fontSize: "11.5px", color: "#bdb1a1" }}>
-                      Joinery: Wooden wedge mortise &amp; natural tree resin sealant
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Bottom Trigger to View in Archive */}
-              <a
-                href="#seasons"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  color: "#F59E0B",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  borderTop: "1px solid #3A2922",
-                  paddingTop: "12px"
-                }}
-              >
-                <span>Browse All 10 Preserved Implements</span>
-                <span>↓</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ======================================================== */}
-      {/* 4. "THE 4 SEASONS OF RICE" CATALOG BELOW HERO */}
-      {/* ======================================================== */}
-      <section
-        id="seasons"
-        className="container"
-        style={{
-          padding: "64px 1.5rem",
-          borderTop: "1px solid #3A2922"
-        }}
-      >
-        {/* Section Header */}
-        <div style={{ marginBottom: "32px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.14em", color: "#F59E0B", textTransform: "uppercase" }}>
-            AGRICULTURAL TAXONOMY · KAMPONG CHAM
-          </div>
-          <h2
+          {/* Right: Interactive Implement Spotlight */}
+          <div
+            className="reveal-on-scroll in-view"
             style={{
-              fontFamily: "var(--font-serif), Georgia, serif",
-              fontSize: "clamp(28px, 3.5vw, 42px)",
-              color: "#f3ece0",
-              margin: 0,
-              fontWeight: 400
+              backgroundColor: '#16120E',
+              border: '1px solid rgba(82, 54, 42, 0.8)',
+              borderRadius: '24px',
+              padding: '20px',
+              boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 24px rgba(234, 88, 12, 0.08)'
             }}
           >
-            The 4 Seasons of Rice
-          </h2>
-          <p style={{ color: "#bdb1a1", fontSize: "15px", margin: 0, maxWidth: "680px" }}>
-            The Kampong Cham agricultural calendar organized into 4 seasonal phases: Soil Preparation, Planting &amp; Water, Harvest, and Storage &amp; Daily Village Life.
-          </p>
-        </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', fontSize: '11px', fontFamily: 'monospace', color: '#F59E0B' }}>
+              <span style={{ letterSpacing: '1px', textTransform: 'uppercase' }}>FEATURED IMPLEMENT</span>
+              <span style={{ padding: '2px 8px', borderRadius: '6px', backgroundColor: '#241610', border: '1px solid #4D2D20' }}>CATALOG #01</span>
+            </div>
 
-        {/* Filter Bar: Category Tabs & Search Box */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
-          {/* Seasonal Category Pills */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {[
-              { id: "all", label: `All Tools (${entries.length})` },
-              { id: "soil", label: "1. Soil Prep (ភ្ជួររាស់)" },
-              { id: "planting", label: "2. Planting & Water (ស្ទូង)" },
-              { id: "harvest", label: "3. Harvest (ច្រូតកាត់)" },
-              { id: "storage", label: "4. Storage & Daily Life (ទុកដាក់)" }
-            ].map((tab) => (
+            {/* Photo */}
+            <div style={{ width: '100%', height: '190px', borderRadius: '14px', backgroundColor: '#0B0907', border: '1px solid #2B1D16', overflow: 'hidden', position: 'relative', marginBottom: '14px' }}>
+              <img
+                src="/images/traditional_plough.jpg"
+                alt="Plough in Red Soil"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div style={{ position: 'absolute', bottom: '8px', left: '8px', padding: '3px 8px', borderRadius: '6px', backgroundColor: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(6px)', fontSize: '11px', color: '#FED7AA' }}>
+                នង្គ័លបុរាណ (Kokir Ironwood Ox Plough)
+              </div>
+            </div>
+
+            {/* 3 Clickable Tabs */}
+            <div style={{ display: 'flex', gap: '6px', padding: '3px', borderRadius: '10px', backgroundColor: '#0E0B09', border: '1px solid #281B14', marginBottom: '12px', fontSize: '11.5px', fontFamily: 'monospace' }}>
               <button
-                key={tab.id}
                 type="button"
-                onClick={() => setSelectedSeason(tab.id)}
-                className={`season-tab-btn ${selectedSeason === tab.id ? "active" : ""}`}
+                onClick={() => setSpotlightTab('story')}
+                style={{
+                  flex: 1,
+                  padding: '6px 0',
+                  borderRadius: '7px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: spotlightTab === 'story' ? '#271811' : 'transparent',
+                  color: spotlightTab === 'story' ? '#F59E0B' : '#A8A29E',
+                  fontWeight: spotlightTab === 'story' ? 'bold' : 'normal',
+                  transition: 'all 0.2s ease'
+                }}
               >
-                {tab.label}
+                Oral Memory
               </button>
+              <button
+                type="button"
+                onClick={() => setSpotlightTab('season')}
+                style={{
+                  flex: 1,
+                  padding: '6px 0',
+                  borderRadius: '7px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: spotlightTab === 'season' ? '#271811' : 'transparent',
+                  color: spotlightTab === 'season' ? '#F59E0B' : '#A8A29E',
+                  fontWeight: spotlightTab === 'season' ? 'bold' : 'normal',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Season &amp; Soil
+              </button>
+              <button
+                type="button"
+                onClick={() => setSpotlightTab('craft')}
+                style={{
+                  flex: 1,
+                  padding: '6px 0',
+                  borderRadius: '7px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: spotlightTab === 'craft' ? '#271811' : 'transparent',
+                  color: spotlightTab === 'craft' ? '#F59E0B' : '#A8A29E',
+                  fontWeight: spotlightTab === 'craft' ? 'bold' : 'normal',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Woodcraft
+              </button>
+            </div>
+
+            {/* Tab Details */}
+            <div style={{ minHeight: '70px' }}>
+              {spotlightTab === 'story' && (
+                <div>
+                  <p style={{ margin: '0 0 4px 0', fontStyle: 'italic', fontSize: '12.5px', color: 'rgba(254, 215, 170, 0.95)', lineHeight: 1.6, fontFamily: 'var(--font-serif), Georgia, serif' }}>
+                    « នង្គ័លនេះ ធ្វើពីឈើគគីររឹងមាំណាស់ ប្រើជាមួយគោមួយនឹម ភ្ជួរតាំងពីដីរឹងរហូតដល់ភ្លៀងធ្លាក់ដំបូង... »
+                  </p>
+                  <span style={{ fontSize: '10.5px', color: '#A8A29E', fontFamily: 'monospace' }}>
+                    — Grandfather Sok, Kampong Siem
+                  </span>
+                </div>
+              )}
+              {spotlightTab === 'season' && (
+                <div>
+                  <p style={{ margin: '0 0 4px 0', fontSize: '12.5px', color: '#E7E3DF', lineHeight: 1.5 }}>
+                    Deployed in <strong style={{ color: '#F59E0B' }}>May - June</strong> when early rains soften basalt red clay before flooding.
+                  </p>
+                  <span style={{ fontSize: '10.5px', color: '#A8A29E', fontFamily: 'monospace' }}>
+                    Basalt Red Earth (ដីក្រហមបាសាល់)
+                  </span>
+                </div>
+              )}
+              {spotlightTab === 'craft' && (
+                <div>
+                  <p style={{ margin: '0 0 4px 0', fontSize: '12.5px', color: '#E7E3DF', lineHeight: 1.5 }}>
+                    Hewn from curved <strong style={{ color: '#F59E0B' }}>Kokir ironwood</strong>. Tip clad in blacksmith-hammered spring steel.
+                  </p>
+                  <span style={{ fontSize: '10.5px', color: '#A8A29E', fontFamily: 'monospace' }}>
+                    Tension: ~400kg draft pull · 2 Oxen
+                  </span>
+                </div>
+              )}
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ======================================================== */}
+        {/* SECTION 2: THE 10 PRESERVED TOOLS (CINEMATIC CARD GRID)  */}
+        {/* ======================================================== */}
+        <section id="tools" style={{ marginBottom: '64px' }}>
+          
+          <div className="reveal-on-scroll" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', borderBottom: '1px solid #281D17', paddingBottom: '14px' }}>
+            <div>
+              <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block' }}>
+                KAMPONG CHAM ARCHIVE
+              </span>
+              <h2 style={{ fontSize: '24px', color: '#FFFFFF', margin: '4px 0 0 0', fontWeight: 500, fontFamily: 'var(--font-serif), Georgia, serif' }}>
+                The 10 Preserved Implements
+              </h2>
+            </div>
+            <div style={{ fontSize: '12px', fontFamily: 'monospace', color: '#F59E0B' }}>
+              Showing {filteredEntries.length} of {entries.length || 10} Tools
+            </div>
+          </div>
+
+          {/* STAGGERED BI-DIRECTIONAL WAVE GRID (WORKS SCROLLING UP & DOWN) */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '22px',
+            alignItems: 'stretch'
+          }}>
+            {filteredEntries.map((tool, idx) => (
+              <MuseumCard
+                key={tool.id || idx}
+                tool={tool}
+                index={idx}
+                onClick={() => setSelectedEntry(tool)}
+                staggerDelay={(idx % 3) * 80}
+              />
             ))}
           </div>
 
-          {/* Search Input & Add Tool Action */}
-          <div style={{ display: "flex", gap: "10px", alignItems: "center", width: "100%", maxWidth: "360px" }}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search tools, names, province..."
-                className="input focus-ring"
-                style={{
-                  height: "40px",
-                  padding: "0 14px",
-                  fontSize: "13.5px",
-                  borderRadius: "9999px",
-                  backgroundColor: "#1C1816",
-                  border: "1px solid #3A2922",
-                  color: "#f3ece0"
-                }}
-              />
+        </section>
+
+        {/* ======================================================== */}
+        {/* SECTION 3: UNIFIED HERITAGE & WOODCRAFT COMPASS FOOTER   */}
+        {/* ======================================================== */}
+        <section
+          id="heritage"
+          className="reveal-on-scroll"
+          style={{
+            backgroundColor: '#14100D',
+            border: '1px solid rgba(82, 54, 42, 0.75)',
+            borderRadius: '24px',
+            padding: '32px 28px',
+            boxShadow: '0 20px 40px -10px rgba(0,0,0,0.6)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '32px',
+            alignItems: 'center'
+          }}
+        >
+          {/* Left: Oral Quote & 4 Clean Stat Tags */}
+          <div>
+            <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: '8px' }}>
+              FAMILY ORAL ARCHIVE · KAMPONG CHAM
+            </span>
+            <p style={{ fontSize: '14px', color: 'rgba(254, 215, 170, 0.95)', fontStyle: 'italic', lineHeight: 1.6, margin: '0 0 18px 0', fontFamily: 'var(--font-serif), Georgia, serif' }}>
+              « របស់ទាំងនេះ មិនមែនគ្រាន់តែជាឈើ ឬដែកនោះទេ តែជាញើសឈាម និងជីវិតអ្នកស្រែកំពង់ចាមរាប់តំណរ... »
+            </p>
+
+            {/* 4 Clean Stats */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+              <div style={{ backgroundColor: '#1A1410', border: '1px solid #38251C', borderRadius: '12px', padding: '10px 14px' }}>
+                <span style={{ fontSize: '10px', color: '#EA580C', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block' }}>CURATED BY</span>
+                <span style={{ fontSize: '12px', color: '#FFFFFF', fontWeight: 600 }}>Srorn Vanuth</span>
+              </div>
+              <div style={{ backgroundColor: '#1A1410', border: '1px solid #38251C', borderRadius: '12px', padding: '10px 14px' }}>
+                <span style={{ fontSize: '10px', color: '#EA580C', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block' }}>PROVINCE</span>
+                <span style={{ fontSize: '12px', color: '#FFFFFF', fontWeight: 600 }}>Kampong Cham (ដីក្រហម)</span>
+              </div>
+              <div style={{ backgroundColor: '#1A1410', border: '1px solid #38251C', borderRadius: '12px', padding: '10px 14px' }}>
+                <span style={{ fontSize: '10px', color: '#EA580C', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block' }}>COURSE</span>
+                <span style={{ fontSize: '12px', color: '#FFFFFF', fontWeight: 600 }}>ICT 340 · Web Coding</span>
+              </div>
+              <div style={{ backgroundColor: '#1A1410', border: '1px solid #38251C', borderRadius: '12px', padding: '10px 14px' }}>
+                <span style={{ fontSize: '10px', color: '#EA580C', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block' }}>COLLECTION</span>
+                <span style={{ fontSize: '12px', color: '#F59E0B', fontWeight: 600 }}>10 Living Tools</span>
+              </div>
             </div>
-            {user && (
-              <button
-                type="button"
-                onClick={() => setShowAddModal(true)}
-                className="btn btn-primary"
-                style={{
-                  height: "40px",
-                  padding: "0 16px",
-                  borderRadius: "9999px",
-                  fontSize: "13px",
-                  whiteSpace: "nowrap"
-                }}
-              >
-                ＋ Add Tool
-              </button>
-            )}
           </div>
+
+          {/* Right: Golden Khmer Woodcraft Lotus Compass (*Kbach Pka Chan*) */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <div style={{ width: '180px', height: '180px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+              <svg
+                style={{ width: '100%', height: '100%', color: '#F59E0B', filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.3))' }}
+                viewBox="0 0 200 200"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              >
+                <circle cx="100" cy="100" r="14" />
+                <circle cx="100" cy="100" r="34" strokeDasharray="3,3" />
+                <circle cx="100" cy="100" r="68" />
+                <circle cx="100" cy="100" r="92" strokeDasharray="2,4" />
+                <line x1="100" y1="8" x2="100" y2="192" />
+                <line x1="8" y1="100" x2="192" y2="100" />
+                <path d="M 100,34 Q 130,65 100,100 Q 70,65 100,34 Z" fill="rgba(234, 88, 12, 0.15)" />
+                <path d="M 100,166 Q 130,135 100,100 Q 70,135 100,166 Z" fill="rgba(234, 88, 12, 0.15)" />
+                <path d="M 34,100 Q 65,130 100,100 Q 65,70 34,100 Z" fill="rgba(234, 88, 12, 0.15)" />
+                <path d="M 166,100 Q 135,130 100,100 Q 135,70 166,100 Z" fill="rgba(234, 88, 12, 0.15)" />
+              </svg>
+            </div>
+            <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#F59E0B', letterSpacing: '1px' }}>
+              KBACH PKA CHAN · ក្បាច់ផ្កាចន្ទ័៍
+            </span>
+            <span style={{ fontSize: '10px', color: '#78716C', fontFamily: 'monospace', marginTop: '2px' }}>
+              Woodcraft Carpentry Geometry · Kampong Cham
+            </span>
+          </div>
+
+        </section>
+
+      </main>
+
+      {/* 4. Detail Modal Popup */}
+      {selectedEntry && (
+        <EntryModal
+          entry={selectedEntry}
+          onClose={() => setSelectedEntry(null)}
+        />
+      )}
+
+    </div>
+  );
+}
+
+// Compact, crisp Museum Card with Smooth Bi-directional Scroll Wave Transition
+function MuseumCard({ tool, index, onClick, staggerDelay }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const photoUrl = tool.photo_url || tool.image_url;
+
+  // Render authentic woodcraft silhouette plates for implements
+  const renderFallbackPlate = (category, title) => {
+    const text = (category + ' ' + title).toLowerCase();
+    let iconPath;
+
+    if (text.includes('harrow') || text.includes('រាស់')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <rect x="18" y="26" width="64" height="8" rx="2" fill="rgba(234, 88, 12, 0.2)" />
+          <line x1="24" y1="34" x2="24" y2="60" strokeLinecap="round" />
+          <line x1="34" y1="34" x2="34" y2="60" strokeLinecap="round" />
+          <line x1="44" y1="34" x2="44" y2="60" strokeLinecap="round" />
+          <line x1="50" y1="18" x2="50" y2="26" stroke="#F59E0B" strokeWidth="3" />
+          <line x1="56" y1="34" x2="56" y2="60" strokeLinecap="round" />
+          <line x1="66" y1="34" x2="66" y2="60" strokeLinecap="round" />
+          <line x1="76" y1="34" x2="76" y2="60" strokeLinecap="round" />
+        </g>
+      );
+    } else if (text.includes('yoke') || text.includes('នឹម')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <path d="M 12,46 Q 32,24 50,46 Q 68,24 88,46" strokeLinecap="round" strokeWidth="3.5" />
+          <circle cx="30" cy="54" r="4" fill="#F59E0B" />
+          <circle cx="70" cy="54" r="4" fill="#F59E0B" />
+          <line x1="30" y1="42" x2="30" y2="62" stroke="#F59E0B" strokeWidth="2" strokeDasharray="2,2" />
+          <line x1="70" y1="42" x2="70" y2="62" stroke="#F59E0B" strokeWidth="2" strokeDasharray="2,2" />
+        </g>
+      );
+    } else if (text.includes('sickle') || text.includes('កណ្ដៀវ')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <path d="M 68,18 C 36,18 20,42 32,68 C 38,56 48,46 62,40" strokeLinecap="round" fill="rgba(234, 88, 12, 0.2)" />
+          <rect x="28" y="65" width="8" height="15" rx="2" transform="rotate(-25 28 65)" fill="#F59E0B" stroke="#F59E0B" />
+        </g>
+      );
+    } else if (text.includes('cart') || text.includes('រទេះ')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <circle cx="35" cy="52" r="18" fill="rgba(234, 88, 12, 0.15)" />
+          <circle cx="35" cy="52" r="4" fill="#F59E0B" />
+          <line x1="17" y1="52" x2="53" y2="52" />
+          <line x1="35" y1="34" x2="35" y2="70" />
+          <line x1="35" y1="42" x2="86" y2="30" strokeWidth="3.5" stroke="#F59E0B" strokeLinecap="round" />
+        </g>
+      );
+    } else if (text.includes('hoe') || text.includes('ចប')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <line x1="22" y1="68" x2="72" y2="18" strokeWidth="3.5" stroke="#F59E0B" strokeLinecap="round" />
+          <rect x="66" y="14" width="16" height="22" rx="2" transform="rotate(30 66 14)" fill="rgba(234, 88, 12, 0.3)" />
+        </g>
+      );
+    } else if (text.includes('pot') || text.includes('ក្អម')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <ellipse cx="50" cy="22" rx="14" ry="4" stroke="#F59E0B" />
+          <path d="M 38,24 C 22,40 22,66 50,68 C 78,66 78,40 62,24" fill="rgba(234, 88, 12, 0.2)" />
+        </g>
+      );
+    } else if (text.includes('granary') || text.includes('ជង្រុក')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <polygon points="50,18 18,38 82,38" fill="rgba(234, 88, 12, 0.25)" stroke="#F59E0B" />
+          <rect x="25" y="38" width="50" height="24" rx="2" fill="rgba(234, 88, 12, 0.15)" />
+          <line x1="32" y1="62" x2="32" y2="74" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="68" y1="62" x2="68" y2="74" strokeWidth="3.5" strokeLinecap="round" />
+        </g>
+      );
+    } else if (text.includes('scoop') || text.includes('ឈ្នាង')) {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <ellipse cx="50" cy="45" rx="30" ry="18" fill="rgba(234, 88, 12, 0.2)" />
+          <line x1="50" y1="27" x2="50" y2="63" strokeDasharray="3,3" />
+          <line x1="20" y1="45" x2="80" y2="45" strokeDasharray="3,3" />
+          <line x1="50" y1="27" x2="50" y2="12" stroke="#F59E0B" strokeWidth="3.5" strokeLinecap="round" />
+        </g>
+      );
+    } else {
+      iconPath = (
+        <g stroke="#EA580C" strokeWidth="2.5" fill="none">
+          <path d="M 15,62 Q 42,62 62,35 L 86,16" strokeLinecap="round" strokeWidth="3.5" stroke="#F59E0B" />
+          <path d="M 52,42 L 36,68 L 68,68 Z" fill="rgba(234, 88, 12, 0.3)" />
+        </g>
+      );
+    }
+
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        background: 'radial-gradient(circle at center, #221611 0%, #0F0C0A 100%)',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden'
+      }}>
+        {/* Woodcraft Geometry Blueprint Grid */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'radial-gradient(rgba(245, 158, 11, 0.12) 1px, transparent 1px)',
+          backgroundSize: '16px 16px',
+          opacity: 0.6
+        }} />
+
+        {/* Faint Khmer Script Watermark */}
+        <div style={{
+          position: 'absolute',
+          bottom: '6px',
+          right: '10px',
+          fontSize: '26px',
+          fontFamily: 'var(--font-serif), Georgia, serif',
+          color: 'rgba(234, 88, 12, 0.08)',
+          fontWeight: 'bold',
+          userSelect: 'none',
+          pointerEvents: 'none'
+        }}>
+          {tool.title}
         </div>
 
-        {/* Clean 3-Column Grid of Cards */}
-        {loading ? (
-          <div style={{ textAlign: "center", padding: "64px 0", border: "1px dashed #3A2922", borderRadius: "12px" }}>
-            <p style={{ color: "#F59E0B", fontSize: "16px", fontWeight: 600 }}>🌾 កំពុងទាញយកទិន្នន័យ... / Loading implements...</p>
-          </div>
-        ) : filteredTools.length > 0 ? (
-          <div className="seasons-grid">
-            {filteredTools.map((tool, index) => {
-              const names = parseNames(tool.title);
-              const season = getToolSeason(tool);
-              const seasonBadge =
-                season === "soil"
-                  ? "Soil Prep"
-                  : season === "planting"
-                  ? "Planting & Water"
-                  : season === "harvest"
-                  ? "Harvest"
-                  : "Storage";
+        {/* SVG Silhouette */}
+        <svg style={{ width: '64px', height: '64px', filter: 'drop-shadow(0 0 8px rgba(234, 88, 12, 0.4))', position: 'relative', zIndex: 2 }} viewBox="0 0 100 80">
+          {iconPath}
+        </svg>
 
-              const isOwner = user && tool.owner === user.id;
+        {/* Curatorial Seal */}
+        <div style={{
+          position: 'absolute',
+          bottom: '8px',
+          left: '8px',
+          fontSize: '9px',
+          fontFamily: 'monospace',
+          color: '#8C827A',
+          letterSpacing: '1px',
+          backgroundColor: 'rgba(0,0,0,0.65)',
+          padding: '2px 6px',
+          borderRadius: '4px',
+          border: '1px solid rgba(82, 54, 42, 0.5)'
+        }}>
+          ORAL HERITAGE PLATE
+        </div>
+      </div>
+    );
+  };
 
-              return (
-                <article
-                  key={tool.id || index}
-                  onClick={() => setSelectedEntry(tool)}
-                  className="card spot-card focus-ring"
-                  style={{
-                    backgroundColor: "#1C1816",
-                    border: "1px solid #3A2922",
-                    borderRadius: "14px",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    display: "flex",
-                    flexDirection: "column",
-                    position: "relative",
-                    transition: "transform 0.2s ease, border-color 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-4px)";
-                    e.currentTarget.style.borderColor = "#EA580C";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.borderColor = "#3A2922";
-                  }}
-                >
-                  {/* Photo Framing */}
-                  <div
-                    style={{
-                      width: "100%",
-                      aspectRatio: "16/10",
-                      backgroundColor: "#110F0D",
-                      overflow: "hidden",
-                      position: "relative",
-                      borderBottom: "1px solid #3A2922"
-                    }}
-                  >
-                    <img
-                      src={tool.photo_url || "/images/traditional_plough.jpg"}
-                      alt={tool.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      onError={(e) => {
-                        e.currentTarget.src = "/images/traditional_plough.jpg";
-                      }}
-                    />
-                    {/* Season Tag Pill */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "10px",
-                        left: "10px",
-                        padding: "3px 9px",
-                        borderRadius: "9999px",
-                        backgroundColor: "rgba(17, 15, 13, 0.88)",
-                        backdropFilter: "blur(4px)",
-                        border: "1px solid #3A2922",
-                        color: "#F59E0B",
-                        fontSize: "11px",
-                        fontWeight: 700
-                      }}
-                    >
-                      {seasonBadge}
-                    </div>
-
-                    {/* Owner Controls */}
-                    {isOwner && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "10px",
-                          right: "10px",
-                          display: "flex",
-                          gap: "6px"
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditClick(tool);
-                          }}
-                          style={{
-                            backgroundColor: "rgba(28, 24, 22, 0.9)",
-                            border: "1px solid #3A2922",
-                            color: "#f3ece0",
-                            borderRadius: "6px",
-                            padding: "4px 8px",
-                            fontSize: "11.5px",
-                            fontWeight: 600,
-                            cursor: "pointer"
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (window.confirm("Delete this tool entry?")) {
-                              handleDelete(tool.id);
-                            }
-                          }}
-                          style={{
-                            backgroundColor: "rgba(28, 24, 22, 0.9)",
-                            border: "1px solid #3A2922",
-                            color: "#EA580C",
-                            borderRadius: "6px",
-                            padding: "4px 8px",
-                            fontSize: "11.5px",
-                            fontWeight: 600,
-                            cursor: "pointer"
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Content */}
-                  <div style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1 }}>
-                    {/* Khmer Name in Serif */}
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-khmer-title), var(--font-serif), serif",
-                        fontSize: "22px",
-                        fontWeight: 600,
-                        color: "#F59E0B",
-                        margin: "0 0 4px"
-                      }}
-                    >
-                      {names.khmer}
-                    </h3>
-
-                    {/* English Name */}
-                    <div style={{ fontSize: "14px", color: "#bdb1a1", fontWeight: 500, marginBottom: "10px" }}>
-                      {names.english}
-                    </div>
-
-                    {/* Province Origin */}
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "5px",
-                        fontSize: "12px",
-                        color: "#e8dfd3",
-                        marginBottom: "12px"
-                      }}
-                    >
-                      <span style={{ color: "#EA580C" }}>📍</span>
-                      <span>{tool.place || "ខេត្តកំពង់ចាម (Kampong Cham)"}</span>
-                    </div>
-
-                    {/* Description Excerpt */}
-                    <p
-                      style={{
-                        fontSize: "13.5px",
-                        color: "#bdb1a1",
-                        lineHeight: 1.6,
-                        margin: 0,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden"
-                      }}
-                    >
-                      {tool.description}
-                    </p>
-
-                    {/* Card Footer Link */}
-                    <div
-                      style={{
-                        marginTop: "auto",
-                        paddingTop: "14px",
-                        borderTop: "1px solid #2B1E19",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "12.5px",
-                        color: "#F59E0B",
-                        fontWeight: 600
-                      }}
-                    >
-                      <span>View details</span>
-                      <span>→</span>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+  return (
+    <div
+      onClick={onClick}
+      className="museum-card reveal-on-scroll"
+      style={{
+        transitionDelay: `${staggerDelay || 0}ms`
+      }}
+    >
+      {/* 150px Visual Exhibit Frame */}
+      <div style={{
+        width: '100%',
+        height: '150px',
+        borderRadius: '12px',
+        backgroundColor: '#0B0907',
+        border: '1px solid #2B1D16',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '14px'
+      }}>
+        {photoUrl && !imgFailed ? (
+          <img
+            src={photoUrl}
+            alt={tool.title || 'Tool'}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            onError={() => setImgFailed(true)}
+          />
         ) : (
-          <div style={{ textAlign: "center", padding: "64px 0", border: "1px dashed #3A2922", borderRadius: "12px" }}>
-            <p style={{ color: "#f3ece0", fontSize: "16px", margin: "0 0 8px" }}>រកមិនឃើញឧបករណ៍កសិកម្មទេ</p>
-            <p style={{ color: "#bdb1a1", fontSize: "14px", margin: "0 0 16px" }}>No traditional implements found matching &ldquo;{query}&rdquo;.</p>
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
-                setSelectedSeason("all");
-              }}
-              className="season-tab-btn"
-            >
-              Reset Filters
-            </button>
+          renderFallbackPlate(tool.category || '', tool.title || '')
+        )}
+        <span style={{ position: 'absolute', top: '8px', left: '8px', padding: '2px 7px', borderRadius: '5px', backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)', fontSize: '9.5px', color: '#F59E0B', fontFamily: 'monospace', border: '1px solid rgba(245, 158, 11, 0.25)' }}>
+          CATALOG #{String(index + 1).padStart(2, '0')}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        
+        {/* Category Pill */}
+        <div style={{ fontSize: '9.5px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+          {tool.category || 'FARMING HERITAGE'}
+        </div>
+
+        {/* Khmer Title */}
+        <h3 style={{ fontSize: '18px', color: '#FFFFFF', margin: '0 0 2px 0', fontWeight: '500', lineHeight: 1.35, fontFamily: 'var(--font-serif), Georgia, serif' }}>
+          {tool.title}
+        </h3>
+
+        {/* English Name Subtitle */}
+        {tool.english_name && (
+          <div style={{ fontSize: '12px', color: '#F59E0B', fontStyle: 'italic', marginBottom: '8px', fontFamily: 'var(--font-serif), Georgia, serif' }}>
+            {tool.english_name}
           </div>
         )}
-      </section>
 
-      {/* ======================================================== */}
-      {/* 5. PROVENANCE FOOTER (3 CLEAN METADATA CARDS) */}
-      {/* ======================================================== */}
-      <section
-        className="container"
-        style={{
-          padding: "48px 1.5rem 80px",
-          borderTop: "1px solid #3A2922"
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px"
-          }}
-        >
-          {/* Card 1: PROVENANCE */}
-          <div
-            style={{
-              backgroundColor: "#1C1816",
-              border: "1px solid #3A2922",
-              borderRadius: "14px",
-              padding: "24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px"
-            }}
-          >
-            <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em", color: "#EA580C", textTransform: "uppercase" }}>
-              PROVENANCE
-            </div>
-            <h4 style={{ fontFamily: "var(--font-serif), Georgia, serif", fontSize: "18px", color: "#f3ece0", margin: 0, fontWeight: 500 }}>
-              Oral Knowledge from Kampong Cham
-            </h4>
-            <p style={{ fontSize: "13.5px", color: "#bdb1a1", lineHeight: 1.6, margin: 0 }}>
-              {collection.source}
-            </p>
-          </div>
+        {/* Description */}
+        <p style={{ fontSize: '12px', color: '#A8A29E', lineHeight: 1.5, margin: '0 0 10px 0', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          {tool.description}
+        </p>
 
-          {/* Card 2: COLLECTION */}
-          <div
-            style={{
-              backgroundColor: "#1C1816",
-              border: "1px solid #3A2922",
-              borderRadius: "14px",
-              padding: "24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px"
-            }}
-          >
-            <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em", color: "#F59E0B", textTransform: "uppercase" }}>
-              COLLECTION
-            </div>
-            <h4 style={{ fontFamily: "var(--font-serif), Georgia, serif", fontSize: "18px", color: "#f3ece0", margin: 0, fontWeight: 500 }}>
-              10 Traditional Implements Documented
-            </h4>
-            <p style={{ fontSize: "13.5px", color: "#bdb1a1", lineHeight: 1.6, margin: 0 }}>
-              Comprehensive inventory preserving hand-hewn wood and forged-steel tools across all 4 cycles of Cambodian rice cultivation.
-            </p>
-          </div>
-
-          {/* Card 3: PROJECT */}
-          <div
-            style={{
-              backgroundColor: "#1C1816",
-              border: "1px solid #3A2922",
-              borderRadius: "14px",
-              padding: "24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px"
-            }}
-          >
-            <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em", color: "#EA580C", textTransform: "uppercase" }}>
-              PROJECT
-            </div>
-            <h4 style={{ fontFamily: "var(--font-serif), Georgia, serif", fontSize: "18px", color: "#f3ece0", margin: 0, fontWeight: 500 }}>
-              ICT 340 · The Khmer Living Archive
-            </h4>
-            <p style={{ fontSize: "13.5px", color: "#bdb1a1", lineHeight: 1.6, margin: 0 }}>
-              Curated by {collection.curator}. {collection.description}
-            </p>
-          </div>
+        {/* Micro Badges (Material & Season) */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: 'auto', marginBottom: '6px' }}>
+          {tool.material && (
+            <span style={{ fontSize: '10px', color: '#C2410C', backgroundColor: 'rgba(194, 65, 12, 0.1)', border: '1px solid rgba(194, 65, 12, 0.25)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>
+              {tool.material.split('·')[0].trim()}
+            </span>
+          )}
+          {tool.season && (
+            <span style={{ fontSize: '10px', color: '#D97706', backgroundColor: 'rgba(217, 119, 6, 0.1)', border: '1px solid rgba(217, 119, 6, 0.25)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>
+              {tool.season.split('(')[0].trim()}
+            </span>
+          )}
         </div>
-      </section>
 
-      {/* Entry Details Modal */}
-      <EntryModal
-        entry={selectedEntry}
-        onClose={() => setSelectedEntry(null)}
-        currentUser={user}
-        onDelete={handleDelete}
-        onEdit={handleEditClick}
-      />
+      </div>
 
-      {/* Add New Tool Modal */}
-      {showAddModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(17, 15, 13, 0.85)",
-            backdropFilter: "blur(8px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            zIndex: 1000
-          }}
-          onClick={() => setShowAddModal(false)}
-        >
-          <div
-            style={{
-              backgroundColor: "#1C1816",
-              border: "1px solid #3A2922",
-              borderRadius: "16px",
-              padding: "32px",
-              width: "100%",
-              maxWidth: "480px",
-              boxSizing: "border-box",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 25px 50px rgba(0,0,0,0.8)"
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ margin: 0, fontSize: "20px", color: "#F59E0B", fontWeight: 700 }}>
-                បន្ថែមឧបករណ៍ថ្មី / Add New Tool
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#bdb1a1" }}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleAddSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Tool Title *</label>
-                <input
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. នង្គ័ល (Plough)"
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Description *</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  placeholder="Describe the tool, its season, materials, and memories..."
-                  className="input focus-ring"
-                  style={{ height: "auto", padding: "10px 14px" }}
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Contributor</label>
-                <input
-                  value={newContributor}
-                  onChange={(e) => setNewContributor(e.target.value)}
-                  placeholder={user?.email || "e.g. Grandfather Sok"}
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Place of Origin</label>
-                <input
-                  value={newPlace}
-                  onChange={(e) => setNewPlace(e.target.value)}
-                  placeholder="e.g. ខេត្តកំពង់ចាម (Kampong Cham)"
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Photo Upload (JPG, PNG, WebP)</label>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (!file) {
-                      setNewPhotoFile(null);
-                      return;
-                    }
-                    if (file.size > 5 * 1024 * 1024) {
-                      setPhotoError("Image size must be under 5 MB.");
-                      setNewPhotoFile(null);
-                      return;
-                    }
-                    setNewPhotoFile(file);
-                    setPhotoError("");
-                  }}
-                  className="input focus-ring"
-                  style={{ height: "auto", padding: "8px 12px" }}
-                />
-                {photoError && <span style={{ color: "#EA580C", fontSize: "12px" }}>{photoError}</span>}
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "12px" }}>
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  style={{
-                    padding: "10px 18px",
-                    borderRadius: "9999px",
-                    border: "1px solid #3A2922",
-                    background: "transparent",
-                    color: "#bdb1a1",
-                    cursor: "pointer"
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !!photoError}
-                  className="btn btn-primary"
-                  style={{ borderRadius: "9999px", padding: "0 22px" }}
-                >
-                  {isSubmitting ? "Uploading..." : "Submit Tool"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Tool Modal */}
-      {editEntry && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(17, 15, 13, 0.85)",
-            backdropFilter: "blur(8px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            zIndex: 1000
-          }}
-          onClick={() => setEditEntry(null)}
-        >
-          <div
-            style={{
-              backgroundColor: "#1C1816",
-              border: "1px solid #3A2922",
-              borderRadius: "16px",
-              padding: "32px",
-              width: "100%",
-              maxWidth: "480px",
-              boxSizing: "border-box",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 25px 50px rgba(0,0,0,0.8)"
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h3 style={{ margin: 0, fontSize: "20px", color: "#F59E0B", fontWeight: 700 }}>
-                កែប្រែឧបករណ៍ / Edit Tool
-              </h3>
-              <button
-                type="button"
-                onClick={() => setEditEntry(null)}
-                style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#bdb1a1" }}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleEditSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Tool Title *</label>
-                <input
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Description *</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  className="input focus-ring"
-                  style={{ height: "auto", padding: "10px 14px" }}
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Contributor</label>
-                <input
-                  value={newContributor}
-                  onChange={(e) => setNewContributor(e.target.value)}
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Place of Origin</label>
-                <input
-                  value={newPlace}
-                  onChange={(e) => setNewPlace(e.target.value)}
-                  className="input focus-ring"
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "13px", fontWeight: 600, color: "#f3ece0" }}>Replace Photo (Optional)</label>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (!file) {
-                      setNewPhotoFile(null);
-                      return;
-                    }
-                    if (file.size > 5 * 1024 * 1024) {
-                      setPhotoError("Image size must be under 5 MB.");
-                      setNewPhotoFile(null);
-                      return;
-                    }
-                    setNewPhotoFile(file);
-                    setPhotoError("");
-                  }}
-                  className="input focus-ring"
-                  style={{ height: "auto", padding: "8px 12px" }}
-                />
-                {photoError && <span style={{ color: "#EA580C", fontSize: "12px" }}>{photoError}</span>}
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "12px" }}>
-                <button
-                  type="button"
-                  onClick={() => setEditEntry(null)}
-                  style={{
-                    padding: "10px 18px",
-                    borderRadius: "9999px",
-                    border: "1px solid #3A2922",
-                    background: "transparent",
-                    color: "#bdb1a1",
-                    cursor: "pointer"
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !!photoError}
-                  className="btn btn-primary"
-                  style={{ borderRadius: "9999px", padding: "0 22px" }}
-                >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </main>
+      {/* Card Footer with Clean Map Pin SVG (ZERO EMOJIS) */}
+      <div style={{ borderTop: '1px solid #281D17', paddingTop: '10px', marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: '#A8A29E' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+          <svg style={{ width: '12px', height: '12px', color: '#EA580C' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {tool.place ? tool.place.split(',')[0].trim() : 'Kampong Cham'}
+        </span>
+        <span style={{ color: '#F59E0B', fontWeight: '600' }}>Inspect &rarr;</span>
+      </div>
+    </div>
   );
 }

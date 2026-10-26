@@ -332,7 +332,7 @@ export default function MyEntriesPage() {
       {loadingEntries ? (
         <div style={{ textAlign: "center", padding: "var(--space-64)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
           <p style={{ margin: 0, fontSize: 16, color: "var(--color-muted)", fontFamily: "var(--font-sans), var(--font-khmer)" }}>
-            🌾 កំពុងទាញយកកំណត់ត្រា... / Loading your entries...
+            កំពុងទាញយកកំណត់ត្រា... / Loading your entries...
           </p>
         </div>
       ) : filteredEntries.length > 0 ? (
@@ -352,7 +352,11 @@ export default function MyEntriesPage() {
         </div>
       ) : (
         <div style={{ textAlign: "center", padding: "var(--space-64) var(--space-24)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>🌾</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+            <svg style={{ width: 36, height: 36, color: "var(--color-terracotta, #EA580C)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+          </div>
           <p style={{ margin: "0 0 6px", fontSize: 17, fontWeight: 600, color: "var(--color-paper)", fontFamily: "var(--font-sans), var(--font-khmer)" }}>
             {statusFilter === "all"
               ? "មិនទាន់មានកំណត់ត្រានៅឡើយទេ / No entries yet"

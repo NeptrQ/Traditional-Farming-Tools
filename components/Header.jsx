@@ -30,131 +30,182 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-2 z-50 w-full px-4" style={{ position: "sticky", top: "8px", zIndex: 100, width: "100%", padding: "0 16px", boxSizing: "border-box" }}>
-      <div
-        className="max-w-5xl mx-auto rounded-full bg-[#1C1816]/95 border border-[#3A2922] px-6 py-3 my-4 shadow-xl flex items-center justify-between text-xs md:text-sm"
+    <div style={{ position: "sticky", top: "14px", zIndex: 100, padding: "0 16px", width: "100%", boxSizing: "border-box" }}>
+      <header
         style={{
-          maxWidth: "64rem",
-          margin: "0.75rem auto",
+          maxWidth: "1080px",
+          margin: "0 auto",
           borderRadius: "9999px",
-          backgroundColor: "rgba(28, 24, 22, 0.95)",
-          border: "1px solid #3A2922",
-          padding: "10px 22px",
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.6)",
+          border: "1px solid rgba(82, 54, 42, 0.85)",
+          backgroundColor: "rgba(20, 16, 13, 0.92)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          padding: "10px 24px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
+          boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(234, 88, 12, 0.12)",
+          boxSizing: "border-box",
+          position: "relative"
         }}
       >
-        {/* Left Links */}
-        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: "18px", flex: "1 1 0" }}>
-          <Link
-            href="/"
-            className="hover:text-[#F59E0B] transition-colors"
-            style={{ textDecoration: "none", color: pathname === "/" ? "#F59E0B" : "#bdb1a1", fontWeight: 500 }}
-          >
-            Archive
-          </Link>
-          <a
-            href="/#seasons"
-            className="hover:text-[#F59E0B] transition-colors"
-            style={{ textDecoration: "none", color: "#bdb1a1", fontWeight: 500 }}
-          >
-            Seasons
-          </a>
-        </nav>
-
-        {/* Brand Center Title */}
-        <Link
-          href="/"
-          className="flex flex-col items-center text-center px-2 focus:outline-none"
-          style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 8px" }}
-        >
-          <span
-            className="font-bold text-[#F59E0B] tracking-wider uppercase text-xs md:text-sm"
-            style={{ color: "#F59E0B", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" }}
-          >
-            KHMER · LIVING · ARCHIVE
-          </span>
-          <span
-            className="text-[10px] md:text-xs text-[#bdb1a1] tracking-normal font-normal"
-            style={{ color: "#bdb1a1", fontSize: "11px", letterSpacing: "0.02em" }}
-          >
-            Traditional Farming Tools · Kampong Cham
-          </span>
+        {/* Left: Brand with Clean Geometric SVG Icon (NO EMOJI) */}
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: "#271710", border: "1px solid #522E1F", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg style={{ width: "16px", height: "16px", color: "#F59E0B" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 3v3M12 18v3M3 12h3M18 12h3" strokeLinecap="round" />
+            </svg>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-serif), Georgia, serif",
+                fontWeight: 700,
+                fontSize: "17px",
+                color: "#FFFFFF",
+                letterSpacing: "0.02em",
+                lineHeight: 1.2
+              }}
+            >
+              The Khmer Living Archive
+            </span>
+            <span style={{ fontSize: "10px", color: "#A8A29E", fontFamily: "monospace", letterSpacing: "1px", textTransform: "uppercase" }}>
+              Kampong Cham Oral Collection
+            </span>
+          </div>
         </Link>
 
-        {/* Right Links & Auth */}
-        <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: "16px", flex: "1 1 0", justifyContent: "flex-end" }}>
-          <Link
-            href="/contribute"
-            className="hover:text-[#F59E0B] transition-colors"
-            style={{ textDecoration: "none", color: pathname === "/contribute" ? "#F59E0B" : "#bdb1a1", fontWeight: 500 }}
+        {/* Center/Right Desktop Navigation */}
+        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <a
+            href="/#tools"
+            style={{ textDecoration: "none", color: "#D6D3D1", fontSize: "13px", fontWeight: 500, transition: "color 0.2s ease" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#F59E0B")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#D6D3D1")}
           >
-            Contribute
-          </Link>
+            10 Implements
+          </a>
+          <a
+            href="/#heritage"
+            style={{ textDecoration: "none", color: "#D6D3D1", fontSize: "13px", fontWeight: 500, transition: "color 0.2s ease" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#F59E0B")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#D6D3D1")}
+          >
+            Woodcraft Compass
+          </a>
+
+          <span style={{ width: "1px", height: "16px", backgroundColor: "rgba(82, 54, 42, 0.7)" }} />
+
           {user && (
             <Link
               href="/my-entries"
-              className="hover:text-[#F59E0B] transition-colors"
-              style={{ textDecoration: "none", color: pathname === "/my-entries" ? "#F59E0B" : "#bdb1a1", fontWeight: 500 }}
+              style={{ textDecoration: "none", color: "#D6D3D1", fontSize: "13px", fontWeight: 500 }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#F59E0B")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#D6D3D1")}
             >
               My Entries
             </Link>
           )}
+
+          <Link
+            href="/contribute"
+            style={{
+              textDecoration: "none",
+              color: "#FED7AA",
+              backgroundColor: "#261710",
+              border: "1px solid #4D2D20",
+              padding: "6px 14px",
+              borderRadius: "9999px",
+              fontSize: "12px",
+              fontFamily: "monospace",
+              transition: "border-color 0.2s ease"
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#EA580C")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#4D2D20")}
+          >
+            + Contribute Tool
+          </Link>
+
           {user ? (
             <button
               onClick={handleLogout}
-              className="rounded-full border border-[#3A2922] px-3.5 py-1 text-[#bdb1a1] hover:text-white hover:border-[#EA580C] transition-colors"
-              style={{ background: "none", border: "1px solid #3A2922", borderRadius: "9999px", padding: "4px 12px", color: "#bdb1a1", cursor: "pointer", fontSize: "12px" }}
+              style={{
+                background: "none",
+                border: "1px solid #3E2920",
+                borderRadius: "9999px",
+                padding: "5px 14px",
+                color: "#A8A29E",
+                cursor: "pointer",
+                fontSize: "12px"
+              }}
             >
               Log Out
             </button>
           ) : (
             <Link
               href="/login"
-              className="rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-white px-3.5 py-1.5 font-semibold shadow transition-colors"
-              style={{ textDecoration: "none", backgroundColor: "#EA580C", color: "#ffffff", padding: "6px 14px", borderRadius: "9999px", fontWeight: 600, fontSize: "12px" }}
+              style={{
+                textDecoration: "none",
+                backgroundColor: "#EA580C",
+                backgroundImage: "linear-gradient(to right, #EA580C, #C2410C)",
+                color: "#ffffff",
+                padding: "6px 18px",
+                borderRadius: "9999px",
+                fontWeight: 600,
+                fontSize: "12px",
+                boxShadow: "0 4px 14px rgba(234, 88, 12, 0.35)"
+              }}
             >
               Log In
             </Link>
           )}
-        </div>
+        </nav>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Toggle */}
         <button
           className="mobile-toggle"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle Navigation"
-          style={{ background: "none", border: "none", color: "#f3ece0", cursor: "pointer", padding: "4px", display: "none" }}
+          aria-label="Toggle navigation"
+          style={{ background: "none", border: "none", color: "#E7E3DF", cursor: "pointer", display: "none", padding: "4px" }}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d={menuOpen ? "M18 6L6 18M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
         </button>
-      </div>
 
-      {/* Mobile Drawer */}
-      {menuOpen && (
-        <div
-          className="mobile-menu max-w-5xl mx-auto rounded-2xl bg-[#1C1816] border border-[#3A2922] p-5 shadow-2xl flex flex-col gap-3"
-          style={{ maxWidth: "64rem", margin: "4px auto 0", backgroundColor: "#1C1816", border: "1px solid #3A2922", borderRadius: "16px", padding: "16px 20px", display: "flex", flexDirection: "column", gap: "12px" }}
-        >
-          <Link href="/" onClick={() => setMenuOpen(false)} style={{ color: "#f3ece0", textDecoration: "none" }}>Archive</Link>
-          <a href="/#seasons" onClick={() => setMenuOpen(false)} style={{ color: "#f3ece0", textDecoration: "none" }}>Seasons</a>
-          <Link href="/contribute" onClick={() => setMenuOpen(false)} style={{ color: "#f3ece0", textDecoration: "none" }}>Contribute</Link>
-          {user && <Link href="/my-entries" onClick={() => setMenuOpen(false)} style={{ color: "#f3ece0", textDecoration: "none" }}>My Entries</Link>}
-          <div style={{ paddingTop: "8px", borderTop: "1px solid #3A2922" }}>
+        {/* Mobile Menu Dropdown */}
+        {menuOpen && (
+          <div
+            style={{
+              position: "absolute",
+              top: "calc(100% + 10px)",
+              left: 0,
+              right: 0,
+              backgroundColor: "#16120E",
+              border: "1px solid #4D2D20",
+              borderRadius: "20px",
+              padding: "18px 24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.9)",
+              zIndex: 100
+            }}
+          >
+            <a href="/#tools" onClick={() => setMenuOpen(false)} style={{ color: "#E7E3DF", textDecoration: "none" }}>10 Implements</a>
+            <a href="/#heritage" onClick={() => setMenuOpen(false)} style={{ color: "#E7E3DF", textDecoration: "none" }}>Woodcraft Compass</a>
+            <Link href="/contribute" onClick={() => setMenuOpen(false)} style={{ color: "#F59E0B", textDecoration: "none" }}>+ Contribute Tool</Link>
+            {user && <Link href="/my-entries" onClick={() => setMenuOpen(false)} style={{ color: "#E7E3DF", textDecoration: "none" }}>My Entries</Link>}
+            <div style={{ height: "1px", backgroundColor: "#2E221C", margin: "4px 0" }} />
             {user ? (
-              <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#EA580C", cursor: "pointer", padding: 0 }}>Log Out</button>
+              <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#EA580C", textAlign: "left", padding: 0, cursor: "pointer" }}>Log Out</button>
             ) : (
-              <Link href="/login" onClick={() => setMenuOpen(false)} style={{ color: "#F59E0B", textDecoration: "none", fontWeight: 600 }}>Log In</Link>
+              <Link href="/login" onClick={() => setMenuOpen(false)} style={{ color: "#EA580C", textDecoration: "none", fontWeight: 600 }}>Log In</Link>
             )}
           </div>
-        </div>
-      )}
-    </header>
+        )}
+      </header>
+    </div>
   );
 }

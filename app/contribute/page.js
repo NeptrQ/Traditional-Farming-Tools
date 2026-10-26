@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../utils/supabase/client.js";
 
+const CATEGORY_OPTIONS = [
+  "Soil Preparation (ភ្ជួររាស់)",
+  "Planting & Floods (សាបព្រោះ & ស្ទូង)",
+  "The Harvest (ច្រូតកាត់)",
+  "Granary & Storage (ទុកដាក់ & ជីវភាព)"
+];
+
 export default function ContributePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -12,6 +19,7 @@ export default function ContributePage() {
 
   const [formData, setFormData] = useState({
     title: "",
+    category: "Soil Preparation (ភ្ជួររាស់)",
     description: "",
     contributor: "",
     place: "",
@@ -74,12 +82,15 @@ export default function ContributePage() {
   const validate = () => {
     const newErrors = {};
     const t = formData.title.trim();
+    const cat = formData.category;
     const d = formData.description.trim();
     const c = formData.contributor.trim();
     const p = formData.place.trim();
 
     if (!t) newErrors.title = "Title is required.";
     else if (t.length > 200) newErrors.title = "Title must be 200 characters or less.";
+
+    if (!cat) newErrors.category = "Season / Category is required.";
 
     if (!d) newErrors.description = "Description is required.";
     else if (d.length > 2000) newErrors.description = "Description must be 2000 characters or less.";
@@ -131,11 +142,14 @@ export default function ContributePage() {
         .from('photos')
         .getPublicUrl(filePath);
 
+      // Package category prefix in description to preserve categorization without schema changes
+      const formattedDescription = `[Category: ${formData.category}]\n\n${formData.description.trim()}`;
+
       const { error: insertError } = await supabase
         .from('entries')
         .insert({
           title: formData.title.trim(),
-          description: formData.description.trim(),
+          description: formattedDescription,
           contributor: formData.contributor.trim(),
           place: formData.place.trim(),
           photo_url: publicUrl,
@@ -147,6 +161,7 @@ export default function ContributePage() {
       setSubmitted(true);
       setFormData({
         title: "",
+        category: "Soil Preparation (ភ្ជួររាស់)",
         description: "",
         contributor: "",
         place: "",
@@ -162,14 +177,14 @@ export default function ContributePage() {
   };
 
   if (loadingAuth) {
-    return <div className="container" style={{ padding: "var(--space-64) 1.5rem", color: "var(--color-paper)" }}>Loading...</div>;
+    return <div className="container" style={{ padding: "48px 1.5rem", color: "#E7E3DF" }}>Loading...</div>;
   }
 
   if (!user) {
     return (
-      <div className="container" style={{ padding: "var(--space-64) 1.5rem", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div className="page-animate" style={{ textAlign: "center", background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", maxWidth: 400 }}>
-          <p style={{ color: "var(--color-paper)", marginBottom: "var(--space-24)" }}>Please log in to contribute to the archive</p>
+      <div className="container" style={{ padding: "64px 1.5rem", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center", backgroundColor: "#1A1715", border: "1px solid #382821", borderRadius: "16px", padding: "40px", maxWidth: 420 }}>
+          <p style={{ color: "#E7E3DF", marginBottom: "24px", fontSize: "16px" }}>Please log in to contribute to the archive</p>
           <Link href="/login" className="btn btn-primary focus-ring">Go to Login</Link>
         </div>
       </div>
@@ -177,27 +192,31 @@ export default function ContributePage() {
   }
 
   return (
-    <main className="container page-animate" style={{ padding: "var(--space-64) 1.5rem", display: "flex", justifyContent: "center" }}>
-      <div style={{ background: "var(--input-bg)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", padding: "var(--space-40)", width: "100%", maxWidth: 600 }}>
-        <h1 className="khmer-title" style={{ color: "var(--color-straw-gold)", fontSize: 32, margin: "0 0 24px", textAlign: "center" }}>Add New Entry</h1>
+    <main className="container" style={{ padding: "56px 1.5rem 80px", display: "flex", justifyContent: "center" }}>
+      <div style={{ backgroundColor: "#1A1715", border: "1px solid #382821", borderRadius: "16px", padding: "40px 32px", width: "100%", maxWidth: 620, boxShadow: "0 20px 40px rgba(0,0,0,0.6)" }}>
+        <h1 className="khmer-title" style={{ color: "#F59E0B", fontSize: 28, margin: "0 0 8px", textAlign: "center", lineHeight: 1.6 }}>
+          បន្ថែមឧបករណ៍កសិកម្មថ្មី
+        </h1>
+        <p style={{ textAlign: "center", color: "#A8A29E", fontSize: "14px", margin: "0 0 28px" }}>
+          Contribute a traditional farming implement to the Living Archive
+        </p>
         
         {submitted ? (
-          <div style={{ textAlign: "center", padding: "var(--space-24) 0" }}>
-            <div style={{ fontSize: 44, marginBottom: "var(--space-16)" }}>🌾</div>
+          <div style={{ textAlign: "center", padding: "24px 0" }}>
             <p style={{
-              fontSize: 16,
-              lineHeight: 1.6,
-              color: "var(--color-paper)",
-              marginBottom: "var(--space-32)",
-              fontFamily: "var(--font-sans), var(--font-khmer)",
-              padding: "16px 20px",
-              backgroundColor: "rgba(232, 176, 74, 0.12)",
-              border: "1px solid var(--accent)",
-              borderRadius: "var(--radius-md)"
+              fontSize: 15,
+              lineHeight: 1.7,
+              color: "#E7E3DF",
+              marginBottom: "32px",
+              fontFamily: "var(--font-khmer), var(--font-sans)",
+              padding: "20px 24px",
+              backgroundColor: "rgba(245, 158, 11, 0.08)",
+              border: "1px solid rgba(245, 158, 11, 0.3)",
+              borderRadius: "12px"
             }}>
               សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ! / Your entry has been submitted for review! It will be verified by an archivist before appearing in the public collection.
             </p>
-            <div style={{ display: "flex", gap: "var(--space-16)", justifyContent: "center", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
               <Link href="/my-entries" className="btn btn-primary focus-ring">
                 My Entries / កំណត់ត្រារបស់ខ្ញុំ
               </Link>
@@ -206,88 +225,142 @@ export default function ContributePage() {
                 onClick={() => setSubmitted(false)}
                 className="btn btn-secondary focus-ring"
               >
-                បន្ថែមឧបករណ៍ផ្សេងទៀត / Submit Another Tool
+                Submit Another Tool
               </button>
             </div>
           </div>
         ) : (
           <>
-            {submitError && <div style={{ backgroundColor: "var(--surface-soft)", border: "1px solid var(--color-ember-clay)", color: "var(--color-paper)", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: 14, marginBottom: "var(--space-24)" }}>{submitError}</div>}
+            {submitError && (
+              <div style={{ backgroundColor: "rgba(234, 88, 12, 0.15)", border: "1px solid #EA580C", color: "#E7E3DF", borderRadius: "8px", padding: "12px 16px", fontSize: 14, marginBottom: "24px" }}>
+                {submitError}
+              </div>
+            )}
             
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-24)" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <label htmlFor="title" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Title</label>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {/* Title */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="title" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Tool Title / ឈ្មោះឧបករណ៍ *
+                </label>
                 <input
                   id="title"
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
+                  placeholder="e.g. នង្គ័ល (Plough)"
                   maxLength={200}
                   className="input focus-ring"
-                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                  style={{ height: 46, backgroundColor: "#12100E", border: "1px solid #382821", color: "#E7E3DF", borderRadius: "8px" }}
                 />
-                {errors.title && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.title}</span>}
+                {errors.title && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.title}</span>}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <label htmlFor="description" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Description</label>
+              {/* Season / Category Required Dropdown */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="category" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Season / Category (រដូវកាលកសិកម្ម) *
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  required
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="input focus-ring"
+                  style={{
+                    height: 46,
+                    backgroundColor: "#12100E",
+                    border: "1px solid #382821",
+                    color: "#E7E3DF",
+                    borderRadius: "8px",
+                    padding: "0 12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt} style={{ backgroundColor: "#1A1715", color: "#E7E3DF" }}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.category}</span>}
+              </div>
+
+              {/* Description */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="description" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Description &amp; Oral Story / ការពិពណ៌នា *
+                </label>
                 <textarea
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
+                  placeholder="Describe the tool, its agricultural season, craftsmanship, and oral memories from elders..."
                   maxLength={2000}
                   className="input focus-ring"
-                  style={{ minHeight: 120, padding: 12, resize: "vertical", background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                  style={{ minHeight: 120, padding: "12px", resize: "vertical", backgroundColor: "#12100E", border: "1px solid #382821", color: "#E7E3DF", borderRadius: "8px" }}
                 />
-                {errors.description && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.description}</span>}
+                {errors.description && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.description}</span>}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <label htmlFor="contributor" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Contributor (Elder/Source)</label>
+              {/* Contributor */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="contributor" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Contributor (Elder / Source) *
+                </label>
                 <input
                   id="contributor"
                   name="contributor"
                   value={formData.contributor}
                   onChange={handleInputChange}
+                  placeholder="e.g. Grandfather Sok (Kampong Siem)"
                   className="input focus-ring"
-                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                  style={{ height: 46, backgroundColor: "#12100E", border: "1px solid #382821", color: "#E7E3DF", borderRadius: "8px" }}
                 />
-                {errors.contributor && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.contributor}</span>}
+                {errors.contributor && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.contributor}</span>}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <label htmlFor="place" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Place (Province/Origin)</label>
+              {/* Place */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="place" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Place of Origin (Province / District) *
+                </label>
                 <input
                   id="place"
                   name="place"
                   value={formData.place}
                   onChange={handleInputChange}
+                  placeholder="e.g. Kampong Cham"
                   className="input focus-ring"
-                  style={{ height: 48, background: "var(--surface)", border: "1px solid var(--border)", color: "var(--color-paper)" }}
+                  style={{ height: 46, backgroundColor: "#12100E", border: "1px solid #382821", color: "#E7E3DF", borderRadius: "8px" }}
                 />
-                {errors.place && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.place}</span>}
+                {errors.place && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.place}</span>}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <label htmlFor="photo" style={{ fontSize: 14, fontWeight: 500, color: "var(--color-muted)", fontFamily: "var(--font-sans)" }}>Photo</label>
+              {/* Photo */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label htmlFor="photo" style={{ fontSize: 13.5, fontWeight: 600, color: "#E7E3DF" }}>
+                  Photo Upload (JPG, PNG, WebP) *
+                </label>
                 <input
                   id="photo"
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   onChange={handleFileChange}
-                  style={{ color: "var(--color-paper)" }}
+                  style={{ color: "#A8A29E", fontSize: "14px" }}
                 />
-                {errors.photo && <span style={{ color: "var(--color-ember-clay)", fontSize: 13 }}>{errors.photo}</span>}
+                {errors.photo && <span style={{ color: "#EA580C", fontSize: 12.5 }}>{errors.photo}</span>}
               </div>
 
               <button 
                 type="submit" 
                 disabled={isSubmitting}
                 className="btn btn-primary focus-ring"
-                style={{ width: "100%", height: 48, marginTop: 16, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
+                style={{ width: "100%", height: 48, marginTop: 8, opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? "not-allowed" : "pointer" }}
               >
-                {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry"}
+                {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading..." : "Submit Entry for Review"}
               </button>
             </form>
           </>
@@ -296,4 +369,3 @@ export default function ContributePage() {
     </main>
   );
 }
-

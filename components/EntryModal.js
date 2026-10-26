@@ -52,8 +52,8 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
               <p style={{ fontSize: "16px", lineHeight: 1.6, color: "var(--color-paper)", whiteSpace: "pre-wrap", margin: "0 0 var(--space-24)", fontFamily: "var(--font-sans), var(--font-khmer)" }}>{entry.description}</p>
               
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: "var(--space-24)" }}>
-                {entry.contributor && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>👤 {entry.contributor}</span>}
-                {entry.place && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>📍 {entry.place}</span>}
+                {entry.contributor && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>Contributor: {entry.contributor}</span>}
+                {entry.place && <span style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--input-bg)", border: "1px solid var(--border)", color: "var(--color-muted)", fontSize: 14 }}>Location: {entry.place}</span>}
               </div>
             </div>
 

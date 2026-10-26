@@ -6,9 +6,9 @@
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #110F0D; /* Deep Smoked Teak */
-  --text: #f3ece0; /* 16.1:1 on bg */
-  --text-muted: #bdb1a1; /* 9.0:1 */
+  --bg: #12100E; /* Deep Teak Wood */
+  --text: #E7E3DF; /* Warm white */
+  --text-muted: #A8A29E; /* Muted stone */
   --accent: #EA580C; /* Kampong Cham Terracotta */
   --accent-hover: #C2410C;
   --accent-contrast: #ffffff; /* text on terracotta buttons */
