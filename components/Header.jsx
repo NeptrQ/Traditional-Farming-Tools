@@ -7,14 +7,30 @@ import { createClient } from "../utils/supabase/client.js";
 
 export default function Header() {
   const [user, setUser] = useState(null);
+  const [isReviewer, setIsReviewer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user ?? null));
+
+    async function checkReviewer(currentUser) {
+      setUser(currentUser ?? null);
+      if (currentUser) {
+        try {
+          const { data: rev } = await supabase.rpc('is_reviewer');
+          setIsReviewer(rev === true);
+        } catch {
+          setIsReviewer(false);
+        }
+      } else {
+        setIsReviewer(false);
+      }
+    }
+
+    supabase.auth.getUser().then(({ data }) => checkReviewer(data?.user));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      checkReviewer(session?.user);
     });
     return () => subscription?.unsubscribe();
   }, []);
@@ -27,6 +43,7 @@ export default function Header() {
     const supabase = createClient();
     await supabase.auth.signOut();
     setUser(null);
+    setIsReviewer(false);
   }
 
   return (
@@ -105,6 +122,31 @@ export default function Header() {
               onMouseLeave={(e) => (e.currentTarget.style.color = "#D6D3D1")}
             >
               My Entries
+            </Link>
+          )}
+
+          {isReviewer && (
+            <Link
+              href="/review"
+              style={{
+                textDecoration: "none",
+                color: "#F59E0B",
+                fontSize: "13px",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "4px 12px",
+                borderRadius: "9999px",
+                backgroundColor: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.35)",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#F59E0B")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(245, 158, 11, 0.35)")}
+            >
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
+              Review Queue
             </Link>
           )}
 
@@ -197,6 +239,23 @@ export default function Header() {
             <a href="/#heritage" onClick={() => setMenuOpen(false)} style={{ color: "#E7E3DF", textDecoration: "none" }}>Woodcraft Compass</a>
             <Link href="/contribute" onClick={() => setMenuOpen(false)} style={{ color: "#F59E0B", textDecoration: "none" }}>+ Contribute Tool</Link>
             {user && <Link href="/my-entries" onClick={() => setMenuOpen(false)} style={{ color: "#E7E3DF", textDecoration: "none" }}>My Entries</Link>}
+            {isReviewer && (
+              <Link
+                href="/review"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  color: "#F59E0B",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
+                Review Queue
+              </Link>
+            )}
             <div style={{ height: "1px", backgroundColor: "#2E221C", margin: "4px 0" }} />
             {user ? (
               <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#EA580C", textAlign: "left", padding: 0, cursor: "pointer" }}>Log Out</button>
