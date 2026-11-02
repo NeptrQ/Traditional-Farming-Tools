@@ -140,7 +140,7 @@ export default function AtmosphereCanvas() {
           height: '500px',
           borderRadius: '50%',
           filter: 'blur(130px)',
-          opacity: 0.35,
+          opacity: 0.12,
           background: 'radial-gradient(circle, #EA580C 0%, transparent 70%)',
           top: 0,
           left: 0,

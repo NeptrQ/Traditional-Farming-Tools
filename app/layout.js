@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();" }} />
       </head>
-      <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "#12100E", color: "#E7E3DF" }}>
+      <body style={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "#F7F4EE", color: "#191614" }}>
         <LanguageProvider>
           {/* Pure CSS Harvest Rice Chaff Particles */}
           <div

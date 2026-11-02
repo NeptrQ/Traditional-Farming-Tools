@@ -390,22 +390,118 @@ html {
   }
 }
 
-/* Premium Museum Card Glassmorphism & Hover Glow */
-.museum-card {
-  position: relative;
-  background: linear-gradient(180deg, #181310 0%, #110E0B 100%);
-  border: 1px solid rgba(82, 54, 42, 0.7);
-  border-radius: 18px;
+/* Premium Editorial Cards (Pratham Inspired) */
+.exhibit-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(40, 28, 18, 0.1);
+  border-radius: 22px;
   padding: 16px;
+  box-shadow: 0 14px 34px -10px rgba(40, 28, 18, 0.06);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.3s ease;
 }
 
-.museum-card:hover {
-  transform: translateY(-5px);
+.exhibit-card:hover {
+  transform: translateY(-8px);
   border-color: #EA580C !important;
-  box-shadow: 0 16px 36px -10px rgba(234, 88, 12, 0.4), 0 0 20px rgba(234, 88, 12, 0.15);
+  box-shadow: 0 24px 50px -12px rgba(234, 88, 12, 0.22);
+}
+
+/* Staggered organic rhythm (middle card elevated on desktop) */
+@media (min-width: 992px) {
+  .exhibit-card:nth-child(3n+2) {
+    transform: translateY(18px);
+  }
+  .exhibit-card:nth-child(3n+2):hover {
+    transform: translateY(10px);
+  }
+}
+
+/* 3D Perspective Pillar Cards */
+.pillar-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(40, 28, 18, 0.1);
+  border-radius: 24px;
+  padding: 26px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 36px -10px rgba(40, 28, 18, 0.06);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.25s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #EA580C;
+  box-shadow: 0 24px 50px -12px rgba(234, 88, 12, 0.2);
+}
+
+.pillar-card.active {
+  border: 2px solid #EA580C;
+  background: #FFFDF9;
+}
+
+/* Material Toolkit Chips */
+.tool-chip {
+  background: #FFFFFF;
+  border: 1px solid rgba(40, 28, 18, 0.12);
+  border-radius: 18px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #191614;
+  box-shadow: 0 8px 24px rgba(40, 28, 18, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: default;
+}
+
+.tool-chip:hover {
+  transform: translateY(-5px) rotate(-1deg);
+  border-color: #EA580C;
+  box-shadow: 0 16px 32px rgba(234, 88, 12, 0.16);
+}
+
+/* Watermark Background Display Typography */
+.watermark-hero {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  font-size: clamp(80px, 16vw, 210px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: rgba(40, 28, 18, 0.035);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  z-index: 0;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+}
+
+.watermark-archive {
+  position: absolute;
+  top: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(60px, 14vw, 180px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: rgba(40, 28, 18, 0.035);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  z-index: 0;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
 }
