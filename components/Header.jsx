@@ -127,6 +127,14 @@ export default function Header() {
           >
             Materials
           </a>
+          <a
+            href="/#tape"
+            style={{ textDecoration: "none", color: "#57534E", fontSize: "13.5px", fontWeight: 500, transition: "color 0.2s ease" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#EA580C")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#57534E")}
+          >
+            Oral Tape
+          </a>
 
           <span style={{ width: "1px", height: "16px", backgroundColor: "rgba(40, 28, 18, 0.15)" }} />
 
@@ -265,6 +273,7 @@ export default function Header() {
             <a href="/#pillars" onClick={() => setMenuOpen(false)} style={{ color: "#191614", textDecoration: "none", fontWeight: 500 }}>Four Pillars</a>
             <a href="/#archive" onClick={() => setMenuOpen(false)} style={{ color: "#191614", textDecoration: "none", fontWeight: 500 }}>Visual Archive</a>
             <a href="/#materials" onClick={() => setMenuOpen(false)} style={{ color: "#191614", textDecoration: "none", fontWeight: 500 }}>Materials Toolkit</a>
+            <a href="/#tape" onClick={() => setMenuOpen(false)} style={{ color: "#191614", textDecoration: "none", fontWeight: 500 }}>Oral Tape</a>
             <Link href="/contribute" onClick={() => setMenuOpen(false)} style={{ color: "#EA580C", textDecoration: "none", fontWeight: 600 }}>+ Contribute Tool</Link>
             {user && <Link href="/my-entries" onClick={() => setMenuOpen(false)} style={{ color: "#191614", textDecoration: "none" }}>My Entries</Link>}
             {isReviewer && (
