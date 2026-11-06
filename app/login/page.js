@@ -20,6 +20,7 @@ export default function LoginPage() {
         const { data } = await supabase
           .from("entries")
           .select("*")
+          .eq("status", "published")
           .not("photo_url", "is", null)
           .limit(1);
         if (data && data.length > 0) {

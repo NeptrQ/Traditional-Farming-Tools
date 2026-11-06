@@ -139,19 +139,15 @@ export default function MyEntriesPage() {
       publicUrl = url;
     }
 
-    const { data: isReviewer } = await supabase.rpc("is_reviewer");
-
+    // Whenever an entry is edited, it must go back to 'pending' to satisfy Lab 10/11 edit rules
     const updatePayload = {
       title: editTitle,
       description: editDesc,
       place: editPlace,
       contributor: editContributor,
       photo_url: publicUrl,
+      status: "pending",
     };
-
-    if (!isReviewer) {
-      updatePayload.status = "pending";
-    }
 
     const { data, error } = await supabase
       .from("entries")
