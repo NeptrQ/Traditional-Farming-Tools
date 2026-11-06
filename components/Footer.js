@@ -24,7 +24,7 @@ export default function Footer() {
             CURATORIAL STEWARD
           </span>
           <span style={{ fontSize: "13px", color: "#191614", fontWeight: 600 }}>
-            Srorn Vanuth · Japanese Pathway
+            Srorn Vanuth
           </span>
         </div>
       </div>
