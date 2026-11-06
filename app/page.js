@@ -17,7 +17,8 @@ const DEFAULT_TOOLS = [
     material: 'Kokir Ironwood · Spring Steel Tip',
     place: 'Kampong Siem, Kampong Cham',
     description: 'Carved from aged Kokir ironwood. Specially angled to slice 20cm deep into sticky basalt red soil without snapping under draft tension.',
-    photo_url: '/images/traditional_plough.jpg'
+    photo_url: '/images/traditional_plough.jpg',
+    status: 'published'
   },
   {
     id: '2',
@@ -29,7 +30,8 @@ const DEFAULT_TOOLS = [
     material: 'Ironwood Frame · Chiseled Teeth',
     place: 'Batheay, Kampong Cham',
     description: 'Hand-chiseled ironwood comb with 7 teeth that pulverize hardened mud clods so baby rice seedlings can take root and breathe.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '3',
@@ -41,7 +43,8 @@ const DEFAULT_TOOLS = [
     material: 'Curved Tamarind Wood · Rawhide Ties',
     place: 'Kampong Siem, Kampong Cham',
     description: 'Curved neck beam designed to balance pulling tension across twin draft cattle over 8 continuous hours of muddy drag.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '4',
@@ -53,7 +56,8 @@ const DEFAULT_TOOLS = [
     material: 'Blacksmith Carbon Steel · Tamarind Shaft',
     place: 'Prey Chhor, Kampong Cham',
     description: 'Heavy steel blade hand-forged by village blacksmiths for digging irrigation ditches and repairing earthen paddy bunds.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '5',
@@ -65,7 +69,8 @@ const DEFAULT_TOOLS = [
     material: 'Solid Spoke Hubs · Woven Bamboo Rack',
     place: 'Chamkar Leu, Kampong Cham',
     description: 'Solid high-clearance spoke wheels engineered to roll through deep wet mud during monsoon season carrying 30 sacks of unhusked rice.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '6',
@@ -77,7 +82,8 @@ const DEFAULT_TOOLS = [
     material: 'Serrated Blacksmith Steel · Bamboo Grip',
     place: 'Kang Meas, Kampong Cham',
     description: 'Fine-toothed curved steel blade forged to slice rice stalks in rapid one-handed sweeps during the golden dry season harvest.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '7',
@@ -89,7 +95,8 @@ const DEFAULT_TOOLS = [
     material: 'Smoked Bamboo Splints · Rattan Trim',
     place: 'Cheung Prey, Kampong Cham',
     description: 'Woven bamboo platter tossed into evening Mekong breezes to separate empty husks from golden grain by natural aerodynamics.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '8',
@@ -101,7 +108,8 @@ const DEFAULT_TOOLS = [
     material: 'Mekong River Basin Clay',
     place: 'Kampong Siem, Kampong Cham',
     description: 'Porous terracotta vessel that keeps well water icy cool under 38°C midday field heat through natural evaporative cooling.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '9',
@@ -113,7 +121,8 @@ const DEFAULT_TOOLS = [
     material: 'Fine Split Bamboo · Water Reed Mesh',
     place: 'Koh Sotin, Kampong Cham',
     description: 'Fine woven bamboo scoop used by farmers to catch climbing perch and mudfish swimming in flooded paddy furrows.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   },
   {
     id: '10',
@@ -125,7 +134,8 @@ const DEFAULT_TOOLS = [
     material: 'Elevated Hardwood Stilts · Lime Mortar',
     place: 'Srei Santhor, Kampong Cham',
     description: 'Elevated wooden granary built high on stilts with natural lime plaster to protect stored rice from monsoon damp, insects, and mice.',
-    photo_url: ''
+    photo_url: '',
+    status: 'published'
   }
 ];
 
@@ -178,6 +188,7 @@ export default function HomePage() {
         const fetchPromise = supabase
           .from('entries')
           .select('*')
+          .eq('status', 'published')
           .order('created_at', { ascending: false });
 
         const result = await Promise.race([fetchPromise, timeoutPromise]);
@@ -1421,15 +1432,22 @@ function ExhibitCard({ tool, index, onClick }) {
 
       </div>
 
-      {/* Card Footer with Location & Inspect */}
+      {/* Card Footer with Location, Contributor Credit & Inspect */}
       <div style={{ borderTop: '1px solid rgba(40, 28, 18, 0.08)', paddingTop: '10px', marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: '#6B635B' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-          <svg style={{ width: '12px', height: '12px', color: '#EA580C' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          {tool.place ? tool.place.split(',')[0].trim() : 'Kampong Cham'}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <svg style={{ width: '12px', height: '12px', color: '#EA580C' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            {tool.place ? tool.place.split(',')[0].trim() : 'Kampong Cham'}
+          </span>
+          {tool.contributor && (
+            <span style={{ fontSize: '10.5px', color: '#B45309', fontFamily: 'monospace' }}>
+              Contributor: {tool.contributor}
+            </span>
+          )}
+        </div>
         <span style={{ color: '#EA580C', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
           Inspect &rarr;
         </span>
