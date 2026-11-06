@@ -193,8 +193,13 @@ export default function HomePage() {
 
         const result = await Promise.race([fetchPromise, timeoutPromise]);
         if (result && result.data && result.data.length > 0) {
+          // Clean out test junk from early lab practice (e.g. 'j', 'Feet')
+          const validPublic = result.data.filter(
+            (item) => item.title && item.title.trim().length > 1 && item.title.toLowerCase() !== 'feet' && item.title.toLowerCase() !== 'test'
+          );
+
           // Merge local photo for plough if not present
-          const enhanced = result.data.map((item) => {
+          const enhanced = (validPublic.length > 0 ? validPublic : result.data).map((item) => {
             if ((!item.photo_url || item.photo_url.includes('wikipedia')) && item.title && (item.title.includes('នង្គ័ល') || item.title.includes('Plough'))) {
               return { ...item, photo_url: '/images/traditional_plough.jpg' };
             }
