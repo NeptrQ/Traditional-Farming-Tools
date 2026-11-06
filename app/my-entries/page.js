@@ -116,6 +116,42 @@ export default function MyEntriesPage() {
     e.preventDefault();
     if (!user || !editEntry) return;
 
+    const t = editTitle.trim();
+    const d = editDesc.trim();
+    const c = editContributor.trim();
+    const p = editPlace.trim();
+
+    if (!t) {
+      alert("Title is required.");
+      return;
+    }
+    if (!d) {
+      alert("Description is required.");
+      return;
+    }
+    if (!c) {
+      alert("Contributor (Elder / Source) is required.");
+      return;
+    }
+    if (!p) {
+      alert("Place of Origin is required.");
+      return;
+    }
+
+    if (editPhotoFile) {
+      const MAX_SIZE = 5 * 1024 * 1024;
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+      if (!ALLOWED_TYPES.includes(editPhotoFile.type)) {
+        alert("រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP / Please upload a JPG, PNG, or WebP image.");
+        return;
+      }
+      if (editPhotoFile.size > MAX_SIZE) {
+        alert("ទំហំរូបភាពត្រូវតែតូចជាង 5 MB / Image size must be under 5 MB.");
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     const supabase = createClient();
 
@@ -141,10 +177,10 @@ export default function MyEntriesPage() {
 
     // Whenever an entry is edited, it must go back to 'pending' to satisfy Lab 10/11 edit rules
     const updatePayload = {
-      title: editTitle,
-      description: editDesc,
-      place: editPlace,
-      contributor: editContributor,
+      title: t,
+      description: d,
+      place: p,
+      contributor: c,
       photo_url: publicUrl,
       status: "pending",
     };
@@ -472,7 +508,7 @@ export default function MyEntriesPage() {
                   required
                   value={editContributor}
                   onChange={(e) => setEditContributor(e.target.value)}
-                  placeholder={user?.email || "e.g. Grandfather Sok"}
+                  placeholder="e.g. Grandfather Sok, Kampong Siem"
                   style={{ padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", outline: "none", background: "var(--surface)", fontSize: 15, color: "var(--color-paper)" }}
                   className="input focus-ring"
                 />
