@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { resolveToolPhoto } from '../utils/toolImages.js';
 
 export default function EntryCard({ entry, index, onSelect, currentUser, onDelete, onEdit, showStatus = false }) {
   const [imgError, setImgError] = useState(false);
-  const photoUrl = entry.photo_url || entry.image_url || entry.photo;
+  const photoUrl = resolveToolPhoto(entry);
 
   const handleClick = (e) => {
     if (onSelect) {

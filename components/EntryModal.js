@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge.js";
+import { resolveToolPhoto } from "../utils/toolImages.js";
 
 export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
   const [imgError, setImgError] = useState(false);
+  const photoUrl = resolveToolPhoto(entry);
   
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
@@ -193,9 +195,9 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
           {/* Right Visual Image */}
           <div style={{ width: "100%" }}>
             <div style={{ width: "100%", height: "340px", backgroundColor: "#F4EFEB", borderRadius: "20px", border: "1px solid rgba(40, 28, 18, 0.1)", overflow: "hidden", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {entry.photo_url && !imgError ? (
+              {photoUrl && !imgError ? (
                 <img
-                  src={entry.photo_url}
+                  src={photoUrl}
                   alt={entry.title}
                   onError={() => setImgError(true)}
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}

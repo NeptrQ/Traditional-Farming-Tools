@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AtmosphereCanvas from '../components/AtmosphereCanvas';
 import EntryModal from '../components/EntryModal';
 import { createClient } from '../utils/supabase/client';
+import { isJunkEntry, resolveToolPhoto } from '../utils/toolImages';
 
 // 10 Canonical Kampong Cham Implements with Authentic Oral Lore & Provenance
 const DEFAULT_TOOLS = [
@@ -30,7 +31,7 @@ const DEFAULT_TOOLS = [
     material: 'Ironwood Frame · Chiseled Teeth',
     place: 'Batheay, Kampong Cham',
     description: 'Hand-chiseled ironwood comb with 7 teeth that pulverize hardened mud clods so baby rice seedlings can take root and breathe.',
-    photo_url: '',
+    photo_url: '/images/ironwood_harrow.jpg',
     status: 'published'
   },
   {
@@ -43,7 +44,7 @@ const DEFAULT_TOOLS = [
     material: 'Curved Tamarind Wood · Rawhide Ties',
     place: 'Kampong Siem, Kampong Cham',
     description: 'Curved neck beam designed to balance pulling tension across twin draft cattle over 8 continuous hours of muddy drag.',
-    photo_url: '',
+    photo_url: '/images/double_ox_yoke.jpg',
     status: 'published'
   },
   {
@@ -56,7 +57,7 @@ const DEFAULT_TOOLS = [
     material: 'Blacksmith Carbon Steel · Tamarind Shaft',
     place: 'Prey Chhor, Kampong Cham',
     description: 'Heavy steel blade hand-forged by village blacksmiths for digging irrigation ditches and repairing earthen paddy bunds.',
-    photo_url: '',
+    photo_url: '/images/basalt_field_hoe.jpg',
     status: 'published'
   },
   {
@@ -69,7 +70,7 @@ const DEFAULT_TOOLS = [
     material: 'Solid Spoke Hubs · Woven Bamboo Rack',
     place: 'Chamkar Leu, Kampong Cham',
     description: 'Solid high-clearance spoke wheels engineered to roll through deep wet mud during monsoon season carrying 30 sacks of unhusked rice.',
-    photo_url: '',
+    photo_url: '/images/traditional_ox_cart.jpg',
     status: 'published'
   },
   {
@@ -82,7 +83,7 @@ const DEFAULT_TOOLS = [
     material: 'Serrated Blacksmith Steel · Bamboo Grip',
     place: 'Kang Meas, Kampong Cham',
     description: 'Fine-toothed curved steel blade forged to slice rice stalks in rapid one-handed sweeps during the golden dry season harvest.',
-    photo_url: '',
+    photo_url: '/images/harvest_sickle.jpg',
     status: 'published'
   },
   {
@@ -95,7 +96,7 @@ const DEFAULT_TOOLS = [
     material: 'Smoked Bamboo Splints · Rattan Trim',
     place: 'Cheung Prey, Kampong Cham',
     description: 'Woven bamboo platter tossed into evening Mekong breezes to separate empty husks from golden grain by natural aerodynamics.',
-    photo_url: '',
+    photo_url: '/images/winnowing_platter.jpg',
     status: 'published'
   },
   {
@@ -108,7 +109,7 @@ const DEFAULT_TOOLS = [
     material: 'Mekong River Basin Clay',
     place: 'Kampong Siem, Kampong Cham',
     description: 'Porous terracotta vessel that keeps well water icy cool under 38°C midday field heat through natural evaporative cooling.',
-    photo_url: '',
+    photo_url: '/images/terracotta_pot.jpg',
     status: 'published'
   },
   {
@@ -121,7 +122,7 @@ const DEFAULT_TOOLS = [
     material: 'Fine Split Bamboo · Water Reed Mesh',
     place: 'Koh Sotin, Kampong Cham',
     description: 'Fine woven bamboo scoop used by farmers to catch climbing perch and mudfish swimming in flooded paddy furrows.',
-    photo_url: '',
+    photo_url: '/images/bamboo_fish_scoop.jpg',
     status: 'published'
   },
   {
@@ -134,7 +135,7 @@ const DEFAULT_TOOLS = [
     material: 'Elevated Hardwood Stilts · Lime Mortar',
     place: 'Srei Santhor, Kampong Cham',
     description: 'Elevated wooden granary built high on stilts with natural lime plaster to protect stored rice from monsoon damp, insects, and mice.',
-    photo_url: '',
+    photo_url: '/images/paddy_granary.jpg',
     status: 'published'
   }
 ];
@@ -193,19 +194,17 @@ export default function HomePage() {
 
         const result = await Promise.race([fetchPromise, timeoutPromise]);
         if (result && result.data && result.data.length > 0) {
-          // Clean out test junk from early lab practice (e.g. 'j', 'Feet')
-          const validPublic = result.data.filter(
-            (item) => item.title && item.title.trim().length > 1 && item.title.toLowerCase() !== 'feet' && item.title.toLowerCase() !== 'test'
-          );
+          // Clean out test junk from early lab practice (e.g. 'j', 'Feet', 'test')
+          const validPublic = result.data.filter((item) => !isJunkEntry(item));
 
-          // Merge local photo for plough if not present
-          const enhanced = (validPublic.length > 0 ? validPublic : result.data).map((item) => {
-            if ((!item.photo_url || item.photo_url.includes('wikipedia')) && item.title && (item.title.includes('នង្គ័ល') || item.title.includes('Plough'))) {
-              return { ...item, photo_url: '/images/traditional_plough.jpg' };
-            }
-            return item;
-          });
-          setEntries(enhanced);
+          if (validPublic.length > 0) {
+            // Map all canonical & submitted items to clean real photos
+            const enhanced = validPublic.map((item) => ({
+              ...item,
+              photo_url: resolveToolPhoto(item),
+            }));
+            setEntries(enhanced);
+          }
         }
       } catch (err) {
         console.warn('Using default 10 catalog entries:', err);
@@ -1235,7 +1234,7 @@ export default function HomePage() {
 // Compact, crisp Exhibit Card with Staggered Visual Frame
 function ExhibitCard({ tool, index, onClick }) {
   const [imgFailed, setImgFailed] = useState(false);
-  const photoUrl = tool.photo_url || tool.image_url;
+  const photoUrl = resolveToolPhoto(tool);
 
   // Render authentic woodcraft silhouette plate for implements without photos
   const renderFallbackPlate = (category, title) => {

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7E3BE"/>
+      <stop offset="55%" stop-color="#F1C78C"/>
+      <stop offset="100%" stop-color="#D99B5E"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C88F56"/>
+      <stop offset="45%" stop-color="#6F5943"/>
+      <stop offset="100%" stop-color="#2B2118"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6E472B"/>
+      <stop offset="100%" stop-color="#3B2314"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="450" fill="url(#sky)"/>
+  <circle cx="960" cy="210" r="85" fill="#FFF3D1" opacity="0.72"/>
+  <rect y="365" width="1280" height="85" fill="#637A3D" opacity="0.88"/>
+  <path d="M0 430 Q320 405 640 435 T1280 420 L1280 720 L0 720 Z" fill="url(#water)"/>
+  <!-- Sugar Palm Silhouettes -->
+  <g fill="#423322" opacity="0.55">
+    <rect x="210" y="130" width="9" height="240"/>
+    <circle cx="215" cy="128" r="32"/>
+    <rect x="255" y="160" width="7" height="210"/>
+    <circle cx="258" cy="158" r="24"/>
+    <rect x="1035" y="145" width="8" height="225"/>
+    <circle cx="1039" cy="142" r="28"/>
+  </g>
+  <!-- Earth canal bund foreground -->
+  <path d="M0 570 Q240 535 450 590 T960 610 L1280 575 L1280 720 L0 720 Z" fill="#462C1B"/>
+  <!-- Tripod bamboo legs (Snach suspension) -->
+  <line x1="470" y1="155" x2="315" y2="625" stroke="url(#wood)" stroke-width="18" stroke-linecap="round"/>
+  <line x1="470" y1="155" x2="695" y2="615" stroke="url(#wood)" stroke-width="18" stroke-linecap="round"/>
+  <line x1="470" y1="155" x2="545" y2="545" stroke="#4D301D" stroke-width="13" stroke-linecap="round"/>
+  <!-- Rattan suspension ropes -->
+  <line x1="470" y1="168" x2="515" y2="410" stroke="#A67C52" stroke-width="4"/>
+  <line x1="470" y1="168" x2="620" y2="415" stroke="#A67C52" stroke-width="4"/>
+  <!-- Woven wooden water scoop trough (Snach) -->
+  <path d="M405 420 Q560 465 735 410 L755 375 Q565 405 425 385 Z" fill="#7D5232" stroke="#2D190E" stroke-width="5"/>
+  <path d="M425 385 Q565 405 755 375" fill="none" stroke="#B68A5A" stroke-width="4"/>
+  <line x1="735" y1="395" x2="965" y2="335" stroke="url(#wood)" stroke-width="14" stroke-linecap="round"/>
+  <!-- Water splash ripples -->
+  <ellipse cx="425" cy="485" rx="95" ry="14" fill="none" stroke="#F7DFB2" stroke-width="3" opacity="0.65"/>
+  <ellipse cx="425" cy="485" rx="145" ry="22" fill="none" stroke="#F7DFB2" stroke-width="2" opacity="0.4"/>
+  <path d="M415 415 L395 478 M430 422 L412 486 M445 428 L430 482" stroke="#F9E9C6" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+</svg>
