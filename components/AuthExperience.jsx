@@ -206,7 +206,7 @@ export default function AuthExperience({
           top: "28px",
           left: "50%",
           transform: "translateX(-50%)",
-          fontSize: "clamp(64px, 13vw, 170px)",
+          fontSize: "clamp(34px, 10vw, 170px)",
           fontWeight: 900,
           letterSpacing: "-0.05em",
           color: "rgba(40, 28, 18, 0.03)",
@@ -216,6 +216,8 @@ export default function AuthExperience({
           zIndex: 0,
           textTransform: "uppercase",
           fontFamily: "var(--font-sans), sans-serif",
+          maxWidth: "100%",
+          overflow: "hidden",
         }}
       >
         {isSignup ? "JOIN ARCHIVE" : "KAMPONG CHAM"}
@@ -224,7 +226,7 @@ export default function AuthExperience({
       {/* Main 2-Column Editorial Grid */}
       <div className="editorial-auth-layout">
         {/* LEFT COLUMN: Visually changes cleanly between Log In showcase vs Sign Up onboarding */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", minWidth: 0, maxWidth: "100%" }}>
           <div
             style={{
               display: "inline-flex",
@@ -240,9 +242,10 @@ export default function AuthExperience({
               letterSpacing: "1px",
               marginBottom: "18px",
               boxShadow: "0 4px 12px rgba(40, 28, 18, 0.04)",
+              maxWidth: "100%",
             }}
           >
-            <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
+            <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#EA580C", flexShrink: 0 }} />
             <span>
               {isSignup ? "COMMUNITY SIGN UP · OPEN ACCESS" : "STEWARD LOG IN PORTAL"}
             </span>
@@ -251,12 +254,13 @@ export default function AuthExperience({
           <h1
             style={{
               fontFamily: "var(--font-serif), Georgia, serif",
-              fontSize: "clamp(36px, 4.4vw, 54px)",
+              fontSize: "clamp(30px, 6.8vw, 54px)",
               fontWeight: 400,
               color: "#191614",
-              lineHeight: 1.08,
+              lineHeight: 1.1,
               letterSpacing: "-0.02em",
               margin: "0 0 10px 0",
+              maxWidth: "100%",
             }}
           >
             {isSignup ? (

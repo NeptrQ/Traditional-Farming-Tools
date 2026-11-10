@@ -112,7 +112,7 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
         </div>
 
         {/* Modal Main Body Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "36px", alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "36px", alignItems: "start" }}>
           
           {/* Left Details */}
           <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>

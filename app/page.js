@@ -311,13 +311,13 @@ export default function HomePage() {
           <div style={{ position: 'relative', zIndex: 2 }}>
             
             {/* Pill Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '9999px', backgroundColor: '#FFFFFF', border: '1px solid rgba(40, 28, 18, 0.14)', color: '#C2410C', fontSize: '11px', fontFamily: 'monospace', marginBottom: '22px', boxShadow: '0 4px 12px rgba(40, 28, 18, 0.03)' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EA580C' }}></span>
-              <span>KAMPONG CHAM ORAL ANTHROPOLOGY · 10 CANONICAL IMPLEMENTS</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '8px', padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#FFFFFF', border: '1px solid rgba(40, 28, 18, 0.14)', color: '#C2410C', fontSize: '10.5px', fontFamily: 'monospace', marginBottom: '22px', boxShadow: '0 4px 12px rgba(40, 28, 18, 0.03)', maxWidth: '100%', boxSizing: 'border-box' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EA580C', flexShrink: 0 }}></span>
+              <span>KAMPONG CHAM ORAL ANTHROPOLOGY · 10 IMPLEMENTS</span>
             </div>
 
             {/* Unique Headline (Completely original, NO friend's copy) */}
-            <h1 style={{ fontSize: 'clamp(42px, 6.2vw, 76px)', fontWeight: 400, color: '#191614', margin: '0 auto 16px auto', lineHeight: 1.08, fontFamily: 'var(--font-serif), Georgia, serif', maxWidth: '920px', letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 'clamp(34px, 7.2vw, 76px)', fontWeight: 400, color: '#191614', margin: '0 auto 16px auto', lineHeight: 1.1, fontFamily: 'var(--font-serif), Georgia, serif', maxWidth: '920px', letterSpacing: '-0.02em' }}>
               The living soil of <span style={{ color: '#EA580C', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.3)', textUnderlineOffset: '8px' }}>Kampong Cham Province</span>.
             </h1>
 
@@ -1067,7 +1067,7 @@ export default function HomePage() {
               </div>
 
               {/* 3 Clickable Tabs */}
-              <div style={{ display: 'flex', gap: '6px', padding: '4px', borderRadius: '12px', backgroundColor: '#F7F4EE', border: '1px solid rgba(40, 28, 18, 0.1)', fontSize: '12px', fontFamily: 'monospace' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', padding: '4px', borderRadius: '12px', backgroundColor: '#F7F4EE', border: '1px solid rgba(40, 28, 18, 0.1)', fontSize: '12px', fontFamily: 'monospace', maxWidth: '100%' }}>
                 <button
                   type="button"
                   onClick={() => setSpotlightTab('story')}

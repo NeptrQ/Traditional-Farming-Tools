@@ -196,7 +196,7 @@ function QuickContributeAuthBar({ onUnlocked }) {
         onSubmit={handleQuickAuth}
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 210px), 1fr))",
           gap: "12px",
           alignItems: "center",
         }}
@@ -478,7 +478,7 @@ export default function ContributePage() {
           top: "120px",
           left: "50%",
           transform: "translateX(-50%)",
-          fontSize: "clamp(72px, 16vw, 200px)",
+          fontSize: "clamp(34px, 10vw, 200px)",
           fontWeight: 900,
           letterSpacing: "-0.05em",
           color: "rgba(40, 28, 18, 0.035)",
@@ -488,6 +488,8 @@ export default function ContributePage() {
           zIndex: 0,
           textTransform: "uppercase",
           fontFamily: "var(--font-sans), sans-serif",
+          maxWidth: "100%",
+          overflow: "hidden",
         }}
       >
         SUBMIT TOOL
