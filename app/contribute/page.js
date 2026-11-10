@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "../../utils/supabase/client.js";
-import AuthExperience from "../../components/AuthExperience.jsx";
 
 const CATEGORY_OPTIONS = [
   "Soil Preparation (ភ្ជួររាស់)",
@@ -19,6 +19,234 @@ const INITIAL_FORM = {
   contributor: "",
   place: "",
 };
+
+function QuickContributeAuthBar({ onUnlocked }) {
+  const router = useRouter();
+  const [authMode, setAuthMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
+
+  async function handleQuickAuth(e) {
+    e.preventDefault();
+    setErr("");
+    setMsg("");
+    setBusy(true);
+    const supabase = createClient();
+
+    try {
+      if (authMode === "login") {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (error) {
+          setErr("Invalid email or password.");
+          setBusy(false);
+          return;
+        }
+        onUnlocked(data?.user ?? null);
+        router.refresh();
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+        });
+        if (error) {
+          setErr(error.message);
+          setBusy(false);
+          return;
+        }
+        if (data?.session) {
+          onUnlocked(data.user);
+          router.refresh();
+          return;
+        }
+        setMsg("Registered! Click Log In above with your new credentials to unlock the studio.");
+        setAuthMode("login");
+        setBusy(false);
+      }
+    } catch {
+      setErr("Connection error. Please try again.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "1080px",
+        background: "linear-gradient(145deg, #1D1714 0%, #120F0D 100%)",
+        color: "#F5EBE1",
+        borderRadius: "24px",
+        padding: "24px 28px",
+        marginBottom: "28px",
+        border: "1px solid rgba(245, 158, 11, 0.25)",
+        boxShadow: "0 20px 44px -12px rgba(25, 22, 20, 0.25)",
+        position: "relative",
+        zIndex: 2,
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "14px",
+          marginBottom: "18px",
+        }}
+      >
+        <div>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "7px",
+              fontSize: "10.5px",
+              fontFamily: "monospace",
+              color: "#F59E0B",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+              marginBottom: "4px",
+            }}
+          >
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
+            QUICK STUDIO CHECK-IN · UNLOCKS FORM BELOW
+          </span>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "20px",
+              fontWeight: 600,
+              color: "#FFFFFF",
+              fontFamily: "var(--font-serif), Georgia, serif",
+            }}
+          >
+            {authMode === "login"
+              ? "Log in to activate specimen submission"
+              : "Create a contributor account to submit tools"}
+          </h2>
+        </div>
+
+        <div
+          style={{
+            display: "inline-flex",
+            padding: "4px",
+            borderRadius: "9999px",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setAuthMode("login");
+              setErr("");
+              setMsg("");
+            }}
+            style={{
+              padding: "6px 15px",
+              borderRadius: "9999px",
+              border: "none",
+              backgroundColor: authMode === "login" ? "#EA580C" : "transparent",
+              color: authMode === "login" ? "#FFFFFF" : "#C6BEB5",
+              fontSize: "12px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Log In
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAuthMode("signup");
+              setErr("");
+              setMsg("");
+            }}
+            style={{
+              padding: "6px 15px",
+              borderRadius: "9999px",
+              border: "none",
+              backgroundColor: authMode === "signup" ? "#EA580C" : "transparent",
+              color: authMode === "signup" ? "#FFFFFF" : "#C6BEB5",
+              fontSize: "12px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+
+      {err && (
+        <div style={{ color: "#FCA5A5", fontSize: "12.5px", marginBottom: "12px" }}>{err}</div>
+      )}
+      {msg && (
+        <div style={{ color: "#6EE7B7", fontSize: "12.5px", marginBottom: "12px" }}>{msg}</div>
+      )}
+
+      <form
+        onSubmit={handleQuickAuth}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+          gap: "12px",
+          alignItems: "center",
+        }}
+      >
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Contributor email (e.g. you@aupp.edu.kh)"
+          className="editorial-input signup-dark"
+          style={{ height: "44px", padding: "0 14px" }}
+        />
+        <input
+          type="password"
+          required
+          minLength={authMode === "signup" ? 6 : undefined}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder={authMode === "signup" ? "Password (min 6 chars)" : "Password"}
+          className="editorial-input signup-dark"
+          style={{ height: "44px", padding: "0 14px" }}
+        />
+        <button
+          type="submit"
+          disabled={busy}
+          style={{
+            height: "44px",
+            borderRadius: "9999px",
+            border: "none",
+            background: "linear-gradient(135deg, #FB923C 0%, #EA580C 100%)",
+            color: "#FFFFFF",
+            fontSize: "13px",
+            fontWeight: 600,
+            cursor: busy ? "not-allowed" : "pointer",
+            padding: "0 20px",
+            whiteSpace: "nowrap",
+            boxShadow: "0 6px 18px rgba(234, 88, 12, 0.35)",
+          }}
+        >
+          {busy
+            ? "Verifying..."
+            : authMode === "login"
+              ? "Log In & Unlock Studio →"
+              : "Sign Up & Unlock →"}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export default function ContributePage() {
   const [user, setUser] = useState(null);
@@ -143,6 +371,7 @@ export default function ContributePage() {
     e.preventDefault();
     setSubmitError("");
 
+    if (!user) return;
     if (!validate()) return;
 
     setIsSubmitting(true);
@@ -221,21 +450,8 @@ export default function ContributePage() {
             boxShadow: "0 10px 25px rgba(40, 28, 18, 0.06)",
           }}
         >
-          Checking contributor session...
+          Loading Contribution Studio...
         </div>
-      </main>
-    );
-  }
-
-  // Seamless inline editorial auth right on /contribute instead of bouncing to a dead-end box
-  if (!user) {
-    return (
-      <main style={{ flex: 1 }}>
-        <AuthExperience
-          initialMode="login"
-          embeddedInContribute={true}
-          onAuthSuccess={(signedInUser) => setUser(signedInUser)}
-        />
       </main>
     );
   }
@@ -259,7 +475,7 @@ export default function ContributePage() {
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: "140px",
+          top: "120px",
           left: "50%",
           transform: "translateX(-50%)",
           fontSize: "clamp(72px, 16vw, 200px)",
@@ -282,7 +498,7 @@ export default function ContributePage() {
         style={{
           width: "100%",
           maxWidth: "1080px",
-          marginBottom: "28px",
+          marginBottom: "24px",
           position: "relative",
           zIndex: 2,
           display: "flex",
@@ -309,8 +525,10 @@ export default function ContributePage() {
               boxShadow: "0 4px 12px rgba(40, 28, 18, 0.04)",
             }}
           >
-            <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
-            <span>STEP 2 OF 2 · SPECIMEN SUBMISSION STUDIO</span>
+            <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: user ? "#16A34A" : "#EA580C" }} />
+            <span>
+              {user ? "STUDIO ACTIVE · SPECIMEN SUBMISSION" : "CONTRIBUTION STUDIO · LOCKED PREVIEW"}
+            </span>
           </div>
 
           <h1
@@ -326,24 +544,45 @@ export default function ContributePage() {
             បន្ថែមឧបករណ៍កសិកម្មថ្មី
           </h1>
           <p style={{ margin: 0, fontSize: "14.5px", color: "#6B635B" }}>
-            Contribute a traditional farming implement and its oral history to the Kampong Cham Living Archive.
+            Document a traditional farming implement and its elder memory for the Kampong Cham Living Archive.
           </p>
         </div>
 
-        <div
-          style={{
-            padding: "8px 14px",
-            borderRadius: "9999px",
-            backgroundColor: "#FFFFFF",
-            border: "1px solid rgba(40, 28, 18, 0.1)",
-            fontSize: "12px",
-            color: "#57534E",
-            fontFamily: "monospace",
-          }}
-        >
-          Signed in: <strong style={{ color: "#191614" }}>{user.email}</strong>
-        </div>
+        {user ? (
+          <div
+            style={{
+              padding: "8px 14px",
+              borderRadius: "9999px",
+              backgroundColor: "#FFFFFF",
+              border: "1px solid rgba(40, 28, 18, 0.1)",
+              fontSize: "12px",
+              color: "#57534E",
+              fontFamily: "monospace",
+            }}
+          >
+            Contributor: <strong style={{ color: "#191614" }}>{user.email}</strong>
+          </div>
+        ) : (
+          <Link
+            href="/login?next=/contribute"
+            style={{
+              textDecoration: "none",
+              padding: "8px 16px",
+              borderRadius: "9999px",
+              backgroundColor: "#FFFFFF",
+              border: "1px solid rgba(40, 28, 18, 0.12)",
+              fontSize: "12.5px",
+              fontWeight: 600,
+              color: "#191614",
+            }}
+          >
+            Open Full Login Page &rarr;
+          </Link>
+        )}
       </div>
+
+      {/* When logged out, show Quick Check-In strip right above the real Contribution Studio workspace */}
+      {!user && <QuickContributeAuthBar onUnlocked={(u) => setUser(u)} />}
 
       {submitted ? (
         <div
@@ -437,7 +676,14 @@ export default function ContributePage() {
           </div>
         </div>
       ) : (
-        <div className="contribute-studio-grid">
+        <div
+          className="contribute-studio-grid"
+          style={{
+            opacity: user ? 1 : 0.62,
+            pointerEvents: user ? "auto" : "none",
+            transition: "opacity 0.25s ease",
+          }}
+        >
           {/* LEFT: Main Submission Card */}
           <div
             style={{
@@ -465,7 +711,6 @@ export default function ContributePage() {
             )}
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              {/* Title */}
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="title"
@@ -476,6 +721,7 @@ export default function ContributePage() {
                 <input
                   id="title"
                   name="title"
+                  disabled={!user}
                   value={formData.title}
                   onChange={handleInputChange}
                   placeholder="e.g. នង្គ័លបុរាណ (Traditional Wooden Plough)"
@@ -486,7 +732,6 @@ export default function ContributePage() {
                 {errors.title && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.title}</span>}
               </div>
 
-              {/* Season / Category */}
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="category"
@@ -497,11 +742,12 @@ export default function ContributePage() {
                 <select
                   id="category"
                   name="category"
+                  disabled={!user}
                   required
                   value={formData.category}
                   onChange={handleInputChange}
                   className="editorial-input"
-                  style={{ padding: "0 14px", cursor: "pointer" }}
+                  style={{ padding: "0 14px", cursor: user ? "pointer" : "default" }}
                 >
                   {CATEGORY_OPTIONS.map((opt) => (
                     <option key={opt} value={opt}>
@@ -512,7 +758,6 @@ export default function ContributePage() {
                 {errors.category && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.category}</span>}
               </div>
 
-              {/* Description */}
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="description"
@@ -523,6 +768,7 @@ export default function ContributePage() {
                 <textarea
                   id="description"
                   name="description"
+                  disabled={!user}
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="Describe the wood/metal craft, seasonal usage, and oral memories shared by elders..."
@@ -533,7 +779,6 @@ export default function ContributePage() {
                 {errors.description && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.description}</span>}
               </div>
 
-              {/* Two-column row: Contributor & Place */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "16px" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                   <label
@@ -545,6 +790,7 @@ export default function ContributePage() {
                   <input
                     id="contributor"
                     name="contributor"
+                    disabled={!user}
                     value={formData.contributor}
                     onChange={handleInputChange}
                     placeholder="e.g. Grandfather Sok (Kampong Siem)"
@@ -564,6 +810,7 @@ export default function ContributePage() {
                   <input
                     id="place"
                     name="place"
+                    disabled={!user}
                     value={formData.place}
                     onChange={handleInputChange}
                     placeholder="e.g. Kampong Cham"
@@ -574,7 +821,6 @@ export default function ContributePage() {
                 </div>
               </div>
 
-              {/* Photo Dropzone */}
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="photo"
@@ -587,6 +833,7 @@ export default function ContributePage() {
                   <input
                     id="photo"
                     type="file"
+                    disabled={!user}
                     accept="image/jpeg,image/png,image/webp"
                     onChange={handleFileChange}
                     style={{ display: "none" }}
@@ -649,7 +896,7 @@ export default function ContributePage() {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!user || isSubmitting}
                 style={{
                   width: "100%",
                   height: "50px",
@@ -660,7 +907,7 @@ export default function ContributePage() {
                   color: "#FFFFFF",
                   fontSize: "14px",
                   fontWeight: 600,
-                  cursor: isSubmitting ? "not-allowed" : "pointer",
+                  cursor: !user || isSubmitting ? "not-allowed" : "pointer",
                   opacity: isSubmitting ? 0.7 : 1,
                   boxShadow: "0 12px 26px -8px rgba(234, 88, 12, 0.45)",
                 }}
@@ -796,7 +1043,6 @@ export default function ContributePage() {
               </div>
             </div>
 
-            {/* Archival Gate Info Box */}
             <div
               style={{
                 backgroundColor: "#191614",

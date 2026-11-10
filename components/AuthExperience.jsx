@@ -10,35 +10,50 @@ const CURATED_SPECIMENS = [
   {
     id: "plough",
     title: "នង្គ័លបុរាណ",
-    subtitle: "Traditional Kokir Ox Plough",
     place: "Kampong Siem, Kampong Cham",
     photo_url: "/images/traditional_plough.jpg",
   },
   {
-    id: "harrow",
-    title: "រាស់ឈើបុរាណ",
-    subtitle: "7-Tooth Ironwood Harrow",
-    place: "Batheay, Kampong Cham",
-    photo_url: "/images/ironwood_harrow.jpg",
+    id: "sickle",
+    title: "កណ្ដៀវច្រូតស្រូវ",
+    place: "Kang Meas, Kampong Cham",
+    photo_url: "/images/harvest_sickle.jpg",
   },
   {
     id: "cart",
     title: "រទេះគោបុរាណ",
-    subtitle: "Traditional Spoked Ox Cart",
     place: "Chamkar Leu, Kampong Cham",
     photo_url: "/images/traditional_ox_cart.jpg",
   },
 ];
 
+const SIGNUP_STEPS = [
+  {
+    num: "01",
+    title: "Create a Free Contributor Account",
+    detail: "Register once with your email to save drafts and upload specimen photos.",
+  },
+  {
+    num: "02",
+    title: "Document Elder Knowledge",
+    detail: "Pair Khmer tool titles with rural provenance and seasonal oral history.",
+  },
+  {
+    num: "03",
+    title: "Pass Curatorial Review",
+    detail: "Submissions enter Pending Review so archivists verify clarity before publishing.",
+  },
+];
+
 export default function AuthExperience({
   initialMode = "login",
-  embeddedInContribute = false,
   onAuthSuccess,
 }) {
   const router = useRouter();
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -56,23 +71,25 @@ export default function AuthExperience({
         const supabase = createClient();
         const { data } = await supabase
           .from("entries")
-          .select("id, title, place, description, contributor, photo_url, status")
+          .select("id, title, place, contributor, photo_url, status")
           .eq("status", "published")
           .limit(12);
 
         const clean = (data || []).filter((item) => !isJunkEntry(item)).slice(0, 3);
         if (clean.length > 0) {
-          const mapped = clean.map((item, idx) => ({
-            id: item.id || String(idx),
-            title: item.title,
-            subtitle: item.contributor || "Kampong Cham Oral Collection",
-            place: item.place || "Kampong Cham, Cambodia",
-            photo_url: resolveToolPhoto(item) || CURATED_SPECIMENS[idx % CURATED_SPECIMENS.length].photo_url,
-          }));
-          setSpecimens(mapped);
+          setSpecimens(
+            clean.map((item, idx) => ({
+              id: item.id || String(idx),
+              title: item.title,
+              place: item.place || "Kampong Cham, Cambodia",
+              photo_url:
+                resolveToolPhoto(item) ||
+                CURATED_SPECIMENS[idx % CURATED_SPECIMENS.length].photo_url,
+            }))
+          );
         }
       } catch {
-        // Keep curated specimen fallback
+        // Fallback specimens stay active
       }
     }
     fetchFeatured();
@@ -82,14 +99,20 @@ export default function AuthExperience({
     setMode(nextMode);
     setError(null);
     setMessage(null);
+    setConfirmPassword("");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
     setMessage(null);
-    setLoading(true);
 
+    if (mode === "signup" && password !== confirmPassword) {
+      setError("ពាក្យសម្ងាត់ទាំងពីរមិនដូចគ្នាទេ / Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
     const supabase = createClient();
 
     try {
@@ -106,7 +129,7 @@ export default function AuthExperience({
           return;
         }
 
-        if (embeddedInContribute && onAuthSuccess) {
+        if (onAuthSuccess) {
           onAuthSuccess(signInData?.user || null);
           router.refresh();
           return;
@@ -134,7 +157,7 @@ export default function AuthExperience({
         }
 
         if (signUpData?.session) {
-          if (embeddedInContribute && onAuthSuccess) {
+          if (onAuthSuccess) {
             onAuthSuccess(signUpData.user);
             router.refresh();
             return;
@@ -145,9 +168,10 @@ export default function AuthExperience({
         }
 
         setMessage(
-          "បង្កើតគណនីបានជោគជ័យ! សូមចូលគណនីខាងក្រោម / Account registered! Sign in below to continue."
+          "បង្កើតគណនីបានជោគជ័យ! សូមប្រើ Log In ខាងក្រោម / Account registered! Log in below to continue."
         );
         setMode("login");
+        setConfirmPassword("");
         setLoading(false);
       }
     } catch {
@@ -156,6 +180,7 @@ export default function AuthExperience({
     }
   }
 
+  const isSignup = mode === "signup";
   const currentSpecimen = specimens[activeSlide] || CURATED_SPECIMENS[0];
 
   return (
@@ -173,7 +198,7 @@ export default function AuthExperience({
         overflow: "hidden",
       }}
     >
-      {/* Subtle Top Watermark Behind Hero Typography */}
+      {/* Editorial Top Watermark */}
       <div
         aria-hidden="true"
         style={{
@@ -193,29 +218,12 @@ export default function AuthExperience({
           fontFamily: "var(--font-sans), sans-serif",
         }}
       >
-        {embeddedInContribute ? "CONTRIBUTE" : "KAMPONG CHAM"}
+        {isSignup ? "JOIN ARCHIVE" : "KAMPONG CHAM"}
       </div>
 
-      {/* Warm Ambient Glow */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "4%",
-          left: "25%",
-          width: "520px",
-          height: "360px",
-          background:
-            "radial-gradient(ellipse at center, rgba(234, 88, 12, 0.09) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 75%)",
-          filter: "blur(64px)",
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* Airy Open-Canvas Editorial Layout */}
+      {/* Main 2-Column Editorial Grid */}
       <div className="editorial-auth-layout">
-        {/* LEFT COLUMN: Warm Parchment Editorial Narrative + Tilted Archival Specimen Stack */}
+        {/* LEFT COLUMN: Visually changes cleanly between Log In showcase vs Sign Up onboarding */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <div
             style={{
@@ -224,21 +232,19 @@ export default function AuthExperience({
               gap: "8px",
               padding: "5px 14px",
               borderRadius: "9999px",
-              backgroundColor: "#FFFFFF",
-              border: "1px solid rgba(40, 28, 18, 0.11)",
-              color: "#C2410C",
+              backgroundColor: isSignup ? "#191614" : "#FFFFFF",
+              border: isSignup ? "1px solid #3D2B22" : "1px solid rgba(40, 28, 18, 0.11)",
+              color: isSignup ? "#F59E0B" : "#C2410C",
               fontSize: "10.5px",
               fontFamily: "monospace",
               letterSpacing: "1px",
               marginBottom: "18px",
-              boxShadow: "0 4px 12px rgba(40, 28, 18, 0.03)",
+              boxShadow: "0 4px 12px rgba(40, 28, 18, 0.04)",
             }}
           >
             <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
             <span>
-              {embeddedInContribute
-                ? "STEP 1 OF 2 · CONTRIBUTOR IDENTITY"
-                : "ARCHIVAL STEWARDSHIP PORTAL"}
+              {isSignup ? "COMMUNITY SIGN UP · OPEN ACCESS" : "STEWARD LOG IN PORTAL"}
             </span>
           </div>
 
@@ -253,20 +259,15 @@ export default function AuthExperience({
               margin: "0 0 10px 0",
             }}
           >
-            {embeddedInContribute ? (
-              <>
-                Preserve elders&apos;{" "}
-                <span style={{ color: "#EA580C", fontStyle: "italic" }}>craft</span> before it fades.
-              </>
-            ) : mode === "login" ? (
-              <>
-                Step back into the{" "}
-                <span style={{ color: "#EA580C", fontStyle: "italic" }}>Living Archive</span>.
-              </>
-            ) : (
+            {isSignup ? (
               <>
                 Become a keeper of{" "}
                 <span style={{ color: "#EA580C", fontStyle: "italic" }}>Khmer memory</span>.
+              </>
+            ) : (
+              <>
+                Step back into the{" "}
+                <span style={{ color: "#EA580C", fontStyle: "italic" }}>Living Archive</span>.
               </>
             )}
           </h1>
@@ -285,120 +286,168 @@ export default function AuthExperience({
           </p>
 
           <p style={{ color: "#6B635B", fontSize: "14px", lineHeight: 1.6, margin: 0, maxWidth: "460px" }}>
-            {embeddedInContribute
-              ? "Sign in or register right beside this card to unlock the tool submission studio immediately without leaving this page."
-              : "Manage field specimens, revise returned records, and preserve traditional farming knowledge from Kampong Cham elders."}
+            {isSignup
+              ? "Help document hand-forged sickles, ironwood ploughs, and village memories across Kampong Cham before modern machines replace them."
+              : "Log in with your contributor credentials to manage tool records, check moderation status, or revise returned items."}
           </p>
 
-          {/* Tilted Layered Museum Photograph Card (Echoes IMG_4786 Floating Deck) */}
-          <div className="specimen-stack" style={{ width: "100%" }}>
-            <div className="specimen-backplate" aria-hidden="true" />
-            <div className="specimen-card-tilt">
-              <div
-                style={{
-                  width: "100%",
-                  height: "210px",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  backgroundColor: "#EFE7DA",
-                  position: "relative",
-                  marginBottom: "12px",
-                }}
-              >
-                <img
-                  src={currentSpecimen.photo_url}
-                  alt={currentSpecimen.title}
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/traditional_plough.jpg";
-                  }}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                />
-                <span
+          {isSignup ? (
+            /* Sign Up Mode Left Visual: 3 Clear Community Steps */
+            <div style={{ width: "100%", maxWidth: "460px", marginTop: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              {SIGNUP_STEPS.map((step) => (
+                <div
+                  key={step.num}
                   style={{
-                    position: "absolute",
-                    top: "10px",
-                    left: "10px",
-                    padding: "3px 9px",
-                    borderRadius: "9999px",
-                    backgroundColor: "rgba(255, 255, 255, 0.92)",
-                    color: "#191614",
-                    fontSize: "10px",
-                    fontFamily: "monospace",
-                    fontWeight: 700,
-                    border: "1px solid rgba(40, 28, 18, 0.08)",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(40, 28, 18, 0.09)",
+                    borderRadius: "18px",
+                    padding: "14px 18px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "14px",
+                    boxShadow: "0 8px 24px -10px rgba(40, 28, 18, 0.08)",
                   }}
                 >
-                  PLATE #{String(activeSlide + 1).padStart(2, "0")}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: "0 4px",
-                }}
-              >
-                <div>
-                  <div
+                  <span
                     style={{
-                      fontSize: "15.5px",
+                      width: "30px",
+                      height: "30px",
+                      borderRadius: "10px",
+                      backgroundColor: "#FFF7ED",
+                      border: "1px solid #FED7AA",
+                      color: "#EA580C",
+                      fontFamily: "monospace",
+                      fontSize: "12px",
                       fontWeight: 700,
-                      color: "#191614",
-                      fontFamily: "var(--font-khmer-title), Georgia, serif",
-                      lineHeight: 1.3,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
                     }}
                   >
-                    {currentSpecimen.title}
-                  </div>
-                  <div style={{ fontSize: "11.5px", color: "#78716C", marginTop: "2px" }}>
-                    {currentSpecimen.place}
+                    {step.num}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#191614" }}>
+                      {step.title}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#6B635B", lineHeight: 1.5, marginTop: "2px" }}>
+                      {step.detail}
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            /* Log In Mode Left Visual: Tilted Archival Specimen Stack */
+            <div className="specimen-stack" style={{ width: "100%" }}>
+              <div className="specimen-backplate" aria-hidden="true" />
+              <div className="specimen-card-tilt">
+                <div
+                  style={{
+                    width: "100%",
+                    height: "210px",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    backgroundColor: "#EFE7DA",
+                    position: "relative",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <img
+                    src={currentSpecimen.photo_url}
+                    alt={currentSpecimen.title}
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/traditional_plough.jpg";
+                    }}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      left: "10px",
+                      padding: "3px 9px",
+                      borderRadius: "9999px",
+                      backgroundColor: "rgba(255, 255, 255, 0.92)",
+                      color: "#191614",
+                      fontSize: "10px",
+                      fontFamily: "monospace",
+                      fontWeight: 700,
+                      border: "1px solid rgba(40, 28, 18, 0.08)",
+                    }}
+                  >
+                    PLATE #{String(activeSlide + 1).padStart(2, "0")}
+                  </span>
+                </div>
 
-                {/* Specimen Selector Dots */}
-                <div style={{ display: "flex", gap: "5px", flexShrink: 0 }}>
-                  {specimens.map((spec, idx) => (
-                    <button
-                      key={spec.id}
-                      type="button"
-                      onClick={() => setActiveSlide(idx)}
-                      aria-label={`View specimen ${idx + 1}`}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "0 4px",
+                  }}
+                >
+                  <div>
+                    <div
                       style={{
-                        padding: "4px 9px",
-                        borderRadius: "9999px",
-                        border: "1px solid",
-                        borderColor: activeSlide === idx ? "#EA580C" : "rgba(40, 28, 18, 0.12)",
-                        backgroundColor: activeSlide === idx ? "#EA580C" : "#FAF8F5",
-                        color: activeSlide === idx ? "#FFFFFF" : "#6B635B",
-                        fontSize: "10.5px",
-                        fontFamily: "monospace",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
+                        fontSize: "15.5px",
+                        fontWeight: 700,
+                        color: "#191614",
+                        fontFamily: "var(--font-khmer-title), Georgia, serif",
+                        lineHeight: 1.3,
                       }}
                     >
-                      0{idx + 1}
-                    </button>
-                  ))}
+                      {currentSpecimen.title}
+                    </div>
+                    <div style={{ fontSize: "11.5px", color: "#78716C", marginTop: "2px" }}>
+                      {currentSpecimen.place}
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "5px", flexShrink: 0 }}>
+                    {specimens.map((spec, idx) => (
+                      <button
+                        key={spec.id}
+                        type="button"
+                        onClick={() => setActiveSlide(idx)}
+                        aria-label={`View specimen ${idx + 1}`}
+                        style={{
+                          padding: "4px 9px",
+                          borderRadius: "9999px",
+                          border: "1px solid",
+                          borderColor: activeSlide === idx ? "#EA580C" : "rgba(40, 28, 18, 0.12)",
+                          backgroundColor: activeSlide === idx ? "#EA580C" : "#FAF8F5",
+                          color: activeSlide === idx ? "#FFFFFF" : "#6B635B",
+                          fontSize: "10.5px",
+                          fontFamily: "monospace",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        0{idx + 1}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* RIGHT COLUMN: Single Clean White Studio Auth Card */}
-        <div className="editorial-auth-card">
-          {/* Segmented Mode Switcher */}
+        {/* RIGHT COLUMN: Light Card for Log In, Dark Obsidian Card for Sign Up */}
+        <div className={`editorial-auth-card ${isSignup ? "signup-obsidian" : ""}`}>
+          {/* Navigation Mode Toggle: Links cleanly or toggles seamlessly */}
           <div
             style={{
               display: "inline-flex",
               padding: "4px",
               borderRadius: "9999px",
-              backgroundColor: "#F5F0E8",
-              border: "1px solid rgba(40, 28, 18, 0.08)",
+              backgroundColor: isSignup ? "rgba(255, 255, 255, 0.08)" : "#F5F0E8",
+              border: isSignup ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(40, 28, 18, 0.08)",
               marginBottom: "22px",
             }}
           >
@@ -406,35 +455,35 @@ export default function AuthExperience({
               type="button"
               onClick={() => switchMode("login")}
               style={{
-                padding: "7px 18px",
+                padding: "7px 20px",
                 borderRadius: "9999px",
                 border: "none",
-                backgroundColor: mode === "login" ? "#191614" : "transparent",
-                color: mode === "login" ? "#FFFFFF" : "#6B635B",
+                backgroundColor: !isSignup ? "#191614" : "transparent",
+                color: !isSignup ? "#FFFFFF" : "#B8AEA4",
                 fontSize: "12.5px",
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
               }}
             >
-              Sign In
+              Log In
             </button>
             <button
               type="button"
               onClick={() => switchMode("signup")}
               style={{
-                padding: "7px 18px",
+                padding: "7px 20px",
                 borderRadius: "9999px",
                 border: "none",
-                backgroundColor: mode === "signup" ? "#191614" : "transparent",
-                color: mode === "signup" ? "#FFFFFF" : "#6B635B",
+                backgroundColor: isSignup ? "#EA580C" : "transparent",
+                color: isSignup ? "#FFFFFF" : "#6B635B",
                 fontSize: "12.5px",
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
               }}
             >
-              Create Account
+              Sign Up
             </button>
           </div>
 
@@ -444,38 +493,38 @@ export default function AuthExperience({
                 margin: "0 0 4px 0",
                 fontSize: "26px",
                 fontWeight: 600,
-                color: "#191614",
+                color: isSignup ? "#FFFFFF" : "#191614",
                 fontFamily: "var(--font-khmer-title), var(--font-serif), Georgia, serif",
                 lineHeight: 1.3,
               }}
             >
-              {mode === "login" ? "ចូលគណនី" : "បង្កើតគណនី"}
+              {isSignup ? "បង្កើតគណនី" : "ចូលគណនី"}
               <span
                 style={{
                   marginLeft: "10px",
                   fontFamily: "var(--font-serif), Georgia, serif",
                   fontStyle: "italic",
                   fontWeight: 400,
-                  color: "#EA580C",
+                  color: isSignup ? "#F59E0B" : "#EA580C",
                   fontSize: "24px",
                 }}
               >
-                {mode === "login" ? "/ Log In" : "/ Join Archive"}
+                {isSignup ? "/ Sign Up" : "/ Log In"}
               </span>
             </h2>
-            <p style={{ margin: 0, fontSize: "13px", color: "#6B635B", lineHeight: 1.5 }}>
-              {mode === "login"
-                ? "Enter your contributor email and password to continue."
-                : "Register with an email and password (6+ characters) to contribute."}
+            <p style={{ margin: 0, fontSize: "13px", color: isSignup ? "#B8AEA4" : "#6B635B", lineHeight: 1.5 }}>
+              {isSignup
+                ? "Create a new contributor account with email & password (min 6 characters)."
+                : "Log in with your email and password to manage or submit tools."}
             </p>
           </div>
 
           {error && (
             <div
               style={{
-                backgroundColor: "#FEF2F2",
-                border: "1px solid #FECACA",
-                color: "#B91C1C",
+                backgroundColor: isSignup ? "rgba(220, 38, 38, 0.16)" : "#FEF2F2",
+                border: isSignup ? "1px solid rgba(248, 113, 113, 0.4)" : "1px solid #FECACA",
+                color: isSignup ? "#FCA5A5" : "#B91C1C",
                 borderRadius: "14px",
                 padding: "11px 14px",
                 fontSize: "13px",
@@ -497,9 +546,9 @@ export default function AuthExperience({
           {message && (
             <div
               style={{
-                backgroundColor: "#ECFDF5",
-                border: "1px solid #A7F3D0",
-                color: "#065F46",
+                backgroundColor: isSignup ? "rgba(16, 185, 129, 0.16)" : "#ECFDF5",
+                border: isSignup ? "1px solid rgba(110, 231, 183, 0.4)" : "1px solid #A7F3D0",
+                color: isSignup ? "#6EE7B7" : "#065F46",
                 borderRadius: "14px",
                 padding: "11px 14px",
                 fontSize: "13px",
@@ -516,7 +565,7 @@ export default function AuthExperience({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
               <label
                 htmlFor="auth-email"
@@ -524,7 +573,7 @@ export default function AuthExperience({
                   display: "block",
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: "#57534E",
+                  color: isSignup ? "#D6CEC5" : "#57534E",
                   fontFamily: "monospace",
                   marginBottom: "7px",
                   textTransform: "uppercase",
@@ -553,7 +602,7 @@ export default function AuthExperience({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="contributor@aupp.edu.kh"
-                  className="editorial-input"
+                  className={`editorial-input ${isSignup ? "signup-dark" : ""}`}
                   style={{ paddingLeft: "42px", paddingRight: "14px" }}
                 />
               </div>
@@ -566,14 +615,14 @@ export default function AuthExperience({
                   display: "block",
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: "#57534E",
+                  color: isSignup ? "#D6CEC5" : "#57534E",
                   fontFamily: "monospace",
                   marginBottom: "7px",
                   textTransform: "uppercase",
                   letterSpacing: "0.7px",
                 }}
               >
-                {mode === "signup" ? "Password (Min 6 Characters) / ពាក្យសម្ងាត់" : "Password / ពាក្យសម្ងាត់"}
+                {isSignup ? "Password (Min 6 Characters) / ពាក្យសម្ងាត់" : "Password / ពាក្យសម្ងាត់"}
               </label>
               <div style={{ position: "relative" }}>
                 <svg
@@ -592,11 +641,11 @@ export default function AuthExperience({
                   id="auth-password"
                   type={showPassword ? "text" : "password"}
                   required
-                  minLength={mode === "signup" ? 6 : undefined}
+                  minLength={isSignup ? 6 : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="editorial-input"
+                  className={`editorial-input ${isSignup ? "signup-dark" : ""}`}
                   style={{ paddingLeft: "42px", paddingRight: "44px" }}
                 />
                 <button
@@ -632,6 +681,50 @@ export default function AuthExperience({
               </div>
             </div>
 
+            {isSignup && (
+              <div>
+                <label
+                  htmlFor="auth-confirm-password"
+                  style={{
+                    display: "block",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: "#D6CEC5",
+                    fontFamily: "monospace",
+                    marginBottom: "7px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.7px",
+                  }}
+                >
+                  Confirm Password / បញ្ជាក់ពាក្យសម្ងាត់
+                </label>
+                <div style={{ position: "relative" }}>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#8B8177"
+                    strokeWidth="2"
+                    style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <input
+                    id="auth-confirm-password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-enter password"
+                    className="editorial-input signup-dark"
+                    style={{ paddingLeft: "42px", paddingRight: "14px" }}
+                  />
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -640,7 +733,9 @@ export default function AuthExperience({
                 height: "48px",
                 marginTop: "6px",
                 borderRadius: "9999px",
-                background: "linear-gradient(135deg, #FB923C 0%, #EA580C 52%, #C2410C 100%)",
+                background: isSignup
+                  ? "linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)"
+                  : "linear-gradient(135deg, #FB923C 0%, #EA580C 52%, #C2410C 100%)",
                 border: "none",
                 color: "#FFFFFF",
                 fontSize: "14px",
@@ -648,20 +743,15 @@ export default function AuthExperience({
                 cursor: loading ? "not-allowed" : "pointer",
                 opacity: loading ? 0.7 : 1,
                 boxShadow: "0 12px 24px -8px rgba(234, 88, 12, 0.45)",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
               }}
             >
               {loading
-                ? mode === "login"
-                  ? "កំពុងផ្ទៀងផ្ទាត់... / Signing in..."
-                  : "កំពុងបង្កើតគណនី... / Creating account..."
-                : embeddedInContribute
-                  ? mode === "login"
-                    ? "Sign In & Open Contribution Studio →"
-                    : "Create Account & Continue →"
-                  : mode === "login"
-                    ? "Sign In to Archive →"
-                    : "Create Contributor Account →"}
+                ? isSignup
+                  ? "កំពុងបង្កើតគណនី... / Creating account..."
+                  : "កំពុងផ្ទៀងផ្ទាត់... / Logging in..."
+                : isSignup
+                  ? "Sign Up as Contributor →"
+                  : "Log In to Archive →"}
             </button>
           </form>
 
@@ -669,28 +759,28 @@ export default function AuthExperience({
             style={{
               marginTop: "22px",
               paddingTop: "16px",
-              borderTop: "1px solid #F0EAE1",
+              borderTop: isSignup ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #F0EAE1",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               flexWrap: "wrap",
               gap: "10px",
               fontSize: "12.5px",
-              color: "#78716C",
+              color: isSignup ? "#A8A29E" : "#78716C",
             }}
           >
             <Link
               href="/"
               style={{
-                color: "#6B635B",
+                color: isSignup ? "#E7E3DF" : "#6B635B",
                 textDecoration: "none",
                 fontWeight: 500,
               }}
             >
               &larr; Browse public archive
             </Link>
-            <span style={{ fontSize: "11px", fontFamily: "monospace", color: "#A8A29E" }}>
-              RLS PROTECTED PORTAL
+            <span style={{ fontSize: "11px", fontFamily: "monospace", color: isSignup ? "#F59E0B" : "#A8A29E" }}>
+              {isSignup ? "NEW STEWARD SIGN UP" : "RLS PROTECTED PORTAL"}
             </span>
           </div>
         </div>

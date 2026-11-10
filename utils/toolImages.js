@@ -46,7 +46,7 @@ const TOOL_PHOTO_RULES = [
   { keywords: ["ក្អម", "pot", "terracotta"], path: "/images/terracotta_pot.jpg" },
   { keywords: ["ឈ្នាង", "fish scoop"], path: "/images/bamboo_fish_scoop.jpg" },
   { keywords: ["ជង្រុក", "granary", "barn"], path: "/images/paddy_granary.jpg" },
-  { keywords: ["ស្នប់", "ធុងបាច", "water scoop"], path: "/images/water_scoop.svg" },
+  { keywords: ["ស្នប់", "ធុងបាច", "water scoop"], path: "/images/water_scoop.jpg" },
 ];
 
 export function resolveToolPhoto(item) {

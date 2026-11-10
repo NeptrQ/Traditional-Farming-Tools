@@ -712,6 +712,30 @@ html {
   padding: 36px 34px 30px;
   box-shadow: 0 28px 64px -18px rgba(40, 28, 18, 0.12);
   box-sizing: border-box;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.editorial-auth-card.signup-obsidian {
+  background: linear-gradient(165deg, #1E1815 0%, #13100E 100%);
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  color: #F5EBE1;
+  box-shadow: 0 28px 64px -18px rgba(17, 14, 12, 0.45);
+}
+
+.editorial-input.signup-dark {
+  background-color: #0E0B09;
+  border-color: #3D2B22;
+  color: #FFFFFF;
+}
+
+.editorial-input.signup-dark:focus {
+  background-color: #14100D;
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+.editorial-input.signup-dark::placeholder {
+  color: #7D7268;
 }
 
 .specimen-stack {
