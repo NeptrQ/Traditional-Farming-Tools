@@ -934,14 +934,86 @@ export default function HomePage() {
             position: 'relative',
             zIndex: 10
           }}>
-            {filteredEntries.map((tool, idx) => (
-              <ExhibitCard
-                key={tool.id || idx}
-                tool={tool}
-                index={idx}
-                onClick={() => setSelectedEntry(tool)}
-              />
-            ))}
+            {filteredEntries.length === 0 ? (
+              <div
+                style={{
+                  gridColumn: '1 / -1',
+                  textAlign: 'center',
+                  padding: '56px 20px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1.5px dashed rgba(40, 28, 18, 0.16)',
+                  borderRadius: '24px',
+                  margin: '12px 0 24px'
+                }}
+              >
+                <div
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '50%',
+                    backgroundColor: '#FFF7ED',
+                    border: '1px solid #FED7AA',
+                    color: '#EA580C',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px'
+                  }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                  </svg>
+                </div>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    color: '#191614',
+                    margin: '0 0 8px',
+                    fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif'
+                  }}
+                >
+                  រកមិនឃើញឧបករណ៍កសិកម្មទេ
+                </h3>
+                <p style={{ fontSize: '14.5px', color: '#6B635B', margin: '0 auto 20px', maxWidth: '440px', lineHeight: 1.6 }}>
+                  {search
+                    ? `No farming implements match "${search}". Try searching for plough (នង្គ័ល), sickle (កណ្ដៀវ), yoke (នឹម), or clearing your search.`
+                    : 'No tools match the selected category filter.'}
+                </p>
+                {(search || activeFilter !== 'ALL') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearch('');
+                      setActiveFilter('ALL');
+                    }}
+                    style={{
+                      padding: '8px 22px',
+                      borderRadius: '9999px',
+                      backgroundColor: '#EA580C',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)'
+                    }}
+                  >
+                    កំណត់ឡើងវិញ / Clear Search &amp; Filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              filteredEntries.map((tool, idx) => (
+                <ExhibitCard
+                  key={tool.id || idx}
+                  tool={tool}
+                  index={idx}
+                  onClick={() => setSelectedEntry(tool)}
+                />
+              ))
+            )}
           </div>
 
         </section>

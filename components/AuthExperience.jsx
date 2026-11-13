@@ -151,7 +151,13 @@ export default function AuthExperience({
         });
 
         if (signUpError) {
-          setError(signUpError.message);
+          if (signUpError.message?.toLowerCase().includes("already registered")) {
+            setError("គណនីនេះមានរួចហើយ សូមជ្រើសរើស Log In / This email is already registered. Please log in.");
+          } else if (signUpError.message?.toLowerCase().includes("password")) {
+            setError("ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច ៦ តួអក្សរ / Password must be at least 6 characters.");
+          } else {
+            setError("មិនអាចចុះឈ្មោះបានទេ សូមពិនិត្យព័ត៌មានម្តងទៀត / Registration could not be completed. Please check your details and try again.");
+          }
           setLoading(false);
           return;
         }

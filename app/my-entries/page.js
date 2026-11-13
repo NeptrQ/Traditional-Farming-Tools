@@ -13,6 +13,7 @@ export default function MyEntriesPage() {
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [entries, setEntries] = useState([]);
   const [loadingEntries, setLoadingEntries] = useState(true);
+  const [isReviewer, setIsReviewer] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const { lang } = useLanguage();
@@ -38,6 +39,7 @@ export default function MyEntriesPage() {
 
       if (currentUser) {
         loadUserEntries(currentUser.id);
+        supabase.rpc("is_reviewer").then(({ data: r }) => setIsReviewer(Boolean(r)));
       } else {
         setLoadingEntries(false);
       }
@@ -53,8 +55,10 @@ export default function MyEntriesPage() {
       setLoadingAuth(false);
       if (nextUser) {
         loadUserEntries(nextUser.id);
+        supabase.rpc("is_reviewer").then(({ data: r }) => setIsReviewer(Boolean(r)));
       } else {
         setEntries([]);
+        setIsReviewer(false);
         setLoadingEntries(false);
       }
     });
@@ -90,10 +94,10 @@ export default function MyEntriesPage() {
       .select();
 
     if (error) {
-      alert(`Error deleting entry: ${error.message}`);
+      alert("មិនអាចលុបកំណត់ត្រាបានទេ សូមព្យាយាមម្តងទៀត / Could not delete this entry. Please try again.");
     } else if (!data || data.length === 0) {
       console.error("Delete failed: RLS may have silently blocked it.");
-      alert("That change wasn't saved");
+      alert("ការផ្លាស់ប្តូរមិនត្រូវបានរក្សាទុកទេ / That change was not saved.");
     } else {
       setEntries((prev) => prev.filter((e) => e.id !== entryId));
       if (selectedEntry?.id === entryId) {
@@ -122,19 +126,19 @@ export default function MyEntriesPage() {
     const p = editPlace.trim();
 
     if (!t) {
-      alert("Title is required.");
+      alert("សូមបញ្ចូលឈ្មោះឧបករណ៍ / Title is required.");
       return;
     }
     if (!d) {
-      alert("Description is required.");
+      alert("សូមបញ្ចូលការពិពណ៌នា / Description is required.");
       return;
     }
     if (!c) {
-      alert("Contributor (Elder / Source) is required.");
+      alert("សូមបញ្ចូលប្រភព / ឈ្មោះអ្នកផ្តល់ព័ត៌មាន / Contributor (Elder / Source) is required.");
       return;
     }
     if (!p) {
-      alert("Place of Origin is required.");
+      alert("សូមបញ្ចូលទីកន្លែងដើម / Place of Origin is required.");
       return;
     }
 
@@ -164,7 +168,7 @@ export default function MyEntriesPage() {
         .upload(filePath, editPhotoFile);
 
       if (uploadError) {
-        alert(`Error uploading photo: ${uploadError.message}`);
+        alert("មិនអាចបង្ហោះរូបភាពបានទេ សូមពិនិត្យឯកសារហើយព្យាយាមម្តងទៀត / Could not upload photo. Please check the file and try again.");
         setIsSubmitting(false);
         return;
       }
@@ -175,14 +179,15 @@ export default function MyEntriesPage() {
       publicUrl = url;
     }
 
-    // Whenever an entry is edited, it must go back to 'pending' to satisfy Lab 10/11 edit rules
+    // Contributor edits return to 'pending'; reviewer editing an already published entry keeps it 'published'
+    const nextStatus = (isReviewer && editEntry.status === "published") ? "published" : "pending";
     const updatePayload = {
       title: t,
       description: d,
       place: p,
       contributor: c,
       photo_url: publicUrl,
-      status: "pending",
+      status: nextStatus,
     };
 
     const { data, error } = await supabase
@@ -194,12 +199,12 @@ export default function MyEntriesPage() {
     setIsSubmitting(false);
 
     if (error) {
-      alert(`Error updating entry: ${error.message}`);
+      alert("មិនអាចកែប្រែកំណត់ត្រាបានទេ សូមព្យាយាមម្តងទៀត / Could not update entry. Please try again.");
     } else if (!data || data.length === 0) {
       console.error("Update failed: No data returned, possibly RLS silent refusal.");
-      alert("That change wasn't saved");
+      alert("ការផ្លាស់ប្តូរមិនត្រូវបានរក្សាទុកទេ / That change was not saved.");
     } else {
-      alert("Success! Entry updated.");
+      alert("បានកែប្រែកំណត់ត្រាដោយជោគជ័យ! / Entry updated successfully.");
       setEditEntry(null);
       setEditTitle("");
       setEditDesc("");

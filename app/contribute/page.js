@@ -55,7 +55,13 @@ function QuickContributeAuthBar({ onUnlocked }) {
           password,
         });
         if (error) {
-          setErr(error.message);
+          if (error.message?.toLowerCase().includes("already registered")) {
+            setErr("គណនីនេះមានរួចហើយ សូមជ្រើសរើស Log In / This email is already registered. Please log in.");
+          } else if (error.message?.toLowerCase().includes("password")) {
+            setErr("ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច ៦ តួអក្សរ / Password must be at least 6 characters.");
+          } else {
+            setErr("មិនអាចចុះឈ្មោះបានទេ សូមពិនិត្យព័ត៌មានម្តងទៀត / Registration failed. Please check your details and try again.");
+          }
           setBusy(false);
           return;
         }
@@ -419,7 +425,7 @@ export default function ContributePage() {
       setPhoto(null);
     } catch (err) {
       console.error(err);
-      setSubmitError("Failed to save entry. Please try again.");
+      setSubmitError("មិនអាចរក្សាទុកកំណត់ត្រាបានទេ សូមព្យាយាមម្តងទៀត / Failed to save entry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
