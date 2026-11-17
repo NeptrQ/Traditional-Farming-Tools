@@ -115,7 +115,7 @@ export default function Header() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span
               style={{
-                fontFamily: "var(--font-sans), system-ui, sans-serif",
+                fontFamily: lang === "KH" ? "var(--font-khmer-title), var(--font-sans), system-ui" : "var(--font-sans), system-ui, sans-serif",
                 fontWeight: 700,
                 fontSize: "14px",
                 color: "#FFFFFF",
@@ -124,13 +124,13 @@ export default function Header() {
                 whiteSpace: "nowrap",
               }}
             >
-              Khmer Archive
+              {lang === "KH" ? "បណ្ណសារខ្មែរ" : "Khmer Archive"}
             </span>
             <span
               style={{
                 fontSize: "9px",
                 color: "#B7ACA2",
-                fontFamily: "monospace",
+                fontFamily: lang === "KH" ? "var(--font-khmer-body), monospace" : "monospace",
                 letterSpacing: "1px",
                 textTransform: "uppercase",
                 display: "inline-flex",
@@ -139,7 +139,7 @@ export default function Header() {
               }}
             >
               <span style={{ width: "5px", height: "5px", borderRadius: "50%", backgroundColor: "#F59E0B" }} />
-              Kampong Cham
+              {lang === "KH" ? "ខេត្តកំពង់ចាម" : "Kampong Cham"}
             </span>
           </div>
         </Link>

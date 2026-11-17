@@ -146,28 +146,124 @@ const ORAL_TAPES = [
   {
     id: 1,
     speaker: 'Grandfather Sok (84 years old)',
+    speakerKh: 'លោកតា សុខ (អាយុ ៨៤ ឆ្នាំ)',
     village: 'Kampong Siem District, Kampong Cham',
+    villageKh: 'ស្រុកកំពង់សៀម ខេត្តកំពង់ចាម',
     title: 'Reading the Morning Star (មើលផ្កាយព្រឹក) to Begin Plowing',
+    titleKh: 'មើលផ្កាយព្រឹក ដើម្បីទម្លាក់នង្គ័លចុះស្រែ',
     khmerQuote: '« នង្គ័លនេះ ធ្វើពីឈើគគីររឹងមាំណាស់ ប្រើជាមួយគោមួយនឹម ភ្ជួរតាំងពីដីរឹងរហូតដល់ភ្លៀងធ្លាក់ដំបូង... ជីតាតែងតែបង្រៀនឱ្យមើលរដូវតាមផ្កាយព្រឹក ដើម្បីដឹងថាតើពេលណាត្រូវទម្លាក់នង្គ័លចុះក្នុងស្រែ »',
-    engContext: 'Grandfather Sok explains how elders judged the exact week to hitch cattle by observing astronomical alignments above the Mekong horizon before monsoon downpours flooded the basalt paddies.'
+    engContext: 'Grandfather Sok explains how elders judged the exact week to hitch cattle by observing astronomical alignments above the Mekong horizon before monsoon downpours flooded the basalt paddies.',
+    khmerContext: 'លោកតា សុខ រៀបរាប់អំពីរបៀបដែលចាស់ទុំសង្កេតផ្កាយព្រឹកលើជើងមេឃដងទន្លេមេគង្គ ដើម្បីដឹងពីពេលវេលាច្បាស់លាស់ក្នុងការទឹមគោភ្ជួររាស់ មុនពេលភ្លៀងមូសុងធ្លាក់ជោកជាំលើដីក្រហម។'
   },
   {
     id: 2,
     speaker: 'Grandmother Yan (78 years old)',
+    speakerKh: 'លោកយាយ យ៉ាន (អាយុ ៧៨ ឆ្នាំ)',
     village: 'Kang Meas District, Kampong Cham',
+    villageKh: 'ស្រុកកងមាស ខេត្តកំពង់ចាម',
     title: 'The Sweep Rhythm of the Serrated Sickle (កណ្ដៀវច្រូតស្រូវ)',
+    titleKh: 'ចង្វាក់ច្រូតកាត់ និងកណ្ដៀវធ្មេញត្រីឆ្លាម',
     khmerQuote: '« កណ្ដៀវច្រូតស្រូវនេះ ដំដោយជាងដែកភូមិ មានធ្មេញតូចៗដូចធ្មេញត្រីឆ្លាម។ ពេលច្រូតត្រូវកាន់មួយកណ្តាប់ដៃ ហើយកាត់ដោយចលនាតែមួយ កុំឱ្យជ្រុះគ្រាប់ស្រូវមាសលើដីស្រែ »',
-    engContext: 'Grandmother Yan recounts the harvest chants synchronized with the sickle sweep to reap thirty bushels of jasmine rice in late December without shattering fragile grains.'
+    engContext: 'Grandmother Yan recounts the harvest chants synchronized with the sickle sweep to reap thirty bushels of jasmine rice in late December without shattering fragile grains.',
+    khmerContext: 'លោកយាយ យ៉ាន រៀបរាប់អំពីចង្វាក់ច្រៀងពេលច្រូតកាត់ស្រែ និងរបៀបប្រើកណ្ដៀវដើម្បីច្រូតស្រូវផ្ការំដួល ៣០ ថាំង ដោយមិនឱ្យជ្រុះគ្រាប់ស្រូវលើដីស្រែ។'
   },
   {
     id: 3,
     speaker: 'Master Blacksmith Kong (72 years old)',
+    speakerKh: 'ជាងដែក គង់ (អាយុ ៧២ ឆ្នាំ)',
     village: 'Prey Chhor District, Kampong Cham',
+    villageKh: 'ស្រុកព្រៃឈរ ខេត្តកំពង់ចាម',
     title: 'Tempering Spring Steel for Sticky Basalt Red Clay (ដីក្រហមបាសាល់)',
+    titleKh: 'ការដំដែកថែបមុខនង្គ័ល សម្រាប់ដីក្រហមបាសាល់',
     khmerQuote: '« ដីក្រហមកំពង់ចាមស្វិតណាស់! បើប្រើដែកធម្មតា ភ្ជួរតែកន្លះថ្ងៃគឺបាក់ឬរេចរឹលអស់ហើយ។ ជាងដែកត្រូវយកដែកថែបដំកម្តៅឡើងក្រហមដូចផ្លេកបន្ទោរ ហើយជ្រលក់ក្នុងទឹកប្រេងរុក្ខជាតិទើបធន់មិនកោង »',
-    engContext: 'Master Kong details the secret botanical oil quenching technique that keeps ploughshares razor-sharp against volcanic basalt silica without snapping under 400kg oxen drag.'
+    engContext: 'Master Kong details the secret botanical oil quenching technique that keeps ploughshares razor-sharp against volcanic basalt silica without snapping under 400kg oxen drag.',
+    khmerContext: 'ជាងដែក គង់ បង្ហាញពីអាថ៌កំបាំងនៃការដំដែកថែប និងជ្រលក់ប្រេងរុក្ខជាតិ ដើម្បីឱ្យមុខនង្គ័លមុតស្រួចធន់នឹងដីក្រហមបាសាល់ ដោយមិនបាក់ក្រោមរង្វាស់កម្លាំងអូស ៤០០ គីឡូ។'
   }
 ];
+
+// Complete authentic Khmer data mapping for living archive implements
+const KHMER_TOOL_INFO = {
+  '1': {
+    title: 'នង្គ័លបុរាណឈើគគីរ',
+    category: 'ភ្ជួររាស់ដីស្រែ',
+    season: 'ដើមរដូវវស្សា (ឧសភា - មិថុនា)',
+    material: 'ឈើគគីរ · ផ្លែដែកថែប',
+    place: 'ស្រុកកំពង់សៀម ខេត្តកំពង់ចាម',
+    description: 'ច្នៃចេញពីឈើគគីរចាស់។ មុំកោងពិសេសសម្រាប់កាត់ជម្រៅ ២០ សង់ទីម៉ែត្រចូលក្នុងដីក្រហមស្អិត ដោយមិនបាក់ក្រោមរង្វាស់កម្លាំងអូសទាញ។'
+  },
+  '2': {
+    title: 'រាស់ឈើបុរាណ',
+    category: 'រាស់បំបែកដី',
+    season: 'រាស់ដីពង្រាប (មិថុនា)',
+    material: 'តួឈើគគីរ · ធ្មេញឈើ ៧',
+    place: 'ស្រុកបាធាយ ខេត្តកំពង់ចាម',
+    description: 'រាស់ឈើគគីរមានធ្មេញ ៧ ច្នៃឡើងដោយដៃ ដើម្បីបំបែកដុំដីរឹងឱ្យម៉ដ្ឋល្អ សម្រាប់កូនសំណាបស្រូវដុះឫសស្រូបយកជីវជាតិ។'
+  },
+  '3': {
+    title: 'នឹមគោភ្លោះ',
+    category: 'នឹមទឹមគោ',
+    season: 'រដូវភ្ជួររាស់ (ឧសភា - កក្កដា)',
+    material: 'ឈើអំពិលកោង · ខ្សែស្បែកគោ',
+    place: 'ស្រុកកំពង់សៀម ខេត្តកំពង់ចាម',
+    description: 'ឈើនឹមទឹមស្មាកោង ច្នៃឡើងដើម្បីចែកចាយកម្លាំងទាញស្មើគ្នារវាងគោមួយនឹម ពេញមួយថ្ងៃ ៨ ម៉ោងលើដីភក់ល្បាប់។'
+  },
+  '4': {
+    title: 'ចបកាប់ដីក្រហម',
+    category: 'ចបកាប់ដី និងភ្លឺស្រែ',
+    season: 'លើកភ្លឺស្រែ (រដូវវស្សា)',
+    material: 'ដែកថែបដំដោយដៃ · ដងឈើអំពិល',
+    place: 'ស្រុកព្រៃឈរ ខេត្តកំពង់ចាម',
+    description: 'ផ្លែដែកថែបដំដោយដៃដោយជាងដែកភូមិ សម្រាប់ជីកប្រឡាយទឹក និងជួសជុលភ្លឺស្រែដីក្រហមក្នុងរដូវវស្សា។'
+  },
+  '5': {
+    title: 'រទេះគោបុរាណ',
+    category: 'រទេះដឹកជញ្ជូន',
+    season: 'ដឹកជញ្ជូនស្រូវ (វិច្ឆិកា - មករា)',
+    material: 'កង់កាំឈើរឹង · ទ្រុងឫស្សីត្បាញ',
+    place: 'ស្រុកចំការលើ ខេត្តកំពង់ចាម',
+    description: 'កង់រទេះឈើរឹងកម្ពស់ខ្ពស់ ច្នៃឡើងដើម្បីបរឆ្លងកាត់ភក់ជ្រៅក្នុងរដូវវស្សា ដោយផ្ទុកស្រូវសំបកបានរហូតដល់ ៣០ បាវ។'
+  },
+  '6': {
+    title: 'កណ្ដៀវច្រូតស្រូវ',
+    category: 'ច្រូតកាត់ស្រូវ',
+    season: 'ប្រមូលផលរដូវប្រាំង (ធ្នូ - មករា)',
+    material: 'ដែកថែបធ្មេញត្រីឆ្លាម · ដងឫស្សី',
+    place: 'ស្រុកកងមាស ខេត្តកំពង់ចាម',
+    description: 'ផ្លែដែកថែបកោងមានធ្មេញល្អិតៗដូចធ្មេញត្រីឆ្លាម ដំឡើងសម្រាប់ច្រូតកាត់ដើមស្រូវយ៉ាងរហ័សដោយដៃម្ខាងក្នុងរដូវប្រមូលផល។'
+  },
+  '7': {
+    title: 'កញ្ជើបក់ស្រូវ',
+    category: 'កញ្ជើ និងរោយស្រូវ',
+    season: 'បោកបក់ស្រូវ (មករា)',
+    material: 'បន្ទះឫស្សីរោលផ្សែង · គែមផ្តៅ',
+    place: 'ស្រុកជើងព្រៃ ខេត្តកំពង់ចាម',
+    description: 'កញ្ជើត្បាញពីបន្ទះឫស្សីរោលផ្សែង ប្រើសម្រាប់រោយបក់គ្រាប់ស្រូវក្នុងខ្យល់រដូវរំហើយ ដើម្បីញែកអង្កាមចេញពីគ្រាប់ស្រូវមាស។'
+  },
+  '8': {
+    title: 'ក្អមដីដុតបុរាណ',
+    category: 'ក្អមទឹកត្រជាក់',
+    season: 'ការងារស្រែ (គ្រប់រដូវ)',
+    material: 'ដីឥដ្ឋដុតមាត់ទន្លេមេគង្គ',
+    place: 'ស្រុកកំពង់សៀម ខេត្តកំពង់ចាម',
+    description: 'ក្អមដីដុតទន្លេជួយរក្សាទឹកអណ្តូងឱ្យត្រជាក់ស្រេបក្រោមអាកាសធាតុក្តៅ ៣៨°C តាមរយៈការភាយរំហួតធម្មជាតិ។'
+  },
+  '9': {
+    title: 'ឈ្នាងដងត្រីស្រែ',
+    category: 'ឈ្នាងដងត្រី',
+    season: 'រដូវទឹកសម្រក (សីហា - តុលា)',
+    material: 'បន្ទះឫស្សីត្បាញល្អិត',
+    place: 'ស្រុកកោះសូទិន ខេត្តកំពង់ចាម',
+    description: 'ឧបករណ៍ត្បាញពីបន្ទះឫស្សីល្អិតៗ ប្រើសម្រាប់ដងត្រីក្រាញ់ ត្រីឆ្លូញ និងត្រីរ៉ស់ ដែលហែលតាមប្រឡាយទឹកស្រែពេលទឹកស្រក។'
+  },
+  '10': {
+    title: 'ជង្រុកស្រូវបុរាណ',
+    category: 'ជង្រុកស្រូវ',
+    season: 'រក្សាទុកពេញមួយឆ្នាំ',
+    material: 'សសរឈើរឹងខ្ពស់ · កំបោរបាយអ',
+    place: 'ស្រុកស្រីសន្ធរ ខេត្តកំពង់ចាម',
+    description: 'ជង្រុកឈើសសរខ្ពស់ផុតពីដី លាបកំបោរបាយអធម្មជាតិ ដើម្បីការពារស្រូវទុកពីសំណើមរដូវវស្សា សត្វល្អិត និងកណ្ដុរ។'
+  }
+};
 
 export default function HomePage() {
   const { lang } = useLanguage();
@@ -310,7 +406,7 @@ export default function HomePage() {
         <section id="overview" className="reveal-on-scroll in-view" style={{ textAlign: 'center', padding: '48px 0 72px 0', position: 'relative' }}>
           
           {/* Giant Background Watermark */}
-          <div className="watermark-hero">LIVING SOIL</div>
+          <div className="watermark-hero">{lang === 'KH' ? 'ដីរស់' : 'LIVING SOIL'}</div>
 
           <div style={{ position: 'relative', zIndex: 2 }}>
             
@@ -325,9 +421,6 @@ export default function HomePage() {
               {lang === 'KH' ? (
                 <>
                   ដីរស់នៃ<span style={{ color: '#EA580C', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.3)', textUnderlineOffset: '8px' }}>ខេត្តកំពង់ចាម</span>
-                  <span style={{ display: 'block', fontSize: 'clamp(18px, 3.4vw, 32px)', fontWeight: 400, color: '#6B635B', marginTop: '10px', fontFamily: 'var(--font-serif), Georgia, serif' }}>
-                    The living soil of Kampong Cham Province
-                  </span>
                 </>
               ) : (
                 <>
@@ -341,7 +434,9 @@ export default function HomePage() {
 
             {/* Khmer Subtitle */}
             <p style={{ color: '#D97706', fontStyle: 'italic', fontSize: 'clamp(16px, 2.2vw, 21px)', lineHeight: 1.6, margin: '0 auto 16px auto', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
-              « រំលឹកដង្ហើមស្រែដូនតា និងកេរ្តិ៍ដំណែលឧបករណ៍កសិកម្មបុរាណ លើទឹកដីដីក្រហម »
+              {lang === 'KH' 
+                ? '« រំលឹកដង្ហើមស្រែដូនតា និងកេរ្តិ៍ដំណែលឧបករណ៍កសិកម្មបុរាណ លើទឹកដីដីក្រហម »'
+                : '"Remembering ancestral paddy breath and traditional farming implements on basalt red earth."'}
             </p>
 
             {/* Subheading Narrative */}
@@ -447,19 +542,25 @@ export default function HomePage() {
                   >
                     <div>
                       <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                        {activeHotspot === 1 && 'ANATOMICAL COMPONENT 01 · ឈើគគីរ (BEAM SHANK)'}
-                        {activeHotspot === 2 && 'ANATOMICAL COMPONENT 02 · ចង្អុលដែកថែប (STEEL WEDGE)'}
-                        {activeHotspot === 3 && 'ANATOMICAL COMPONENT 03 · នឹម & ខ្សែទាញ (DRAUGHT LINE)'}
+                        {activeHotspot === 1 && (lang === 'KH' ? 'ផ្នែកកាយវិភាគ ០១ · ឈើគគីរ' : 'ANATOMICAL COMPONENT 01 · KOKIR BEAM SHANK')}
+                        {activeHotspot === 2 && (lang === 'KH' ? 'ផ្នែកកាយវិភាគ ០២ · ចង្អុលដែកថែប' : 'ANATOMICAL COMPONENT 02 · FORGED STEEL WEDGE')}
+                        {activeHotspot === 3 && (lang === 'KH' ? 'ផ្នែកកាយវិភាគ ០៣ · នឹម និងខ្សែទាញ' : 'ANATOMICAL COMPONENT 03 · RAWHIDE DRAUGHT LINE')}
                       </span>
                       <h4 style={{ fontSize: '17px', margin: '2px 0 4px 0', color: '#FFFFFF', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
                         {activeHotspot === 1 && (lang === 'KH' ? 'ដងនង្គ័លធ្វើពីឈើគគីររឹងមាំ' : 'Curved Kokir Ironwood Shank (Hopea odorata)')}
                         {activeHotspot === 2 && (lang === 'KH' ? 'ចង្អុលដែកថែបដំកម្តៅ ៣២ ដឺក្រេ' : 'Hand-Forged Spring Steel Share (32° Soil Incline)')}
-                        {activeHotspot === 3 && (lang === 'KH' ? 'នឹម និងខ្សែទាញស្បែកគោព្រៃធន់ ៤០០គីឡូ' : 'Twin Oxen Rawhide Draft Line (400kg Drag Balancing)')}
+                        {activeHotspot === 3 && (lang === 'KH' ? 'នឹម និងខ្សែទាញស្បែកគោទ្រទម្ងន់ ៤០០គីឡូ' : 'Twin Oxen Rawhide Draft Line (400kg Drag Balancing)')}
                       </h4>
                       <p style={{ fontSize: '12.5px', color: '#D6D3D1', margin: 0, maxWidth: '640px', lineHeight: 1.5 }}>
-                        {activeHotspot === 1 && 'Naturally cured for three dry seasons. High fiber density prevents snapping when buffaloes lurch against embedded basalt granite boulders.'}
-                        {activeHotspot === 2 && 'Village blacksmiths temper carbon spring steel in botanical oil baths to achieve 58 HRC hardness, slicing 20cm deep through sticky clay.'}
-                        {activeHotspot === 3 && 'Rawhide lashings absorb sudden shock loads, protecting the necks of working oxen while maintaining a straight plough furrow across flooded paddies.'}
+                        {activeHotspot === 1 && (lang === 'KH'
+                          ? 'ហាលសម្ងួតធម្មជាតិតាមកម្តៅថ្ងៃ ៣ រដូវប្រាំង។ សរសៃឈើក្រាស់ស្វិត ការពារកុំឱ្យបាក់នៅពេលគោក្របីទាញប៉ះចំថ្មបាសាល់ក្នុងដី។'
+                          : 'Naturally cured for three dry seasons. High fiber density prevents snapping when buffaloes lurch against embedded basalt granite boulders.')}
+                        {activeHotspot === 2 && (lang === 'KH'
+                          ? 'ជាងដែកភូមិដំដែកថែប និងជ្រលក់ប្រេងរុក្ខជាតិដើម្បីទទួលបានភាពរឹងមាំ អាចកាត់ជម្រៅ ២០ សង់ទីម៉ែត្រចូលក្នុងដីស្អិត។'
+                          : 'Village blacksmiths temper carbon spring steel in botanical oil baths to achieve 58 HRC hardness, slicing 20cm deep through sticky clay.')}
+                        {activeHotspot === 3 && (lang === 'KH'
+                          ? 'ខ្សែស្បែកគោព្រៃជួយទប់លំនឹងកម្លាំងទាញភ្លាមៗ ការពារកញ្ចឹងកសត្វពាហនៈ និងរក្សាគន្លងភ្ជួរឱ្យត្រង់តាមបណ្តោយស្រែ។'
+                          : 'Rawhide lashings absorb sudden shock loads, protecting the necks of working oxen while maintaining a straight plough furrow across flooded paddies.')}
                       </p>
                     </div>
 
@@ -478,7 +579,9 @@ export default function HomePage() {
                           border: 'none',
                           fontSize: '12px',
                           fontWeight: 600,
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(234, 88, 12, 0.3)',
+                          whiteSpace: 'nowrap'
                         }}
                       >
                         {lang === 'KH' ? 'ពិនិត្យឯកសារលម្អិត →' : 'Inspect Full Dossier →'}
@@ -522,22 +625,30 @@ export default function HomePage() {
               >
                 <div>
                   <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1.2px', display: 'block' }}>
-                    CANONICAL ARTIFACT #01 · MONSOON TILLING
+                    {lang === 'KH' ? 'វត្ថុបុរាណគំរូ ០១ · ភ្ជួររាស់រដូវវស្សា' : 'CANONICAL ARTIFACT #01 · MONSOON TILLING'}
                   </span>
                   <div style={{ fontSize: '17px', fontWeight: 700, color: '#191614', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
-                    នង្គ័លបុរាណ (Traditional Kokir Ox Plough)
+                    {lang === 'KH' ? 'នង្គ័លបុរាណឈើគគីរ' : 'Traditional Kokir Ox Plough (នង្គ័ល)'}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <div style={{ borderLeft: '2px solid rgba(40, 28, 18, 0.1)', paddingLeft: '14px' }}>
-                    <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#6B635B', textTransform: 'uppercase' }}>PROVENANCE</span>
-                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#191614' }}>Kampong Siem (ដីក្រហម)</div>
+                    <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#6B635B', textTransform: 'uppercase' }}>
+                      {lang === 'KH' ? 'ទីតាំងប្រភព' : 'PROVENANCE'}
+                    </span>
+                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#191614' }}>
+                      {lang === 'KH' ? 'ស្រុកកំពង់សៀម (ដីក្រហម)' : 'Kampong Siem (ដីក្រហម)'}
+                    </div>
                   </div>
 
                   <div style={{ borderLeft: '2px solid rgba(40, 28, 18, 0.1)', paddingLeft: '14px' }}>
-                    <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#6B635B', textTransform: 'uppercase' }}>DRAUGHT FORCE</span>
-                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#191614' }}>~400kg Drag · Twin Oxen</div>
+                    <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#6B635B', textTransform: 'uppercase' }}>
+                      {lang === 'KH' ? 'កម្លាំងអូសទាញ' : 'DRAUGHT FORCE'}
+                    </span>
+                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#191614' }}>
+                      {lang === 'KH' ? '~៤០០ គ.ក្រ · គោមួយនឹម' : '~400kg Drag · Twin Oxen'}
+                    </div>
                   </div>
 
                   <button
@@ -581,13 +692,15 @@ export default function HomePage() {
           
           <div style={{ textAlign: 'center', marginBottom: '44px' }}>
             <span style={{ fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '2px', color: '#EA580C', display: 'block', marginBottom: '8px' }}>
-              FOUR PILLARS OF ANCESTRAL FARMING
+              {lang === 'KH' ? 'សសរស្តម្ភទាំង ៤ នៃកសិកម្មបុរាណ' : 'FOUR PILLARS OF ANCESTRAL FARMING'}
             </span>
-            <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 4.5vw, 48px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
-              The Seasonal Rice Calendar &amp; Village Engineering
+            <h2 style={{ fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 4.5vw, 48px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
+              {lang === 'KH' ? 'ប្រតិទិនរដូវស្រូវ និងវិស្វកម្មភូមិ' : 'The Seasonal Rice Calendar & Village Engineering'}
             </h2>
             <p style={{ color: '#6B635B', fontSize: '14.5px', maxWidth: '580px', margin: '0 auto', lineHeight: 1.6 }}>
-              Tools curated by their functional phase across the monsoon floodwaters and dry harvest cycles. Click any pillar to filter the archive below.
+              {lang === 'KH'
+                ? 'ឧបករណ៍ត្រូវបានរៀបចំតាមវដ្តរដូវទឹកជំនន់មូសុង និងរដូវប្រមូលផលស្ងួត។ ចុចលើសសរស្តម្ភណាមួយដើម្បីត្រងមើលឧបករណ៍ក្នុងបណ្ណសារ។'
+                : 'Tools curated by their functional phase across the monsoon floodwaters and dry harvest cycles. Click any pillar to filter the archive below.'}
             </p>
           </div>
 
@@ -608,13 +721,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-                PHASE 01 · MAY - JUNE
+                {lang === 'KH' ? 'ដំណាក់កាល ០១ · ឧសភា - មិថុនា' : 'PHASE 01 · MAY - JUNE'}
               </span>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#191614', margin: '0 0 4px 0', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
                 ភ្ជួររាស់ដីក្រហម
               </h3>
               <p style={{ fontSize: '12.5px', color: '#6B635B', margin: '0 0 14px 0' }}>
-                Tilling Basalt Red Earth
+                {lang === 'KH' ? 'រៀបចំដីក្រហមបាសាល់មុនភ្លៀងធ្លាក់' : 'Tilling Basalt Red Earth'}
               </p>
               <span style={{ fontSize: '11px', fontFamily: 'monospace', padding: '4px 10px', borderRadius: '9999px', backgroundColor: '#F7F4EE', color: '#191614', border: '1px solid rgba(40,28,18,0.1)' }}>
                 នង្គ័ល · រាស់ · នឹម
@@ -633,13 +746,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#0284C7', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-                PHASE 02 · JULY - SEPT
+                {lang === 'KH' ? 'ដំណាក់កាល ០២ · កក្កដា - កញ្ញា' : 'PHASE 02 · JULY - SEPT'}
               </span>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#191614', margin: '0 0 4px 0', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
                 ទឹក &amp; ការស្ទូង
               </h3>
               <p style={{ fontSize: '12.5px', color: '#6B635B', margin: '0 0 14px 0' }}>
-                Irrigation &amp; Monsoon Flood
+                {lang === 'KH' ? 'ប្រព័ន្ធធារាសាស្ត្រ និងទឹកជំនន់មូសុង' : 'Irrigation & Monsoon Flood'}
               </p>
               <span style={{ fontSize: '11px', fontFamily: 'monospace', padding: '4px 10px', borderRadius: '9999px', backgroundColor: '#F7F4EE', color: '#191614', border: '1px solid rgba(40,28,18,0.1)' }}>
                 ស្នប់បាចទឹក · ឈ្នាង
@@ -659,13 +772,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#B45309', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-                PHASE 03 · NOV - JAN
+                {lang === 'KH' ? 'ដំណាក់កាល ០៣ · វិច្ឆិកា - មករា' : 'PHASE 03 · NOV - JAN'}
               </span>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#191614', margin: '0 0 4px 0', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
                 ច្រូតកាត់រដូវប្រមូលផល
               </h3>
               <p style={{ fontSize: '12.5px', color: '#6B635B', margin: '0 0 14px 0' }}>
-                Dry Season Harvest &amp; Winnowing
+                {lang === 'KH' ? 'ប្រមូលផលរដូវប្រាំង និងបក់ស្រូវ' : 'Dry Season Harvest & Winnowing'}
               </p>
               <span style={{ fontSize: '11px', fontFamily: 'monospace', padding: '4px 10px', borderRadius: '9999px', backgroundColor: '#F7F4EE', color: '#191614', border: '1px solid rgba(40,28,18,0.1)' }}>
                 កណ្ដៀវ · អង្រែ · កញ្ជើ
@@ -685,13 +798,13 @@ export default function HomePage() {
                 </svg>
               </div>
               <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#7E22CE', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-                PHASE 04 · YEAR-ROUND
+                {lang === 'KH' ? 'ដំណាក់កាល ០៤ · ពេញមួយឆ្នាំ' : 'PHASE 04 · YEAR-ROUND'}
               </span>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#191614', margin: '0 0 4px 0', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
                 ជង្រុក &amp; ការដឹកជញ្ជូន
               </h3>
               <p style={{ fontSize: '12.5px', color: '#6B635B', margin: '0 0 14px 0' }}>
-                Storage &amp; Draft Transport
+                {lang === 'KH' ? 'រក្សាទុកគ្រាប់ពូជ និងរទេះដឹកជញ្ជូន' : 'Storage & Draft Transport'}
               </p>
               <span style={{ fontSize: '11px', fontFamily: 'monospace', padding: '4px 10px', borderRadius: '9999px', backgroundColor: '#F7F4EE', color: '#191614', border: '1px solid rgba(40,28,18,0.1)' }}>
                 រទេះគោ · ជង្រុកស្រូវ
@@ -747,10 +860,10 @@ export default function HomePage() {
 
                 <div>
                   <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#F59E0B', letterSpacing: '1.5px', textTransform: 'uppercase', display: 'block' }}>
-                    FIELD RECORDING ARCHIVE · REEL 01
+                    {lang === 'KH' ? 'បណ្ណសារសំឡេងវាលស្រែ · ខ្សែអាត់ ០១' : 'FIELD RECORDING ARCHIVE · REEL 01'}
                   </span>
                   <span style={{ fontSize: '12px', color: '#A8A29E', fontFamily: 'monospace' }}>
-                    MEKONG BASIN ORAL EXPEDITION · TAPE #{activeTape.id}
+                    {lang === 'KH' ? `ការកត់ត្រាផ្ទាល់មាត់ដងទន្លេមេគង្គ · ខ្សែអាត់ #${activeTape.id}` : `MEKONG BASIN ORAL EXPEDITION · TAPE #${activeTape.id}`}
                   </span>
                 </div>
               </div>
@@ -780,7 +893,7 @@ export default function HomePage() {
                     cursor: 'pointer'
                   }}
                 >
-                  {isTapePlaying ? 'PAUSE SPOOL' : 'RESUME TAPE'}
+                  {isTapePlaying ? (lang === 'KH' ? 'ផ្អាកសំឡេង' : 'PAUSE SPOOL') : (lang === 'KH' ? 'ចាក់សំឡេង' : 'RESUME TAPE')}
                 </button>
               </div>
 
@@ -805,7 +918,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Tape 0{tape.id}: {tape.speaker.split('(')[0].trim()}
+                  {lang === 'KH' ? `ខ្សែអាត់ ០${tape.id}៖ ${tape.speakerKh.split('(')[0].trim()}` : `Tape 0${tape.id}: ${tape.speaker.split('(')[0].trim()}`}
                 </button>
               ))}
             </div>
@@ -813,7 +926,7 @@ export default function HomePage() {
             {/* Tape Transcript Quote */}
             <div style={{ minHeight: '120px' }}>
               <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
-                RECORDED TESTIMONY · {activeTape.village}
+                {lang === 'KH' ? `សក្ខីកម្មផ្ទាល់មាត់កត់ត្រាទុក · ${activeTape.villageKh}` : `RECORDED TESTIMONY · ${activeTape.village}`}
               </div>
 
               <p style={{ fontFamily: 'var(--font-khmer-title), Georgia, serif', fontSize: 'clamp(17px, 2.3vw, 21px)', lineHeight: 1.7, color: '#FED7AA', margin: '0 0 14px 0' }}>
@@ -821,11 +934,11 @@ export default function HomePage() {
               </p>
 
               <p style={{ fontSize: '13px', color: '#A8A29E', lineHeight: 1.6, margin: '0 0 14px 0', maxWidth: '780px' }}>
-                {activeTape.engContext}
+                {lang === 'KH' ? activeTape.khmerContext : activeTape.engContext}
               </p>
 
               <div style={{ fontSize: '12px', color: '#F59E0B', fontFamily: 'monospace' }}>
-                Speaker: {activeTape.speaker} · {activeTape.title}
+                {lang === 'KH' ? `អ្នករៀបរាប់៖ ${activeTape.speakerKh} · ${activeTape.titleKh}` : `Speaker: ${activeTape.speaker} · ${activeTape.title}`}
               </div>
             </div>
 
@@ -839,7 +952,7 @@ export default function HomePage() {
         <section id="archive" className="reveal-on-scroll" style={{ padding: '60px 0 84px 0', position: 'relative' }}>
           
           {/* Watermark in background */}
-          <div className="watermark-archive">VISUAL ARCHIVE</div>
+          <div className="watermark-archive">{lang === 'KH' ? 'បណ្ណសាររូបភាព' : 'VISUAL ARCHIVE'}</div>
 
           <div style={{ textAlign: 'center', marginBottom: '36px', position: 'relative', zIndex: 10 }}>
             <span style={{ fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '2px', color: '#EA580C', display: 'block', marginBottom: '8px' }}>
@@ -874,7 +987,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                {lang === 'KH' ? `ទាំងអស់ / ALL (${entries.length || 10})` : `ALL (${entries.length || 10})`}
+                {lang === 'KH' ? `ទាំងអស់ (${entries.length || 10})` : `ALL (${entries.length || 10})`}
               </button>
               <button
                 type="button"
@@ -891,7 +1004,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                {lang === 'KH' ? 'I. ភ្ជួររាស់ (Soil Prep)' : 'I. Soil Prep'}
+                {lang === 'KH' ? 'I. ភ្ជួររាស់ដី' : 'I. Soil Prep'}
               </button>
               <button
                 type="button"
@@ -908,7 +1021,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                {lang === 'KH' ? 'II. ស្ទូងទឹក (Planting & Water)' : 'II. Planting & Water'}
+                {lang === 'KH' ? 'II. ស្ទូង និងទឹក' : 'II. Planting & Water'}
               </button>
               <button
                 type="button"
@@ -925,7 +1038,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                {lang === 'KH' ? 'III. ច្រូតកាត់ (Harvest)' : 'III. Harvest'}
+                {lang === 'KH' ? 'III. ច្រូតកាត់' : 'III. Harvest'}
               </button>
               <button
                 type="button"
@@ -942,7 +1055,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                {lang === 'KH' ? 'IV. ជង្រុកគោក្របី (Storage & Cattle)' : 'IV. Storage & Cattle'}
+                {lang === 'KH' ? 'IV. ជង្រុក និងរទេះ' : 'IV. Storage & Cattle'}
               </button>
             </div>
 
@@ -950,7 +1063,7 @@ export default function HomePage() {
             <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
               <input
                 type="text"
-                placeholder={lang === 'KH' ? 'ស្វែងរកឧបករណ៍... / Search tool, village...' : 'Search tool, village...'}
+                placeholder={lang === 'KH' ? 'ស្វែងរកឧបករណ៍ ឬភូមិ...' : 'Search tool, village...'}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
@@ -1022,12 +1135,16 @@ export default function HomePage() {
                     fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif'
                   }}
                 >
-                  រកមិនឃើញឧបករណ៍កសិកម្មទេ
+                  {lang === 'KH' ? 'រកមិនឃើញឧបករណ៍កសិកម្មទេ' : 'No Farming Implements Found'}
                 </h3>
                 <p style={{ fontSize: '14.5px', color: '#6B635B', margin: '0 auto 20px', maxWidth: '440px', lineHeight: 1.6 }}>
                   {search
-                    ? `No farming implements match "${search}". Try searching for plough (នង្គ័ល), sickle (កណ្ដៀវ), yoke (នឹម), or clearing your search.`
-                    : 'No tools match the selected category filter.'}
+                    ? (lang === 'KH'
+                        ? `មិនមានឧបករណ៍ត្រូវគ្នានឹង "${search}" ទេ។ សូមសាកល្បងស្វែងរក "នង្គ័ល", "កណ្ដៀវ", "នឹម" ឬកំណត់ការស្វែងរកឡើងវិញ។`
+                        : `No farming implements match "${search}". Try searching for plough (នង្គ័ល), sickle (កណ្ដៀវ), yoke (នឹម), or clearing your search.`)
+                    : (lang === 'KH'
+                        ? 'មិនមានឧបករណ៍ក្នុងប្រភេទដែលបានជ្រើសរើសទេ។'
+                        : 'No tools match the selected category filter.')}
                 </p>
                 {(search || activeFilter !== 'ALL') && (
                   <button
@@ -1048,7 +1165,7 @@ export default function HomePage() {
                       boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)'
                     }}
                   >
-                    កំណត់ឡើងវិញ / Clear Search &amp; Filters
+                    {lang === 'KH' ? 'កំណត់ឡើងវិញ' : 'Clear Search & Filters'}
                   </button>
                 )}
               </div>
@@ -1059,6 +1176,7 @@ export default function HomePage() {
                   tool={tool}
                   index={idx}
                   onClick={() => setSelectedEntry(tool)}
+                  lang={lang}
                 />
               ))
             )}
@@ -1073,9 +1191,9 @@ export default function HomePage() {
           
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
             <span style={{ fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '2px', color: '#EA580C', display: 'block', marginBottom: '8px' }}>
-              {lang === 'KH' ? 'ជាងដែក និងជាងឈើភូមិ · VILLAGE METALLURGY & CARPENTRY' : 'VILLAGE METALLURGY & CARPENTRY'}
+              {lang === 'KH' ? 'ជាងដែក និងជាងឈើភូមិ' : 'VILLAGE METALLURGY & CARPENTRY'}
             </span>
-            <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(30px, 4vw, 44px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
+            <h2 style={{ fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif', fontSize: 'clamp(30px, 4vw, 44px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
               {lang === 'KH' ? 'វត្ថុធាតុដើមនៃដីមានជីវិត' : 'Materials of the Living Soil'}
             </h2>
             <p style={{ color: '#6B635B', fontSize: '14.5px', maxWidth: '580px', margin: '0 auto', lineHeight: 1.6 }}>
@@ -1095,7 +1213,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'ឈើគគីរ (Kokir Ironwood)' : 'Kokir Ironwood (ឈើគគីរ)'}</strong>
+                <strong>{lang === 'KH' ? 'ឈើគគីរ' : 'Kokir Ironwood (ឈើគគីរ)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'ឈើរឹងធន់នឹងទឹក ប្រើធ្វើតួនង្គ័ល និងរាស់' : 'High-density rot-resistant plough beams'}
                 </div>
@@ -1109,7 +1227,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'ដែកថែបដំដោយដៃ (Spring Steel)' : 'Forged Spring Steel (ដែកថែប)'}</strong>
+                <strong>{lang === 'KH' ? 'ដែកថែបដំដោយដៃ' : 'Forged Spring Steel (ដែកថែប)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'មុខកណ្ដៀវ និងផ្លែចបដំដោយជាងដែកភូមិ' : 'Blacksmith sickle teeth & hoe blades'}
                 </div>
@@ -1123,7 +1241,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'ឫស្សីទន្លេរោលផ្សែង (Smoked Bamboo)' : 'Smoked River Bamboo (ឫស្សី)'}</strong>
+                <strong>{lang === 'KH' ? 'ឫស្សីទន្លេរោលផ្សែង' : 'Smoked River Bamboo (ឫស្សី)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'បន្ទះឫស្សីត្បាញឈ្នាង កញ្ច្រែង និងអង្រុត' : 'Flexible weave for winnowers & traps'}
                 </div>
@@ -1138,7 +1256,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'ដីក្រហមបាសាល់ (Basalt Red Earth)' : 'Basalt Red Earth (ដីក្រហម)'}</strong>
+                <strong>{lang === 'KH' ? 'ដីក្រហមបាសាល់' : 'Basalt Red Earth (ដីក្រហម)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'ដីភ្នំភ្លើងស្អិត ត្រូវការមុខនង្គ័លកោងកាត់ស្មៅ' : 'Volcanic clay with 84% adhesion index'}
                 </div>
@@ -1152,7 +1270,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'គោមួយនឹម (Twin Draft Oxen)' : 'Twin Draft Oxen (គោមួយនឹម)'}</strong>
+                <strong>{lang === 'KH' ? 'គោមួយនឹម' : 'Twin Draft Oxen (គោមួយនឹម)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'កម្លាំងអូសទាញស៊ីចង្វាក់គ្នាលើដីស្រែរឹង' : 'Synchronous draft cattle navigation'}
                 </div>
@@ -1166,7 +1284,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>{lang === 'KH' ? 'ដីដុតមេគង្គ (Mekong Terracotta)' : 'Mekong Terracotta (ដីដុតទន្លេ)'}</strong>
+                <strong>{lang === 'KH' ? 'ដីដុតទន្លេមេគង្គ' : 'Mekong Terracotta (ដីដុតទន្លេ)'}</strong>
                 <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
                   {lang === 'KH' ? 'ក្អមដីដុតរក្សាទឹកត្រជាក់ធម្មជាតិ ៣៨°C' : '38°C natural evaporative water cooling'}
                 </div>
@@ -1193,9 +1311,9 @@ export default function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
                 <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block' }}>
-                  {lang === 'KH' ? 'កំណត់ត្រាស្រាវជ្រាវសារមន្ទីរ · CURATORIAL RESEARCH NOTE' : 'CURATORIAL RESEARCH NOTE'}
+                  {lang === 'KH' ? 'កំណត់ត្រាស្រាវជ្រាវសារមន្ទីរ' : 'CURATORIAL RESEARCH NOTE'}
                 </span>
-                <h3 style={{ fontSize: '22px', color: '#191614', margin: '4px 0 0 0', fontFamily: 'var(--font-serif), Georgia, serif' }}>
+                <h3 style={{ fontSize: '22px', color: '#191614', margin: '4px 0 0 0', fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif' }}>
                   {lang === 'KH' ? 'ចំណេះដឹងផ្ទាល់មាត់ និងរូបវិទ្យាកសិកម្ម' : 'Oral Knowledge & Agricultural Physics'}
                 </h3>
               </div>
@@ -1217,7 +1335,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  {lang === 'KH' ? 'សក្ខីកម្មផ្ទាល់មាត់ (Oral Memory)' : 'Oral Testimony'}
+                  {lang === 'KH' ? 'សក្ខីកម្មផ្ទាល់មាត់' : 'Oral Testimony'}
                 </button>
                 <button
                   type="button"
@@ -1234,7 +1352,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  {lang === 'KH' ? 'ចលនាដីក្រហម (Basalt Soil)' : 'Basalt Soil Dynamics'}
+                  {lang === 'KH' ? 'ចលនាដីក្រហម' : 'Basalt Soil Dynamics'}
                 </button>
                 <button
                   type="button"
@@ -1251,7 +1369,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  {lang === 'KH' ? 'សិល្បៈចម្លាក់ឈើ (Woodcraft)' : 'Woodcraft Carpentry'}
+                  {lang === 'KH' ? 'សិល្បៈចម្លាក់ឈើ' : 'Woodcraft Carpentry'}
                 </button>
               </div>
             </div>
@@ -1264,27 +1382,45 @@ export default function HomePage() {
                     « នង្គ័លនេះ ធ្វើពីឈើគគីររឹងមាំណាស់ ប្រើជាមួយគោមួយនឹម ភ្ជួរតាំងពីដីរឹងរហូតដល់ភ្លៀងធ្លាក់ដំបូង... ជីតាតែងតែបង្រៀនឱ្យមើលរដូវតាមផ្កាយព្រឹក »
                   </p>
                   <span style={{ fontSize: '12px', color: '#6B635B', fontFamily: 'monospace' }}>
-                    — Oral Memory from Grandfather Sok, Kampong Siem District, Kampong Cham Province
+                    {lang === 'KH'
+                      ? '— សក្ខីកម្មផ្ទាល់មាត់ពីលោកតា សុខ ស្រុកកំពង់សៀម ខេត្តកំពង់ចាម'
+                      : '— Oral Memory from Grandfather Sok, Kampong Siem District, Kampong Cham Province'}
                   </span>
                 </div>
               )}
               {spotlightTab === 'season' && (
                 <div>
                   <p style={{ margin: '0 0 6px 0', fontSize: '14px', color: '#191614', lineHeight: 1.6 }}>
-                    Deployed in <strong style={{ color: '#EA580C' }}>May - June</strong> when early rains soften basalt red clay before flooding. Basalt clay expands when saturated, requiring blade geometry with continuous 20cm curvature to prevent furrow clogging.
+                    {lang === 'KH' ? (
+                      <>
+                        ប្រើប្រាស់ក្នុងចន្លោះខែ <strong style={{ color: '#EA580C' }}>ឧសភា ដល់ មិថុនា</strong> នៅពេលភ្លៀងដើមរដូវធ្វើឱ្យដីឥដ្ឋក្រហមបាសាល់ទន់មុនពេលទឹកជំនន់មកដល់។ ដីឥដ្ឋបាសាល់រីកមាឌនៅពេលត្រូវទឹក ដូច្នេះត្រូវការទម្រង់មុខនង្គ័លកោងប្រវែង ២០ សង់ទីម៉ែត្រជាប់រហូត ដើម្បីកុំឱ្យដីស្អិតកកស្ទះលើផ្លែ។
+                      </>
+                    ) : (
+                      <>
+                        Deployed in <strong style={{ color: '#EA580C' }}>May - June</strong> when early rains soften basalt red clay before flooding. Basalt clay expands when saturated, requiring blade geometry with continuous 20cm curvature to prevent furrow clogging.
+                      </>
+                    )}
                   </p>
                   <span style={{ fontSize: '12px', color: '#6B635B', fontFamily: 'monospace' }}>
-                    Basalt Red Clay (ដីក្រហមបាសាល់) · Silt Absorption Index 84%
+                    {lang === 'KH' ? 'ដីឥដ្ឋក្រហមបាសាល់ · សន្ទស្សន៍ស្រូបយកល្បាប់ ៨៤%' : 'Basalt Red Clay (ដីក្រហមបាសាល់) · Silt Absorption Index 84%'}
                   </span>
                 </div>
               )}
               {spotlightTab === 'craft' && (
                 <div>
                   <p style={{ margin: '0 0 6px 0', fontSize: '14px', color: '#191614', lineHeight: 1.6 }}>
-                    Hewn from curved <strong style={{ color: '#EA580C' }}>Kokir ironwood</strong> (Hopea odorata), naturally cured for 3 dry seasons. The leading wedge is hand-shod in blacksmith-hammered spring steel to resist abrasive volcanic grit.
+                    {lang === 'KH' ? (
+                      <>
+                        កាប់ច្នៃចេញពីដើម <strong style={{ color: '#EA580C' }}>ឈើគគីរ</strong> កោងដោយធម្មជាតិ និងហាលសម្ងួតទុក ៣ រដូវប្រាំង។ ចង្អុលមុខនង្គ័លត្រូវបានស្រោបដោយដែកថែបដំដោយដៃពីជាងដែក ដើម្បីធន់នឹងគ្រួសខ្សាច់ភ្នំភ្លើងដែលងាយធ្វើឱ្យរេចរឹល។
+                      </>
+                    ) : (
+                      <>
+                        Hewn from curved <strong style={{ color: '#EA580C' }}>Kokir ironwood</strong> (Hopea odorata), naturally cured for 3 dry seasons. The leading wedge is hand-shod in blacksmith-hammered spring steel to resist abrasive volcanic grit.
+                      </>
+                    )}
                   </p>
                   <span style={{ fontSize: '12px', color: '#6B635B', fontFamily: 'monospace' }}>
-                    Draft Tension: ~400kg continuous drag · Twin White Cattle Harness
+                    {lang === 'KH' ? 'កម្លាំងទាញ៖ ~៤០០ គ.ក្រ ជាប់ជាប្រចាំ · នឹមទឹមគោសមួយគូ' : 'Draft Tension: ~400kg continuous drag · Twin White Cattle Harness'}
                   </span>
                 </div>
               )}
@@ -1309,9 +1445,9 @@ export default function HomePage() {
             }}
           >
             <span style={{ fontSize: '11px', fontFamily: 'monospace', letterSpacing: '2px', textTransform: 'uppercase', color: '#FDE047', marginBottom: '12px', display: 'block' }}>
-              {lang === 'KH' ? 'បណ្ណសារផ្ទាល់មាត់គ្រួសារ · កំពង់ចាម' : 'FAMILY ORAL ARCHIVE · KAMPONG CHAM'}
+              {lang === 'KH' ? 'បណ្ណសារផ្ទាល់មាត់គ្រួសារ · ខេត្តកំពង់ចាម' : 'FAMILY ORAL ARCHIVE · KAMPONG CHAM'}
             </span>
-            <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 5vw, 54px)', fontWeight: 400, margin: '0 0 12px 0', lineHeight: 1.15 }}>
+            <h2 style={{ fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 5vw, 54px)', fontWeight: 400, margin: '0 0 12px 0', lineHeight: 1.15 }}>
               {lang === 'KH' ? 'មុនពេលនង្គ័លឈើចុងក្រោយត្រូវបំភ្លេចចោល' : 'Before the Last Wooden Plough is Forgotten.'}
             </h2>
             <p style={{ fontFamily: 'var(--font-khmer-title), Georgia, serif', fontSize: '18px', color: '#FEF08A', margin: '0 0 20px 0' }}>
@@ -1347,7 +1483,7 @@ export default function HomePage() {
                 e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
               }}
             >
-              <span>{lang === 'KH' ? '+ កត់ត្រាឧបករណ៍គ្រួសារ (Contribute)' : '+ Document a Family Implement'}</span>
+              <span>{lang === 'KH' ? '+ កត់ត្រាឧបករណ៍គ្រួសារ' : '+ Document a Family Implement'}</span>
               <span>&rarr;</span>
             </a>
           </div>
@@ -1368,9 +1504,22 @@ export default function HomePage() {
 }
 
 // Compact, crisp Exhibit Card with Staggered Visual Frame
-function ExhibitCard({ tool, index, onClick }) {
+function ExhibitCard({ tool, index, onClick, lang }) {
   const [imgFailed, setImgFailed] = useState(false);
   const photoUrl = resolveToolPhoto(tool);
+
+  // Look up authentic Khmer dictionary for canonical tools
+  const khmerInfo = (lang === 'KH' && (
+    KHMER_TOOL_INFO[String(tool.id)] ||
+    Object.values(KHMER_TOOL_INFO).find((k) => tool.title && k.title && (tool.title.includes(k.title.split(' ')[0]) || k.title.includes(tool.title.split(' ')[0])))
+  )) || null;
+
+  const displayCategory = lang === 'KH' ? (khmerInfo?.category || 'កេរដំណែលកសិកម្ម') : (tool.category || 'FARMING HERITAGE');
+  const displayTitle = tool.title || khmerInfo?.title;
+  const displayDesc = (lang === 'KH' && khmerInfo?.description) ? khmerInfo.description : tool.description;
+  const displayMaterial = (lang === 'KH' && khmerInfo?.material) ? khmerInfo.material : tool.material;
+  const displaySeason = (lang === 'KH' && khmerInfo?.season) ? khmerInfo.season : tool.season;
+  const displayPlace = (lang === 'KH' && khmerInfo?.place) ? khmerInfo.place : tool.place;
 
   // Render authentic woodcraft silhouette plate for implements without photos
   const renderFallbackPlate = (category, title) => {
@@ -1536,16 +1685,16 @@ function ExhibitCard({ tool, index, onClick }) {
         
         {/* Category Tag */}
         <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-          {tool.category || 'FARMING HERITAGE'}
+          {displayCategory}
         </div>
 
         {/* Khmer Title */}
         <h3 style={{ fontSize: '20px', color: '#191614', margin: '0 0 2px 0', fontWeight: '700', lineHeight: 1.3, fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
-          {tool.title}
+          {displayTitle}
         </h3>
 
-        {/* English Name Subtitle */}
-        {tool.english_name && (
+        {/* English Name Subtitle (Only shown in English mode) */}
+        {tool.english_name && lang !== 'KH' && (
           <div style={{ fontSize: '13px', color: '#B45309', fontStyle: 'italic', marginBottom: '8px', fontFamily: 'var(--font-serif), Georgia, serif' }}>
             {tool.english_name}
           </div>
@@ -1553,19 +1702,19 @@ function ExhibitCard({ tool, index, onClick }) {
 
         {/* Description */}
         <p style={{ fontSize: '12.5px', color: '#6B635B', lineHeight: 1.5, margin: '0 0 12px 0', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-          {tool.description}
+          {displayDesc}
         </p>
 
         {/* Micro Badges (Material & Season) */}
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: 'auto', marginBottom: '8px' }}>
-          {tool.material && (
+          {displayMaterial && (
             <span style={{ fontSize: '10.5px', color: '#9A3412', backgroundColor: 'rgba(234, 88, 12, 0.08)', border: '1px solid rgba(234, 88, 12, 0.18)', padding: '2px 7px', borderRadius: '4px', fontFamily: 'monospace' }}>
-              {tool.material.split('·')[0].trim()}
+              {displayMaterial.split('·')[0].trim()}
             </span>
           )}
-          {tool.season && (
+          {displaySeason && (
             <span style={{ fontSize: '10.5px', color: '#B45309', backgroundColor: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.18)', padding: '2px 7px', borderRadius: '4px', fontFamily: 'monospace' }}>
-              {tool.season.split('(')[0].trim()}
+              {displaySeason.split('(')[0].trim()}
             </span>
           )}
         </div>
@@ -1580,16 +1729,16 @@ function ExhibitCard({ tool, index, onClick }) {
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            {tool.place ? tool.place.split(',')[0].trim() : 'Kampong Cham'}
+            {displayPlace ? displayPlace.split(',')[0].trim() : (lang === 'KH' ? 'ខេត្តកំពង់ចាម' : 'Kampong Cham')}
           </span>
           {tool.contributor && (
             <span style={{ fontSize: '10.5px', color: '#B45309', fontFamily: 'monospace' }}>
-              Contributor: {tool.contributor}
+              {lang === 'KH' ? `អ្នកចូលរួម៖ ${tool.contributor}` : `Contributor: ${tool.contributor}`}
             </span>
           )}
         </div>
         <span style={{ color: '#EA580C', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-          ពិនិត្យ / Inspect &rarr;
+          {lang === 'KH' ? 'ពិនិត្យមើល →' : 'Inspect →'}
         </span>
       </div>
     </div>

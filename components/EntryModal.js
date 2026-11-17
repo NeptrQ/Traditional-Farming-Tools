@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge.js";
 import { resolveToolPhoto } from "../utils/toolImages.js";
+import { useLanguage } from "../app/LanguageContext.js";
 
 export default function EntryModal({ entry, onClose, currentUser, onDelete, onEdit }) {
+  const { lang } = useLanguage();
   const [imgError, setImgError] = useState(false);
   const photoUrl = resolveToolPhoto(entry);
   
@@ -19,7 +21,10 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
   const isOwner = currentUser && entry.owner === currentUser.id;
 
   const handleDeleteClick = () => {
-    if (window.confirm("Are you sure you want to delete this farming tool?")) {
+    const confirmMsg = lang === "KH" 
+      ? "តើអ្នកពិតជាចង់លុបឧបករណ៍កសិកម្មនេះមែនទេ?" 
+      : "Are you sure you want to delete this farming tool?";
+    if (window.confirm(confirmMsg)) {
       onDelete?.(entry.id);
     }
   };
@@ -85,7 +90,7 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Back to Archive
+            {lang === "KH" ? "ត្រឡប់ទៅបណ្ណសារវិញ" : "Back to Archive"}
           </button>
 
           <button
@@ -125,19 +130,21 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
               <h2 style={{ fontFamily: "var(--font-khmer-title), Georgia, serif", fontSize: "32px", color: "#191614", margin: "0 0 4px 0", lineHeight: 1.25, fontWeight: 700 }}>
                 {entry.title}
               </h2>
-              <h3 style={{ fontFamily: "var(--font-serif), Georgia, serif", fontSize: "18px", color: "#B45309", margin: 0, fontStyle: "italic", fontWeight: 400 }}>
-                {entry.english_name || "Traditional Implement"}
-              </h3>
+              {entry.english_name && lang !== "KH" && (
+                <h3 style={{ fontFamily: "var(--font-serif), Georgia, serif", fontSize: "18px", color: "#B45309", margin: 0, fontStyle: "italic", fontWeight: 400 }}>
+                  {entry.english_name}
+                </h3>
+              )}
             </div>
             
             <p style={{ fontSize: "14.5px", lineHeight: 1.65, color: "#44403C", margin: 0, whiteSpace: "pre-wrap" }}>
-              {entry.description || "No oral testimony or description recorded yet."}
+              {entry.description || (lang === "KH" ? "មិនទាន់មានសក្ខីកម្មផ្ទាល់មាត់ ឬការពិពណ៌នានៅឡើយទេ។" : "No oral testimony or description recorded yet.")}
             </p>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
               {entry.category && (
                 <span style={{ padding: "6px 12px", borderRadius: "9999px", backgroundColor: "rgba(234, 88, 12, 0.08)", border: "1px solid rgba(234, 88, 12, 0.2)", color: "#C2410C", fontSize: "12px", fontFamily: "monospace" }}>
-                  Category: {entry.category}
+                  {lang === "KH" ? `ប្រភេទ៖ ${entry.category}` : `Category: ${entry.category}`}
                 </span>
               )}
               {entry.place && (
@@ -146,12 +153,12 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
-                  Location: {entry.place}
+                  {lang === "KH" ? `ទីតាំង៖ ${entry.place}` : `Location: ${entry.place}`}
                 </span>
               )}
               {entry.contributor && (
                 <span style={{ padding: "6px 12px", borderRadius: "9999px", backgroundColor: "#F7F4EE", border: "1px solid rgba(40, 28, 18, 0.12)", color: "#57534E", fontSize: "12px" }}>
-                  Contributor: {entry.contributor}
+                  {lang === "KH" ? `អ្នកចូលរួម៖ ${entry.contributor}` : `Contributor: ${entry.contributor}`}
                 </span>
               )}
             </div>
@@ -171,7 +178,7 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
                     cursor: "pointer"
                   }}
                 >
-                  Edit Tool
+                  {lang === "KH" ? "កែសម្រួល" : "Edit Tool"}
                 </button>
                 <button
                   onClick={handleDeleteClick}
@@ -186,7 +193,7 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
                     cursor: "pointer"
                   }}
                 >
-                  Delete
+                  {lang === "KH" ? "លុបចេញ" : "Delete"}
                 </button>
               </div>
             )}
@@ -209,7 +216,7 @@ export default function EntryModal({ entry, onClose, currentUser, onDelete, onEd
                     <path d="M 52,42 L 36,68 L 68,68 Z" fill="rgba(234, 88, 12, 0.2)" />
                   </svg>
                   <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#8C827A", marginTop: "8px", letterSpacing: "1px" }}>
-                    DOCUMENTED ORAL ARTIFACT
+                    {lang === "KH" ? "កេរដំណែលកត់ត្រាផ្ទាល់មាត់" : "DOCUMENTED ORAL ARTIFACT"}
                   </div>
                 </div>
               )}
