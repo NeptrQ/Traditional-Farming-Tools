@@ -5,6 +5,7 @@ import AtmosphereCanvas from '../components/AtmosphereCanvas';
 import EntryModal from '../components/EntryModal';
 import { createClient } from '../utils/supabase/client';
 import { isJunkEntry, resolveToolPhoto } from '../utils/toolImages';
+import { useLanguage } from './LanguageContext';
 
 // 10 Canonical Kampong Cham Implements with Authentic Oral Lore & Provenance
 const DEFAULT_TOOLS = [
@@ -169,6 +170,7 @@ const ORAL_TAPES = [
 ];
 
 export default function HomePage() {
+  const { lang } = useLanguage();
   const [entries, setEntries] = useState(DEFAULT_TOOLS);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [search, setSearch] = useState('');
@@ -177,6 +179,8 @@ export default function HomePage() {
   const [activeTapeIndex, setActiveTapeIndex] = useState(0);
   const [isTapePlaying, setIsTapePlaying] = useState(true);
   const [spotlightTab, setSpotlightTab] = useState('story'); // 'story' | 'season' | 'craft'
+
+  const ploughEntry = entries.find((e) => e.title?.includes('នង្គ័ល') || e.title?.toLowerCase().includes('plough')) || DEFAULT_TOOLS[0];
 
   // Load from Supabase in background with 3-second guard (never stuck loading!)
   useEffect(() => {
@@ -313,12 +317,26 @@ export default function HomePage() {
             {/* Pill Badge */}
             <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '8px', padding: '6px 14px', borderRadius: '9999px', backgroundColor: '#FFFFFF', border: '1px solid rgba(40, 28, 18, 0.14)', color: '#C2410C', fontSize: '10.5px', fontFamily: 'monospace', marginBottom: '22px', boxShadow: '0 4px 12px rgba(40, 28, 18, 0.03)', maxWidth: '100%', boxSizing: 'border-box' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EA580C', flexShrink: 0 }}></span>
-              <span>KAMPONG CHAM ORAL ANTHROPOLOGY · 10 IMPLEMENTS</span>
+              <span>{lang === 'KH' ? 'នរវិទ្យាផ្ទាល់មាត់ខេត្តកំពង់ចាម · ឧបករណ៍ ១០ មុខ' : 'KAMPONG CHAM ORAL ANTHROPOLOGY · 10 IMPLEMENTS'}</span>
             </div>
 
-            {/* Unique Headline (Completely original, NO friend's copy) */}
-            <h1 style={{ fontSize: 'clamp(34px, 7.2vw, 76px)', fontWeight: 400, color: '#191614', margin: '0 auto 16px auto', lineHeight: 1.1, fontFamily: 'var(--font-serif), Georgia, serif', maxWidth: '920px', letterSpacing: '-0.02em' }}>
-              The living soil of <span style={{ color: '#EA580C', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.3)', textUnderlineOffset: '8px' }}>Kampong Cham Province</span>.
+            {/* Unique Headline (Khmer-first Dominance) */}
+            <h1 style={{ fontSize: 'clamp(32px, 6.8vw, 70px)', fontWeight: 600, color: '#191614', margin: '0 auto 16px auto', lineHeight: 1.25, fontFamily: 'var(--font-khmer-title), var(--font-serif), Georgia, serif', maxWidth: '960px', letterSpacing: '-0.01em' }}>
+              {lang === 'KH' ? (
+                <>
+                  ដីរស់នៃ<span style={{ color: '#EA580C', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.3)', textUnderlineOffset: '8px' }}>ខេត្តកំពង់ចាម</span>
+                  <span style={{ display: 'block', fontSize: 'clamp(18px, 3.4vw, 32px)', fontWeight: 400, color: '#6B635B', marginTop: '10px', fontFamily: 'var(--font-serif), Georgia, serif' }}>
+                    The living soil of Kampong Cham Province
+                  </span>
+                </>
+              ) : (
+                <>
+                  The living soil of <span style={{ color: '#EA580C', fontStyle: 'italic', textDecoration: 'underline', textDecorationColor: 'rgba(234, 88, 12, 0.3)', textUnderlineOffset: '8px' }}>Kampong Cham Province</span>.
+                  <span style={{ display: 'block', fontSize: 'clamp(18px, 3.4vw, 30px)', fontWeight: 500, color: '#D97706', marginTop: '8px', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
+                    ដីរស់នៃខេត្តកំពង់ចាម
+                  </span>
+                </>
+              )}
             </h1>
 
             {/* Khmer Subtitle */}
@@ -327,8 +345,10 @@ export default function HomePage() {
             </p>
 
             {/* Subheading Narrative */}
-            <p style={{ color: '#6B635B', fontSize: '15px', lineHeight: 1.65, margin: '0 auto 36px auto', maxWidth: '660px' }}>
-              Ten ancestral ironwood implements hand-carved by village elders to till heavy volcanic basalt clay before mechanized tractors replaced generational oral memory along the Mekong River.
+            <p style={{ color: '#6B635B', fontSize: '15px', lineHeight: 1.7, margin: '0 auto 36px auto', maxWidth: '720px' }}>
+              {lang === 'KH'
+                ? 'ឧបករណ៍កសិកម្មធ្វើពីឈើគគីរ និងដែកថែបដំដោយដៃចំនួន ១០ មុខ ដែលដូនតាយើងច្នៃឡើងដើម្បីភ្ជួររាស់ដីក្រហមស្វិត មុនពេលគ្រឿងយន្តទំនើបមកជំនួសការចងចាំតាមដងទន្លេមេគង្គ។'
+                : 'Ten ancestral ironwood implements hand-carved by village elders to till heavy volcanic basalt clay before mechanized tractors replaced generational oral memory along the Mekong River.'}
             </p>
 
             {/* ======================================================== */}
@@ -347,7 +367,10 @@ export default function HomePage() {
               }}
             >
               {/* Photo Showcase Area */}
-              <div style={{ width: '100%', height: '400px', position: 'relative', overflow: 'hidden', backgroundColor: '#0B0907' }}>
+              <div
+                style={{ width: '100%', height: '400px', position: 'relative', overflow: 'hidden', backgroundColor: '#0B0907', cursor: activeHotspot ? 'pointer' : 'default' }}
+                onClick={() => setActiveHotspot(null)}
+              >
                 <img
                   src="/images/traditional_plough.jpg"
                   alt="Traditional Kokir Plough"
@@ -359,7 +382,10 @@ export default function HomePage() {
                   type="button"
                   className={`hotspot-pin ${activeHotspot === 1 ? 'active' : ''}`}
                   style={{ top: '34%', left: '27%' }}
-                  onClick={() => setActiveHotspot(activeHotspot === 1 ? null : 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveHotspot(activeHotspot === 1 ? null : 1);
+                  }}
                   aria-label="Kokir Wood Shank Anatomy"
                 >
                   1
@@ -370,7 +396,10 @@ export default function HomePage() {
                   type="button"
                   className={`hotspot-pin ${activeHotspot === 2 ? 'active' : ''}`}
                   style={{ top: '68%', left: '68%' }}
-                  onClick={() => setActiveHotspot(activeHotspot === 2 ? null : 2)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveHotspot(activeHotspot === 2 ? null : 2);
+                  }}
                   aria-label="Forged Steel Share Anatomy"
                 >
                   2
@@ -381,7 +410,10 @@ export default function HomePage() {
                   type="button"
                   className={`hotspot-pin ${activeHotspot === 3 ? 'active' : ''}`}
                   style={{ top: '22%', left: '56%' }}
-                  onClick={() => setActiveHotspot(activeHotspot === 3 ? null : 3)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveHotspot(activeHotspot === 3 ? null : 3);
+                  }}
                   aria-label="Ox Draft Pull Bar Anatomy"
                 >
                   3
@@ -390,19 +422,21 @@ export default function HomePage() {
                 {/* Floating Hotspot Inspection Popover */}
                 {activeHotspot && (
                   <div
+                    onClick={(e) => e.stopPropagation()}
                     style={{
                       position: 'absolute',
-                      bottom: '24px',
-                      left: '24px',
-                      right: '24px',
-                      backgroundColor: 'rgba(25, 22, 20, 0.94)',
+                      bottom: '20px',
+                      left: '20px',
+                      right: '20px',
+                      backgroundColor: 'rgba(25, 22, 20, 0.96)',
                       backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
                       borderRadius: '18px',
                       padding: '18px 22px',
-                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                      border: '1px solid rgba(245, 158, 11, 0.35)',
                       color: '#FFFFFF',
                       textAlign: 'left',
-                      boxShadow: '0 16px 36px rgba(0,0,0,0.4)',
+                      boxShadow: '0 16px 36px rgba(0,0,0,0.45)',
                       zIndex: 30,
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -418,9 +452,9 @@ export default function HomePage() {
                         {activeHotspot === 3 && 'ANATOMICAL COMPONENT 03 · នឹម & ខ្សែទាញ (DRAUGHT LINE)'}
                       </span>
                       <h4 style={{ fontSize: '17px', margin: '2px 0 4px 0', color: '#FFFFFF', fontFamily: 'var(--font-khmer-title), Georgia, serif' }}>
-                        {activeHotspot === 1 && 'Curved Kokir Ironwood Shank (Hopea odorata)'}
-                        {activeHotspot === 2 && 'Hand-Forged Spring Steel Share (32° Soil Incline)'}
-                        {activeHotspot === 3 && 'Twin Oxen Rawhide Draft Line (400kg Drag Balancing)'}
+                        {activeHotspot === 1 && (lang === 'KH' ? 'ដងនង្គ័លធ្វើពីឈើគគីររឹងមាំ' : 'Curved Kokir Ironwood Shank (Hopea odorata)')}
+                        {activeHotspot === 2 && (lang === 'KH' ? 'ចង្អុលដែកថែបដំកម្តៅ ៣២ ដឺក្រេ' : 'Hand-Forged Spring Steel Share (32° Soil Incline)')}
+                        {activeHotspot === 3 && (lang === 'KH' ? 'នឹម និងខ្សែទាញស្បែកគោព្រៃធន់ ៤០០គីឡូ' : 'Twin Oxen Rawhide Draft Line (400kg Drag Balancing)')}
                       </h4>
                       <p style={{ fontSize: '12.5px', color: '#D6D3D1', margin: 0, maxWidth: '640px', lineHeight: 1.5 }}>
                         {activeHotspot === 1 && 'Naturally cured for three dry seasons. High fiber density prevents snapping when buffaloes lurch against embedded basalt granite boulders.'}
@@ -432,7 +466,10 @@ export default function HomePage() {
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <button
                         type="button"
-                        onClick={() => setSelectedEntry(entries[0] || DEFAULT_TOOLS[0])}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedEntry(ploughEntry);
+                        }}
                         style={{
                           padding: '7px 16px',
                           borderRadius: '9999px',
@@ -444,11 +481,14 @@ export default function HomePage() {
                           cursor: 'pointer'
                         }}
                       >
-                        Inspect Full Dossier &rarr;
+                        {lang === 'KH' ? 'ពិនិត្យឯកសារលម្អិត →' : 'Inspect Full Dossier →'}
                       </button>
                       <button
                         type="button"
-                        onClick={() => setActiveHotspot(null)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveHotspot(null);
+                        }}
                         style={{
                           padding: '7px 12px',
                           borderRadius: '9999px',
@@ -459,7 +499,7 @@ export default function HomePage() {
                           cursor: 'pointer'
                         }}
                       >
-                        Close
+                        {lang === 'KH' ? 'បិទ' : 'Close'}
                       </button>
                     </div>
                   </div>
@@ -502,7 +542,10 @@ export default function HomePage() {
 
                   <button
                     type="button"
-                    onClick={() => setSelectedEntry(entries[0] || DEFAULT_TOOLS[0])}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedEntry(ploughEntry);
+                    }}
                     style={{
                       padding: '9px 20px',
                       borderRadius: '9999px',
@@ -513,12 +556,15 @@ export default function HomePage() {
                       fontWeight: 600,
                       cursor: 'pointer',
                       boxShadow: '0 4px 14px rgba(234, 88, 12, 0.35)',
-                      transition: 'transform 0.2s ease'
+                      transition: 'transform 0.2s ease',
+                      position: 'relative',
+                      zIndex: 10,
+                      touchAction: 'manipulation'
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.04)')}
                     onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                   >
-                    Examine Anatomy &rarr;
+                    {lang === 'KH' ? 'ពិនិត្យកាយវិភាគ →' : 'Examine Anatomy →'}
                   </button>
                 </div>
               </div>
@@ -797,13 +843,15 @@ export default function HomePage() {
 
           <div style={{ textAlign: 'center', marginBottom: '36px', position: 'relative', zIndex: 10 }}>
             <span style={{ fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '2px', color: '#EA580C', display: 'block', marginBottom: '8px' }}>
-              MUSEUM SPECIMEN TRAYS
+              {lang === 'KH' ? 'ថាសតាំងពិព័រណ៍សារមន្ទីរ · MUSEUM SPECIMEN TRAYS' : 'MUSEUM SPECIMEN TRAYS'}
             </span>
             <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 4.5vw, 48px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
-              The 10 Living Implements
+              {lang === 'KH' ? 'ឧបករណ៍កសិកម្មបុរាណទាំង ១០' : 'The 10 Living Implements'}
             </h2>
             <p style={{ color: '#6B635B', fontSize: '14.5px', maxWidth: '580px', margin: '0 auto', lineHeight: 1.6 }}>
-              Asymmetric museum exhibit plates documenting oral interviews, wood species, and red-soil tension mechanics.
+              {lang === 'KH'
+                ? 'កម្រងឯកសារសារមន្ទីរ កត់ត្រាការសម្ភាសន៍ផ្ទាល់មាត់ ប្រភេទឈើ និងកម្លាំងទាញដីក្រហម។'
+                : 'Asymmetric museum exhibit plates documenting oral interviews, wood species, and red-soil tension mechanics.'}
             </p>
           </div>
 
@@ -826,7 +874,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                ALL ({entries.length || 10})
+                {lang === 'KH' ? `ទាំងអស់ / ALL (${entries.length || 10})` : `ALL (${entries.length || 10})`}
               </button>
               <button
                 type="button"
@@ -843,7 +891,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                I. Soil Prep
+                {lang === 'KH' ? 'I. ភ្ជួររាស់ (Soil Prep)' : 'I. Soil Prep'}
               </button>
               <button
                 type="button"
@@ -860,7 +908,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                II. Planting &amp; Water
+                {lang === 'KH' ? 'II. ស្ទូងទឹក (Planting & Water)' : 'II. Planting & Water'}
               </button>
               <button
                 type="button"
@@ -877,7 +925,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                III. Harvest
+                {lang === 'KH' ? 'III. ច្រូតកាត់ (Harvest)' : 'III. Harvest'}
               </button>
               <button
                 type="button"
@@ -894,7 +942,7 @@ export default function HomePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                IV. Storage &amp; Cattle
+                {lang === 'KH' ? 'IV. ជង្រុកគោក្របី (Storage & Cattle)' : 'IV. Storage & Cattle'}
               </button>
             </div>
 
@@ -902,7 +950,7 @@ export default function HomePage() {
             <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
               <input
                 type="text"
-                placeholder="ស្វែងរកឧបករណ៍... / Search tool, village..."
+                placeholder={lang === 'KH' ? 'ស្វែងរកឧបករណ៍... / Search tool, village...' : 'Search tool, village...'}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
@@ -1025,13 +1073,15 @@ export default function HomePage() {
           
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
             <span style={{ fontSize: '11px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '2px', color: '#EA580C', display: 'block', marginBottom: '8px' }}>
-              VILLAGE METALLURGY &amp; CARPENTRY
+              {lang === 'KH' ? 'ជាងដែក និងជាងឈើភូមិ · VILLAGE METALLURGY & CARPENTRY' : 'VILLAGE METALLURGY & CARPENTRY'}
             </span>
             <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(30px, 4vw, 44px)', fontWeight: 400, margin: '0 0 10px 0', color: '#191614' }}>
-              Materials of the Living Soil
+              {lang === 'KH' ? 'វត្ថុធាតុដើមនៃដីមានជីវិត' : 'Materials of the Living Soil'}
             </h2>
             <p style={{ color: '#6B635B', fontSize: '14.5px', maxWidth: '580px', margin: '0 auto', lineHeight: 1.6 }}>
-              Natural timbers, hand-beaten carbon steel, and river clays selected by elders to endure monsoon moisture and volcanic grit.
+              {lang === 'KH'
+                ? 'ឈើប្រណីតធម្មជាតិ ដែកថែបដំដោយដៃ និងដីឥដ្ឋទន្លេ ដែលចាស់ទុំជ្រើសរើសដើម្បីធន់នឹងសំណើមរដូវវស្សា។'
+                : 'Natural timbers, hand-beaten carbon steel, and river clays selected by elders to endure monsoon moisture and volcanic grit.'}
             </p>
           </div>
 
@@ -1045,8 +1095,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Kokir Ironwood (ឈើគគីរ)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>High-density rot-resistant plough beams</div>
+                <strong>{lang === 'KH' ? 'ឈើគគីរ (Kokir Ironwood)' : 'Kokir Ironwood (ឈើគគីរ)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'ឈើរឹងធន់នឹងទឹក ប្រើធ្វើតួនង្គ័ល និងរាស់' : 'High-density rot-resistant plough beams'}
+                </div>
               </div>
             </div>
 
@@ -1057,8 +1109,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Forged Spring Steel (ដែកថែប)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>Blacksmith sickle teeth &amp; hoe blades</div>
+                <strong>{lang === 'KH' ? 'ដែកថែបដំដោយដៃ (Spring Steel)' : 'Forged Spring Steel (ដែកថែប)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'មុខកណ្ដៀវ និងផ្លែចបដំដោយជាងដែកភូមិ' : 'Blacksmith sickle teeth & hoe blades'}
+                </div>
               </div>
             </div>
 
@@ -1069,8 +1123,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Smoked River Bamboo (ឫស្សី)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>Flexible weave for winnowers &amp; traps</div>
+                <strong>{lang === 'KH' ? 'ឫស្សីទន្លេរោលផ្សែង (Smoked Bamboo)' : 'Smoked River Bamboo (ឫស្សី)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'បន្ទះឫស្សីត្បាញឈ្នាង កញ្ច្រែង និងអង្រុត' : 'Flexible weave for winnowers & traps'}
+                </div>
               </div>
             </div>
 
@@ -1082,8 +1138,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Basalt Red Earth (ដីក្រហម)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>Volcanic clay with 84% adhesion index</div>
+                <strong>{lang === 'KH' ? 'ដីក្រហមបាសាល់ (Basalt Red Earth)' : 'Basalt Red Earth (ដីក្រហម)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'ដីភ្នំភ្លើងស្អិត ត្រូវការមុខនង្គ័លកោងកាត់ស្មៅ' : 'Volcanic clay with 84% adhesion index'}
+                </div>
               </div>
             </div>
 
@@ -1094,8 +1152,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Twin Draft Oxen (គោមួយនឹម)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>Synchronous draft cattle navigation</div>
+                <strong>{lang === 'KH' ? 'គោមួយនឹម (Twin Draft Oxen)' : 'Twin Draft Oxen (គោមួយនឹម)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'កម្លាំងអូសទាញស៊ីចង្វាក់គ្នាលើដីស្រែរឹង' : 'Synchronous draft cattle navigation'}
+                </div>
               </div>
             </div>
 
@@ -1106,8 +1166,10 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <strong>Mekong Terracotta (ដីដុតទន្លេ)</strong>
-                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>38°C natural evaporative water cooling</div>
+                <strong>{lang === 'KH' ? 'ដីដុតមេគង្គ (Mekong Terracotta)' : 'Mekong Terracotta (ដីដុតទន្លេ)'}</strong>
+                <div style={{ fontSize: '11px', color: '#6B635B', marginTop: '2px' }}>
+                  {lang === 'KH' ? 'ក្អមដីដុតរក្សាទឹកត្រជាក់ធម្មជាតិ ៣៨°C' : '38°C natural evaporative water cooling'}
+                </div>
               </div>
             </div>
 
@@ -1131,10 +1193,10 @@ export default function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
                 <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#EA580C', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block' }}>
-                  CURATORIAL RESEARCH NOTE
+                  {lang === 'KH' ? 'កំណត់ត្រាស្រាវជ្រាវសារមន្ទីរ · CURATORIAL RESEARCH NOTE' : 'CURATORIAL RESEARCH NOTE'}
                 </span>
                 <h3 style={{ fontSize: '22px', color: '#191614', margin: '4px 0 0 0', fontFamily: 'var(--font-serif), Georgia, serif' }}>
-                  Oral Knowledge &amp; Agricultural Physics
+                  {lang === 'KH' ? 'ចំណេះដឹងផ្ទាល់មាត់ និងរូបវិទ្យាកសិកម្ម' : 'Oral Knowledge & Agricultural Physics'}
                 </h3>
               </div>
 
@@ -1155,7 +1217,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Oral Testimony
+                  {lang === 'KH' ? 'សក្ខីកម្មផ្ទាល់មាត់ (Oral Memory)' : 'Oral Testimony'}
                 </button>
                 <button
                   type="button"
@@ -1172,7 +1234,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Basalt Soil Dynamics
+                  {lang === 'KH' ? 'ចលនាដីក្រហម (Basalt Soil)' : 'Basalt Soil Dynamics'}
                 </button>
                 <button
                   type="button"
@@ -1189,7 +1251,7 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  Woodcraft Carpentry
+                  {lang === 'KH' ? 'សិល្បៈចម្លាក់ឈើ (Woodcraft)' : 'Woodcraft Carpentry'}
                 </button>
               </div>
             </div>
@@ -1247,16 +1309,18 @@ export default function HomePage() {
             }}
           >
             <span style={{ fontSize: '11px', fontFamily: 'monospace', letterSpacing: '2px', textTransform: 'uppercase', color: '#FDE047', marginBottom: '12px', display: 'block' }}>
-              FAMILY ORAL ARCHIVE · KAMPONG CHAM
+              {lang === 'KH' ? 'បណ្ណសារផ្ទាល់មាត់គ្រួសារ · កំពង់ចាម' : 'FAMILY ORAL ARCHIVE · KAMPONG CHAM'}
             </span>
-            <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(36px, 5.5vw, 60px)', fontWeight: 400, margin: '0 0 12px 0', lineHeight: 1.1 }}>
-              Before the Last Wooden Plough is Forgotten.
+            <h2 style={{ fontFamily: 'var(--font-serif), Georgia, serif', fontSize: 'clamp(32px, 5vw, 54px)', fontWeight: 400, margin: '0 0 12px 0', lineHeight: 1.15 }}>
+              {lang === 'KH' ? 'មុនពេលនង្គ័លឈើចុងក្រោយត្រូវបំភ្លេចចោល' : 'Before the Last Wooden Plough is Forgotten.'}
             </h2>
             <p style={{ fontFamily: 'var(--font-khmer-title), Georgia, serif', fontSize: '18px', color: '#FEF08A', margin: '0 0 20px 0' }}>
               « ជួយថែរក្សាកេរ្តិ៍ដំណែលឧបករណ៍កសិកម្មបុរាណ ដើម្បីកូនចៅជំនាន់ក្រោយ »
             </p>
             <p style={{ fontSize: '15px', maxWidth: '620px', margin: '0 auto 36px auto', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.92)' }}>
-              Every village implement holds decades of oral weather lore, carpentry secrets, and communal solidarity. Contribute a tool from your family elders to our permanent collection.
+              {lang === 'KH'
+                ? 'រាល់ឧបករណ៍ក្នុងភូមិបង្កប់នូវចំណេះដឹងអាកាសធាតុរាប់ទសវត្សរ៍ អាថ៌កំបាំងសិប្បកម្ម និងសាមគ្គីភាពសហគមន៍។ ចូលរួមចែករំលែកឧបករណ៍គ្រួសាររបស់អ្នកមកកាន់បណ្ណសារអចិន្ត្រៃយ៍។'
+                : 'Every village implement holds decades of oral weather lore, carpentry secrets, and communal solidarity. Contribute a tool from your family elders to our permanent collection.'}
             </p>
             <a
               href="/contribute"
@@ -1283,7 +1347,7 @@ export default function HomePage() {
                 e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
               }}
             >
-              <span>+ Document a Family Implement</span>
+              <span>{lang === 'KH' ? '+ កត់ត្រាឧបករណ៍គ្រួសារ (Contribute)' : '+ Document a Family Implement'}</span>
               <span>&rarr;</span>
             </a>
           </div>
@@ -1525,7 +1589,7 @@ function ExhibitCard({ tool, index, onClick }) {
           )}
         </div>
         <span style={{ color: '#EA580C', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-          Inspect &rarr;
+          ពិនិត្យ / Inspect &rarr;
         </span>
       </div>
     </div>

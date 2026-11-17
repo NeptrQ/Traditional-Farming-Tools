@@ -5,7 +5,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState('EN');
+  const [lang, setLang] = useState('KH');
   
   useEffect(() => {
     const saved = localStorage.getItem('lang');

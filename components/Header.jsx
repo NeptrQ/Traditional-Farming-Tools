@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "../utils/supabase/client.js";
+import { useLanguage } from "../app/LanguageContext.js";
 
 const NAV_ANCHORS = [
   { href: "/#overview", label: "Overview" },
@@ -14,6 +15,7 @@ const NAV_ANCHORS = [
 ];
 
 export default function Header() {
+  const { lang, setLang } = useLanguage();
   const [user, setUser] = useState(null);
   const [isReviewer, setIsReviewer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -146,18 +148,27 @@ export default function Header() {
         <nav className="obsidian-desktop" aria-label="Primary Navigation">
           <span style={{ width: "1px", height: "16px", backgroundColor: "rgba(255, 255, 255, 0.12)", marginRight: "4px" }} />
 
-          {NAV_ANCHORS.map((item) => (
-            <a key={item.href} href={item.href} className="obsidian-link">
-              {item.label}
-            </a>
-          ))}
+          {NAV_ANCHORS.map((item) => {
+            const labelMap = {
+              "Overview": lang === "KH" ? "ទិដ្ឋភាពទូទៅ" : "Overview",
+              "Pillars": lang === "KH" ? "សសរស្តម្ភ ៤" : "Pillars",
+              "Archive": lang === "KH" ? "បណ្ណសាររូបភាព" : "Archive",
+              "Materials": lang === "KH" ? "សម្ភារៈ" : "Materials",
+              "Oral Tape": lang === "KH" ? "សំឡេងដូនតា" : "Oral Tape",
+            };
+            return (
+              <a key={item.href} href={item.href} className="obsidian-link">
+                {labelMap[item.label] || item.label}
+              </a>
+            );
+          })}
 
           {user && (
             <Link
               href="/my-entries"
               className={`obsidian-link ${pathname === "/my-entries" ? "active" : ""}`}
             >
-              My Entries
+              {lang === "KH" ? "កំណត់ត្រាខ្ញុំ" : "My Entries"}
             </Link>
           )}
 
@@ -182,11 +193,37 @@ export default function Header() {
               }}
             >
               <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#F97316" }} />
-              Review Queue
+              {lang === "KH" ? "ជួរត្រួតពិនិត្យ" : "Review Queue"}
             </Link>
           )}
 
           <span style={{ width: "1px", height: "16px", backgroundColor: "rgba(255, 255, 255, 0.12)", margin: "0 4px" }} />
+
+          {/* Language Switcher Pill */}
+          <button
+            type="button"
+            onClick={() => setLang(lang === "KH" ? "EN" : "KH")}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              background: "rgba(255, 255, 255, 0.08)",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              borderRadius: "9999px",
+              padding: "6px 12px",
+              color: "#FCD34D",
+              fontSize: "11.5px",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "monospace",
+              transition: "all 0.2s ease",
+            }}
+            title="ប្តូរភាសា / Switch Language"
+          >
+            <span style={{ color: lang === "KH" ? "#F59E0B" : "#8A8179" }}>ខ្មែរ</span>
+            <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>|</span>
+            <span style={{ color: lang === "EN" ? "#F59E0B" : "#8A8179" }}>EN</span>
+          </button>
 
           {user ? (
             <button
@@ -213,7 +250,7 @@ export default function Header() {
                 e.currentTarget.style.color = "#E7E3DF";
               }}
             >
-              Log Out
+              {lang === "KH" ? "ចាកចេញ" : "Log Out"}
             </button>
           ) : (
             <Link
@@ -237,26 +274,51 @@ export default function Header() {
                 transition: "all 0.2s ease",
               }}
             >
-              Log In
+              {lang === "KH" ? "ចូលគណនី" : "Log In"}
             </Link>
           )}
 
           <Link href="/contribute" className="obsidian-cta">
-            <span>+ Contribute Tool</span>
+            <span>{lang === "KH" ? "+ បន្ថែមឧបករណ៍" : "+ Contribute Tool"}</span>
           </Link>
         </nav>
 
         {/* Mobile Actions + Menu Toggle */}
         <div
           className="obsidian-mobile-btn"
-          style={{ alignItems: "center", gap: "8px" }}
+          style={{ alignItems: "center", gap: "6px" }}
         >
+          {/* Mobile Language Switcher Pill */}
+          <button
+            type="button"
+            onClick={() => setLang(lang === "KH" ? "EN" : "KH")}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+              background: "rgba(255, 255, 255, 0.08)",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              borderRadius: "9999px",
+              padding: "5px 9px",
+              color: "#FCD34D",
+              fontSize: "11px",
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "monospace",
+            }}
+            title="ប្តូរភាសា / Switch Language"
+          >
+            <span style={{ color: lang === "KH" ? "#F59E0B" : "#8A8179" }}>KH</span>
+            <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>|</span>
+            <span style={{ color: lang === "EN" ? "#F59E0B" : "#8A8179" }}>EN</span>
+          </button>
+
           <Link
             href="/contribute"
             className="obsidian-cta"
-            style={{ padding: "7px 13px", fontSize: "12px" }}
+            style={{ padding: "7px 11px", fontSize: "11.5px" }}
           >
-            + Contribute
+            {lang === "KH" ? "+ បន្ថែម" : "+ Contribute"}
           </Link>
 
           <button
@@ -304,14 +366,24 @@ export default function Header() {
               zIndex: 100,
             }}
           >
-            <a href="/#overview" onClick={() => setMenuOpen(false)} className="obsidian-link">Overview</a>
-            <a href="/#pillars" onClick={() => setMenuOpen(false)} className="obsidian-link">Four Pillars</a>
-            <a href="/#archive" onClick={() => setMenuOpen(false)} className="obsidian-link">Visual Archive</a>
-            <a href="/#materials" onClick={() => setMenuOpen(false)} className="obsidian-link">Materials Toolkit</a>
-            <a href="/#tape" onClick={() => setMenuOpen(false)} className="obsidian-link">Oral Tape</a>
+            <a href="/#overview" onClick={() => setMenuOpen(false)} className="obsidian-link">
+              {lang === "KH" ? "ទិដ្ឋភាពទូទៅ · Overview" : "Overview"}
+            </a>
+            <a href="/#pillars" onClick={() => setMenuOpen(false)} className="obsidian-link">
+              {lang === "KH" ? "សសរស្តម្ភ ៤ · Four Pillars" : "Four Pillars"}
+            </a>
+            <a href="/#archive" onClick={() => setMenuOpen(false)} className="obsidian-link">
+              {lang === "KH" ? "បណ្ណសាររូបភាព · Visual Archive" : "Visual Archive"}
+            </a>
+            <a href="/#materials" onClick={() => setMenuOpen(false)} className="obsidian-link">
+              {lang === "KH" ? "សម្ភារៈឧបករណ៍ · Materials" : "Materials Toolkit"}
+            </a>
+            <a href="/#tape" onClick={() => setMenuOpen(false)} className="obsidian-link">
+              {lang === "KH" ? "សំឡេងដូនតា · Oral Tape" : "Oral Tapes"}
+            </a>
             {user && (
               <Link href="/my-entries" onClick={() => setMenuOpen(false)} className="obsidian-link">
-                My Entries
+                {lang === "KH" ? "កំណត់ត្រាខ្ញុំ · My Entries" : "My Entries"}
               </Link>
             )}
             {isReviewer && (
@@ -321,7 +393,7 @@ export default function Header() {
                 className="obsidian-link"
                 style={{ color: "#FCD34D" }}
               >
-                Review Queue
+                {lang === "KH" ? "ជួរត្រួតពិនិត្យ · Review Queue" : "Review Queue"}
               </Link>
             )}
             <div style={{ height: "1px", backgroundColor: "rgba(255, 255, 255, 0.1)", margin: "4px 0" }} />
