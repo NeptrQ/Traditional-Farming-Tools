@@ -4,8 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '../../utils/supabase/client.js';
 import StatusBadge from '../../components/StatusBadge.js';
+import { useLanguage } from '../LanguageContext.js';
 
 export default function ReviewQueueClient({ initialEntries }) {
+  const { lang } = useLanguage();
+  const isKh = lang === 'KH';
   const [entries, setEntries] = useState(initialEntries);
   const [processingId, setProcessingId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -77,23 +80,23 @@ export default function ReviewQueueClient({ initialEntries }) {
         
         {/* Header Section */}
         <div style={{ marginBottom: '32px', borderBottom: '1px solid #281D17', paddingBottom: '20px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 14px', borderRadius: '9999px', backgroundColor: '#241610', border: '1px solid #522E1F', color: '#F59E0B', fontSize: '11px', fontFamily: 'monospace', marginBottom: '14px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 14px', borderRadius: '9999px', backgroundColor: '#241610', border: '1px solid #522E1F', color: '#F59E0B', fontSize: '11px', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace', marginBottom: '14px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EA580C' }}></span>
-            <span>ជួរត្រួតពិនិត្យកំណត់ត្រា · CURATORIAL QUEUE</span>
+            <span>{isKh ? 'ជួរត្រួតពិនិត្យកំណត់ត្រា' : 'CURATORIAL QUEUE'}</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <h1 style={{ fontSize: '30px', fontWeight: 600, color: '#FFFFFF', margin: '0 0 6px 0', fontFamily: 'var(--font-serif), Georgia, serif' }}>
-                Review Queue (បញ្ជីរង់ចាំការពិនិត្យ)
+              <h1 style={{ fontSize: '30px', fontWeight: 600, color: '#FFFFFF', margin: '0 0 6px 0', fontFamily: isKh ? 'var(--font-khmer-title)' : 'var(--font-serif), Georgia, serif' }}>
+                {isKh ? 'បញ្ជីរង់ចាំការពិនិត្យ' : 'Review Queue'}
               </h1>
-              <p style={{ fontSize: '14px', color: '#A8A29E', margin: 0, lineHeight: 1.5 }}>
-                Reviewing pending agricultural tool submissions. Oldest submissions appear first.
+              <p style={{ fontSize: '14px', color: '#A8A29E', margin: 0, lineHeight: 1.5, fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)' }}>
+                {isKh ? 'ពិនិត្យសំណើឧបករណ៍កសិកម្មដែលកំពុងរង់ចាំ។ សំណើចាស់ជាងគេបង្ហាញមុន។' : 'Reviewing pending agricultural tool submissions. Oldest submissions appear first.'}
               </p>
             </div>
 
-            <div style={{ padding: '6px 14px', borderRadius: '12px', backgroundColor: '#1A1410', border: '1px solid #38251C', fontSize: '12px', fontFamily: 'monospace', color: '#F59E0B' }}>
-              Pending: {entries.length}
+            <div style={{ padding: '6px 14px', borderRadius: '12px', backgroundColor: '#1A1410', border: '1px solid #38251C', fontSize: '12px', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace', color: '#F59E0B' }}>
+              {isKh ? `កំពុងរង់ចាំ៖ ${entries.length}` : `Pending: ${entries.length}`}
             </div>
           </div>
         </div>
@@ -180,13 +183,13 @@ export default function ReviewQueueClient({ initialEntries }) {
                 color: '#FFFFFF',
                 margin: '0 0 8px 0',
                 fontWeight: 500,
-                fontFamily: 'var(--font-serif), Georgia, serif'
+                fontFamily: isKh ? 'var(--font-khmer-title)' : 'var(--font-serif), Georgia, serif'
               }}
             >
-              គ្មានកំណត់ត្រាកំពុងរង់ចាំការត្រួតពិនិត្យទេ
+              {isKh ? 'គ្មានកំណត់ត្រាកំពុងរង់ចាំការត្រួតពិនិត្យទេ' : 'No pending entries in the queue'}
             </h2>
-            <p style={{ fontSize: '14px', color: '#A8A29E', margin: '0 0 24px 0' }}>
-              No pending entries in the queue.
+            <p style={{ fontSize: '14px', color: '#A8A29E', margin: '0 0 24px 0', fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)' }}>
+              {isKh ? 'រាល់កំណត់ត្រាដែលបានបញ្ជូនត្រូវបានត្រួតពិនិត្យរួចរាល់។' : 'All submitted entries have been reviewed.'}
             </p>
             <Link
               href="/"
@@ -199,10 +202,11 @@ export default function ReviewQueueClient({ initialEntries }) {
                 color: '#FED7AA',
                 textDecoration: 'none',
                 fontSize: '13px',
-                fontWeight: 500
+                fontWeight: 500,
+                fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)'
               }}
             >
-              Back to Archive
+              {isKh ? '← ត្រឡប់ទៅបណ្ណសារវិញ' : '← Back to Archive'}
             </Link>
           </div>
         ) : (
@@ -227,6 +231,8 @@ export default function ReviewQueueClient({ initialEntries }) {
 }
 
 function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
+  const { lang } = useLanguage();
+  const isKh = lang === 'KH';
   const [imgError, setImgError] = useState(false);
   const formattedDate = entry.created_at
     ? new Date(entry.created_at).toLocaleString('en-US', {
@@ -251,11 +257,11 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
       {/* Top Header: Catalog Tag, Submission Date & Status */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', borderBottom: '1px solid #281D17', paddingBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#F59E0B', backgroundColor: '#241610', border: '1px solid #4D2D20', padding: '3px 8px', borderRadius: '6px' }}>
-            QUEUE #{String(index + 1).padStart(2, '0')}
+          <span style={{ fontSize: '11px', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace', color: '#F59E0B', backgroundColor: '#241610', border: '1px solid #4D2D20', padding: '3px 8px', borderRadius: '6px' }}>
+            {isKh ? `ជួរទី #${String(index + 1).padStart(2, '0')}` : `QUEUE #${String(index + 1).padStart(2, '0')}`}
           </span>
-          <span style={{ fontSize: '12px', color: '#8C827A', fontFamily: 'monospace' }}>
-            Submitted: {formattedDate}
+          <span style={{ fontSize: '12px', color: '#8C827A', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace' }}>
+            {isKh ? `បានបញ្ជូន៖ ${formattedDate}` : `Submitted: ${formattedDate}`}
           </span>
         </div>
         <StatusBadge status={entry.status || 'pending'} />
@@ -306,8 +312,8 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
                 <circle cx="8.5" cy="8.5" r="1.5" />
                 <polyline points="21 15 16 10 5 21" />
               </svg>
-              <span style={{ fontSize: '10px', fontFamily: 'monospace', color: '#8C827A', marginTop: '8px', letterSpacing: '1px' }}>
-                SUBMITTED ARTIFACT
+              <span style={{ fontSize: '10px', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace', color: '#8C827A', marginTop: '8px', letterSpacing: isKh ? '0' : '1px' }}>
+                {isKh ? 'រូបថតឧបករណ៍' : 'SUBMITTED ARTIFACT'}
               </span>
             </div>
           )}
@@ -316,7 +322,7 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
         {/* Right: Implemement Lore Details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div>
-            <h2 style={{ fontSize: '22px', color: '#FFFFFF', margin: '0 0 4px 0', fontWeight: 600, fontFamily: 'var(--font-serif), Georgia, serif' }}>
+            <h2 style={{ fontSize: '22px', color: '#FFFFFF', margin: '0 0 4px 0', fontWeight: 600, fontFamily: isKh ? 'var(--font-khmer-title)' : 'var(--font-serif), Georgia, serif' }}>
               {entry.title}
             </h2>
             {entry.english_name && (
@@ -328,12 +334,12 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
 
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
             {entry.category && (
-              <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#EA580C', backgroundColor: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.3)', padding: '3px 8px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '10.5px', fontFamily: isKh ? 'var(--font-khmer)' : 'monospace', color: '#EA580C', backgroundColor: 'rgba(234, 88, 12, 0.12)', border: '1px solid rgba(234, 88, 12, 0.3)', padding: '3px 8px', borderRadius: '6px' }}>
                 {entry.category}
               </span>
             )}
             {entry.place && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#A8A29E' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#A8A29E', fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)' }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#EA580C" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
@@ -343,8 +349,8 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
             )}
           </div>
 
-          <p style={{ fontSize: '13.5px', color: '#D6D3D1', lineHeight: 1.6, margin: '4px 0 0 0', whiteSpace: 'pre-wrap' }}>
-            {entry.description || 'No description provided.'}
+          <p style={{ fontSize: '13.5px', color: '#D6D3D1', lineHeight: 1.6, margin: '4px 0 0 0', whiteSpace: 'pre-wrap', fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)' }}>
+            {entry.description || (isKh ? 'គ្មានការពិពណ៌នា' : 'No description provided.')}
           </p>
         </div>
 
@@ -371,7 +377,8 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
             fontWeight: 600,
             cursor: isProcessing ? 'not-allowed' : 'pointer',
             opacity: isProcessing ? 0.6 : 1,
-            transition: 'all 0.2s ease'
+            transition: 'all 0.2s ease',
+            fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)'
           }}
           onMouseEnter={(e) => {
             if (!isProcessing) {
@@ -390,7 +397,7 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
             <polyline points="9 14 4 9 9 4" />
             <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
           </svg>
-          <span>{isProcessing ? 'កំពុងដំណើរការ...' : 'បញ្ជូនត្រឡប់ / Return'}</span>
+          <span>{isProcessing ? (isKh ? 'កំពុងដំណើរការ...' : 'Processing...') : (isKh ? 'បញ្ជូនត្រឡប់' : 'Return')}</span>
         </button>
 
         {/* Publish Button */}
@@ -412,7 +419,8 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
             cursor: isProcessing ? 'not-allowed' : 'pointer',
             opacity: isProcessing ? 0.6 : 1,
             boxShadow: '0 4px 14px rgba(34, 197, 94, 0.25)',
-            transition: 'all 0.2s ease'
+            transition: 'all 0.2s ease',
+            fontFamily: isKh ? 'var(--font-khmer)' : 'var(--font-sans)'
           }}
           onMouseEnter={(e) => {
             if (!isProcessing) {
@@ -430,7 +438,7 @@ function QueueItem({ entry, index, isProcessing, onPublish, onReturn }) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          <span>{isProcessing ? 'កំពុងដំណើរការ...' : 'ផ្សព្វផ្សាយ / Publish'}</span>
+          <span>{isProcessing ? (isKh ? 'កំពុងដំណើរការ...' : 'Processing...') : (isKh ? 'ផ្សព្វផ្សាយ' : 'Publish')}</span>
         </button>
 
       </div>

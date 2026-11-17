@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client.js";
 import { isJunkEntry, resolveToolPhoto } from "../utils/toolImages.js";
+import { useLanguage } from "../app/LanguageContext.js";
 
 const CURATED_SPECIMENS = [
   {
@@ -45,11 +46,32 @@ const SIGNUP_STEPS = [
   },
 ];
 
+const SIGNUP_STEPS_KH = [
+  {
+    num: "01",
+    title: "បង្កើតគណនីអ្នកចូលរួមដោយឥតគិតថ្លៃ",
+    detail: "ចុះឈ្មោះម្តងដោយប្រើអ៊ីមែលរបស់អ្នក ដើម្បីរក្សាទុក និងផ្ទុករូបថតឧបករណ៍។",
+  },
+  {
+    num: "02",
+    title: "កត់ត្រាការចងចាំរបស់ចាស់ទុំ",
+    detail: "ភ្ជាប់ឈ្មោះឧបករណ៍ខ្មែរជាមួយទីកន្លែងកំណើត និងប្រវត្តិរដូវកាលផ្ទាល់មាត់។",
+  },
+  {
+    num: "03",
+    title: "ឆ្លងកាត់ការត្រួតពិនិត្យបណ្ណសារ",
+    detail: "សំណើនឹងចូលជួររង់ចាំពិនិត្យ ដើម្បីផ្ទៀងផ្ទាត់ភាពត្រឹមត្រូវមុននឹងផ្សព្វផ្សាយ។",
+  },
+];
+
 export default function AuthExperience({
   initialMode = "login",
   onAuthSuccess,
 }) {
   const router = useRouter();
+  const { lang } = useLanguage();
+  const isKh = lang === "KH";
+
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -244,8 +266,8 @@ export default function AuthExperience({
               border: isSignup ? "1px solid #3D2B22" : "1px solid rgba(40, 28, 18, 0.11)",
               color: isSignup ? "#F59E0B" : "#C2410C",
               fontSize: "10.5px",
-              fontFamily: "monospace",
-              letterSpacing: "1px",
+              fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+              letterSpacing: isKh ? "0" : "1px",
               marginBottom: "18px",
               boxShadow: "0 4px 12px rgba(40, 28, 18, 0.04)",
               maxWidth: "100%",
@@ -253,26 +275,44 @@ export default function AuthExperience({
           >
             <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#EA580C", flexShrink: 0 }} />
             <span>
-              {isSignup ? "COMMUNITY SIGN UP · OPEN ACCESS" : "STEWARD LOG IN PORTAL"}
+              {isSignup
+                ? isKh
+                  ? "ចុះឈ្មោះអ្នកចូលរួម · បើកទូលាយ"
+                  : "COMMUNITY SIGN UP · OPEN ACCESS"
+                : isKh
+                  ? "ច្រកចូលគណនីអ្នកថែរក្សា"
+                  : "STEWARD LOG IN PORTAL"}
             </span>
           </div>
 
           <h1
             style={{
-              fontFamily: "var(--font-serif), Georgia, serif",
-              fontSize: "clamp(30px, 6.8vw, 54px)",
+              fontFamily: isKh ? "var(--font-khmer-title)" : "var(--font-serif), Georgia, serif",
+              fontSize: "clamp(28px, 6.8vw, 50px)",
               fontWeight: 400,
               color: "#191614",
-              lineHeight: 1.1,
+              lineHeight: 1.2,
               letterSpacing: "-0.02em",
               margin: "0 0 10px 0",
               maxWidth: "100%",
             }}
           >
             {isSignup ? (
+              isKh ? (
+                <>
+                  ក្លាយជាអ្នកថែរក្សា{" "}
+                  <span style={{ color: "#EA580C", fontStyle: "italic" }}>ការចងចាំខ្មែរ</span>
+                </>
+              ) : (
+                <>
+                  Become a keeper of{" "}
+                  <span style={{ color: "#EA580C", fontStyle: "italic" }}>Khmer memory</span>.
+                </>
+              )
+            ) : isKh ? (
               <>
-                Become a keeper of{" "}
-                <span style={{ color: "#EA580C", fontStyle: "italic" }}>Khmer memory</span>.
+                ចូលកាន់{" "}
+                <span style={{ color: "#EA580C", fontStyle: "italic" }}>បណ្ណសាររស់</span> ឡើងវិញ
               </>
             ) : (
               <>
@@ -295,16 +335,20 @@ export default function AuthExperience({
             « រំលឹកដង្ហើមស្រែដូនតា និងកេរ្តិ៍ដំណែលឧបករណ៍កសិកម្មបុរាណ »
           </p>
 
-          <p style={{ color: "#6B635B", fontSize: "14px", lineHeight: 1.6, margin: 0, maxWidth: "460px" }}>
+          <p style={{ color: "#6B635B", fontSize: "14px", lineHeight: 1.6, margin: 0, maxWidth: "460px", fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)" }}>
             {isSignup
-              ? "Help document hand-forged sickles, ironwood ploughs, and village memories across Kampong Cham before modern machines replace them."
-              : "Log in with your contributor credentials to manage tool records, check moderation status, or revise returned items."}
+              ? isKh
+                ? "ចូលរួមចំណែកកត់ត្រាកណ្ដៀវ នង្គ័ល និងការចងចាំតាមភូមិនៅខេត្តកំពង់ចាម មុនពេលគ្រឿងចក្រទំនើបមកជំនួស។"
+                : "Help document hand-forged sickles, ironwood ploughs, and village memories across Kampong Cham before modern machines replace them."
+              : isKh
+                ? "ចូលគណនីរបស់អ្នកដើម្បីគ្រប់គ្រងកំណត់ត្រាឧបករណ៍ ពិនិត្យស្ថានភាព ឬកែសម្រួលកំណត់ត្រាឡើងវិញ។"
+                : "Log in with your contributor credentials to manage tool records, check moderation status, or revise returned items."}
           </p>
 
           {isSignup ? (
             /* Sign Up Mode Left Visual: 3 Clear Community Steps */
             <div style={{ width: "100%", maxWidth: "460px", marginTop: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
-              {SIGNUP_STEPS.map((step) => (
+              {(isKh ? SIGNUP_STEPS_KH : SIGNUP_STEPS).map((step) => (
                 <div
                   key={step.num}
                   style={{
@@ -474,9 +518,10 @@ export default function AuthExperience({
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
-              Log In
+              {isKh ? "ចូលគណនី" : "Log In"}
             </button>
             <button
               type="button"
@@ -491,9 +536,10 @@ export default function AuthExperience({
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
-              Sign Up
+              {isKh ? "ចុះឈ្មោះ" : "Sign Up"}
             </button>
           </div>
 
@@ -504,28 +550,50 @@ export default function AuthExperience({
                 fontSize: "26px",
                 fontWeight: 600,
                 color: isSignup ? "#FFFFFF" : "#191614",
-                fontFamily: "var(--font-khmer-title), var(--font-serif), Georgia, serif",
+                fontFamily: isKh
+                  ? "var(--font-khmer-title)"
+                  : "var(--font-serif), Georgia, serif",
                 lineHeight: 1.3,
               }}
             >
-              {isSignup ? "បង្កើតគណនី" : "ចូលគណនី"}
-              <span
-                style={{
-                  marginLeft: "10px",
-                  fontFamily: "var(--font-serif), Georgia, serif",
-                  fontStyle: "italic",
-                  fontWeight: 400,
-                  color: isSignup ? "#F59E0B" : "#EA580C",
-                  fontSize: "24px",
-                }}
-              >
-                {isSignup ? "/ Sign Up" : "/ Log In"}
-              </span>
-            </h2>
-            <p style={{ margin: 0, fontSize: "13px", color: isSignup ? "#B8AEA4" : "#6B635B", lineHeight: 1.5 }}>
               {isSignup
-                ? "Create a new contributor account with email & password (min 6 characters)."
-                : "Log in with your email and password to manage or submit tools."}
+                ? isKh
+                  ? "បង្កើតគណនីអ្នកចូលរួម"
+                  : "Create Account"
+                : isKh
+                  ? "ចូលគណនីអ្នកចូលរួម"
+                  : "Contributor Log In"}
+              {!isKh && (
+                <span
+                  style={{
+                    marginLeft: "10px",
+                    fontFamily: "var(--font-serif), Georgia, serif",
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: isSignup ? "#F59E0B" : "#EA580C",
+                    fontSize: "24px",
+                  }}
+                >
+                  {isSignup ? "/ Sign Up" : "/ Log In"}
+                </span>
+              )}
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "13px",
+                color: isSignup ? "#B8AEA4" : "#6B635B",
+                lineHeight: 1.5,
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+              }}
+            >
+              {isSignup
+                ? isKh
+                  ? "បង្កើតគណនីអ្នកចូលរួមថ្មីដោយប្រើអ៊ីមែល និងពាក្យសម្ងាត់ (យ៉ាងតិច ៦ តួអក្សរ)។"
+                  : "Create a new contributor account with email & password (min 6 characters)."
+                : isKh
+                  ? "ចូលគណនីដោយប្រើអ៊ីមែល និងពាក្យសម្ងាត់ ដើម្បីគ្រប់គ្រង ឬបញ្ជូនឧបករណ៍។"
+                  : "Log in with your email and password to manage or submit tools."}
             </p>
           </div>
 
@@ -584,13 +652,13 @@ export default function AuthExperience({
                   fontSize: "11px",
                   fontWeight: 700,
                   color: isSignup ? "#D6CEC5" : "#57534E",
-                  fontFamily: "monospace",
+                  fontFamily: isKh ? "var(--font-khmer)" : "monospace",
                   marginBottom: "7px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.7px",
+                  textTransform: isKh ? "none" : "uppercase",
+                  letterSpacing: isKh ? "0" : "0.7px",
                 }}
               >
-                Email Address / អ៊ីមែល
+                {isKh ? "អ៊ីមែល *" : "Email Address *"}
               </label>
               <div style={{ position: "relative" }}>
                 <svg
@@ -626,13 +694,17 @@ export default function AuthExperience({
                   fontSize: "11px",
                   fontWeight: 700,
                   color: isSignup ? "#D6CEC5" : "#57534E",
-                  fontFamily: "monospace",
+                  fontFamily: isKh ? "var(--font-khmer)" : "monospace",
                   marginBottom: "7px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.7px",
+                  textTransform: isKh ? "none" : "uppercase",
+                  letterSpacing: isKh ? "0" : "0.7px",
                 }}
               >
-                {isSignup ? "Password (Min 6 Characters) / ពាក្យសម្ងាត់" : "Password / ពាក្យសម្ងាត់"}
+                {isKh
+                  ? "ពាក្យសម្ងាត់ (យ៉ាងតិច ៦ តួអក្សរ) *"
+                  : isSignup
+                    ? "Password (Min 6 Characters) *"
+                    : "Password *"}
               </label>
               <div style={{ position: "relative" }}>
                 <svg
@@ -700,13 +772,13 @@ export default function AuthExperience({
                     fontSize: "11px",
                     fontWeight: 700,
                     color: "#D6CEC5",
-                    fontFamily: "monospace",
+                    fontFamily: isKh ? "var(--font-khmer)" : "monospace",
                     marginBottom: "7px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.7px",
+                    textTransform: isKh ? "none" : "uppercase",
+                    letterSpacing: isKh ? "0" : "0.7px",
                   }}
                 >
-                  Confirm Password / បញ្ជាក់ពាក្យសម្ងាត់
+                  {isKh ? "បញ្ជាក់ពាក្យសម្ងាត់ *" : "Confirm Password *"}
                 </label>
                 <div style={{ position: "relative" }}>
                   <svg
@@ -753,15 +825,22 @@ export default function AuthExperience({
                 cursor: loading ? "not-allowed" : "pointer",
                 opacity: loading ? 0.7 : 1,
                 boxShadow: "0 12px 24px -8px rgba(234, 88, 12, 0.45)",
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
               {loading
-                ? isSignup
-                  ? "កំពុងបង្កើតគណនី... / Creating account..."
-                  : "កំពុងផ្ទៀងផ្ទាត់... / Logging in..."
-                : isSignup
-                  ? "Sign Up as Contributor →"
-                  : "Log In to Archive →"}
+                ? isKh
+                  ? "កំពុងដំណើរការ..."
+                  : isSignup
+                    ? "Creating account..."
+                    : "Logging in..."
+                : isKh
+                  ? isSignup
+                    ? "ចុះឈ្មោះអ្នកចូលរួម →"
+                    : "ចូលគណនី →"
+                  : isSignup
+                    ? "Sign Up as Contributor →"
+                    : "Log In to Archive →"}
             </button>
           </form>
 
@@ -785,12 +864,19 @@ export default function AuthExperience({
                 color: isSignup ? "#E7E3DF" : "#6B635B",
                 textDecoration: "none",
                 fontWeight: 500,
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
-              &larr; Browse public archive
+              {isKh ? "← ត្រឡប់ទៅបណ្ណសារសាធារណៈ" : "← Browse public archive"}
             </Link>
-            <span style={{ fontSize: "11px", fontFamily: "monospace", color: isSignup ? "#F59E0B" : "#A8A29E" }}>
-              {isSignup ? "NEW STEWARD SIGN UP" : "RLS PROTECTED PORTAL"}
+            <span style={{ fontSize: "11px", fontFamily: isKh ? "var(--font-khmer)" : "monospace", color: isSignup ? "#F59E0B" : "#A8A29E" }}>
+              {isSignup
+                ? isKh
+                  ? "ចុះឈ្មោះអ្នកថែរក្សាថ្មី"
+                  : "NEW STEWARD SIGN UP"
+                : isKh
+                  ? "ប្រព័ន្ធការពារទិន្នន័យ RLS"
+                  : "RLS PROTECTED PORTAL"}
             </span>
           </div>
         </div>

@@ -1,4 +1,16 @@
+"use client";
+
+import { useLanguage } from "../app/LanguageContext.js";
+
 export default function StatusBadge({ status, style = {} }) {
+  let lang = "KH";
+  try {
+    const ctx = useLanguage();
+    if (ctx?.lang) lang = ctx.lang;
+  } catch {
+    lang = "KH";
+  }
+
   if (!status) return null;
 
   let label = status;
@@ -8,19 +20,19 @@ export default function StatusBadge({ status, style = {} }) {
   let dotColor = "var(--text-muted)";
 
   if (status === "pending") {
-    label = "កំពុងរង់ចាំការពិនិត្យ / Pending Review";
+    label = lang === "KH" ? "កំពុងរង់ចាំការពិនិត្យ" : "Pending Review";
     bg = "rgba(232, 176, 74, 0.15)";
     border = "var(--accent)";
     color = "var(--accent-text)";
     dotColor = "var(--accent)";
   } else if (status === "published") {
-    label = "បានបោះពុម្ពផ្សាយ / Published";
+    label = lang === "KH" ? "បានបោះពុម្ពផ្សាយ" : "Published";
     bg = "rgba(34, 197, 94, 0.15)";
     border = "#22c55e";
     color = "#22c55e";
     dotColor = "#22c55e";
   } else if (status === "returned") {
-    label = "បានប្រគល់ជូនវិញ / Returned for Revision";
+    label = lang === "KH" ? "បានប្រគល់ជូនវិញ" : "Returned for Revision";
     bg = "rgba(200, 85, 61, 0.15)";
     border = "var(--accent-2)";
     color = "var(--accent-2)";
@@ -37,7 +49,7 @@ export default function StatusBadge({ status, style = {} }) {
         borderRadius: "999px",
         fontSize: "12px",
         fontWeight: 600,
-        fontFamily: "var(--font-sans), var(--font-khmer)",
+        fontFamily: lang === "KH" ? "var(--font-khmer)" : "var(--font-sans)",
         backgroundColor: bg,
         border: `1px solid ${border}`,
         color: color,

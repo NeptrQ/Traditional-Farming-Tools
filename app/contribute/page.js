@@ -4,8 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../utils/supabase/client.js";
+import { useLanguage } from "../LanguageContext.js";
 
-const CATEGORY_OPTIONS = [
+const CATEGORY_OPTIONS_KH = [
+  "ភ្ជួររាស់ដី (Soil Preparation)",
+  "សាបព្រោះ និងស្ទូង (Planting & Floods)",
+  "ការច្រូតកាត់ (The Harvest)",
+  "ជង្រុក និងការទុកដាក់ (Granary & Storage)",
+];
+
+const CATEGORY_OPTIONS_EN = [
   "Soil Preparation (ភ្ជួររាស់)",
   "Planting & Floods (សាបព្រោះ & ស្ទូង)",
   "The Harvest (ច្រូតកាត់)",
@@ -14,14 +22,17 @@ const CATEGORY_OPTIONS = [
 
 const INITIAL_FORM = {
   title: "",
-  category: "Soil Preparation (ភ្ជួររាស់)",
+  category: "ភ្ជួររាស់ដី (Soil Preparation)",
   description: "",
   contributor: "",
   place: "",
 };
 
-function QuickContributeAuthBar({ onUnlocked }) {
+function ContributeAuthPrompt({ onUnlocked }) {
   const router = useRouter();
+  const { lang } = useLanguage();
+  const isKh = lang === "KH";
+
   const [authMode, setAuthMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +40,7 @@ function QuickContributeAuthBar({ onUnlocked }) {
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
 
-  async function handleQuickAuth(e) {
+  async function handleAuth(e) {
     e.preventDefault();
     setErr("");
     setMsg("");
@@ -43,7 +54,11 @@ function QuickContributeAuthBar({ onUnlocked }) {
           password,
         });
         if (error) {
-          setErr("Invalid email or password.");
+          setErr(
+            isKh
+              ? "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវទេ"
+              : "Invalid email or password."
+          );
           setBusy(false);
           return;
         }
@@ -56,11 +71,23 @@ function QuickContributeAuthBar({ onUnlocked }) {
         });
         if (error) {
           if (error.message?.toLowerCase().includes("already registered")) {
-            setErr("គណនីនេះមានរួចហើយ សូមជ្រើសរើស Log In / This email is already registered. Please log in.");
+            setErr(
+              isKh
+                ? "គណនីនេះមានរួចហើយ សូមជ្រើសរើសចូលគណនី"
+                : "This email is already registered. Please log in."
+            );
           } else if (error.message?.toLowerCase().includes("password")) {
-            setErr("ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច ៦ តួអក្សរ / Password must be at least 6 characters.");
+            setErr(
+              isKh
+                ? "ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងតិច ៦ តួអក្សរ"
+                : "Password must be at least 6 characters."
+            );
           } else {
-            setErr("មិនអាចចុះឈ្មោះបានទេ សូមពិនិត្យព័ត៌មានម្តងទៀត / Registration failed. Please check your details and try again.");
+            setErr(
+              isKh
+                ? "មិនអាចចុះឈ្មោះបានទេ សូមពិនិត្យព័ត៌មានម្តងទៀត"
+                : "Registration failed. Please check your details and try again."
+            );
           }
           setBusy(false);
           return;
@@ -70,12 +97,20 @@ function QuickContributeAuthBar({ onUnlocked }) {
           router.refresh();
           return;
         }
-        setMsg("Registered! Click Log In above with your new credentials to unlock the studio.");
+        setMsg(
+          isKh
+            ? "ចុះឈ្មោះជោគជ័យ! សូមចូលគណនីខាងលើ ដើម្បីចាប់ផ្តើមបញ្ជូនឧបករណ៍។"
+            : "Registered successfully! Log in above with your credentials to submit."
+        );
         setAuthMode("login");
         setBusy(false);
       }
     } catch {
-      setErr("Connection error. Please try again.");
+      setErr(
+        isKh
+          ? "បញ្ហាតភ្ជាប់បណ្តាញ សូមព្យាយាមម្តងទៀត"
+          : "Connection error. Please try again."
+      );
       setBusy(false);
     }
   }
@@ -114,28 +149,42 @@ function QuickContributeAuthBar({ onUnlocked }) {
               alignItems: "center",
               gap: "7px",
               fontSize: "10.5px",
-              fontFamily: "monospace",
+              fontFamily: isKh ? "var(--font-khmer)" : "monospace",
               color: "#F59E0B",
-              letterSpacing: "1px",
+              letterSpacing: isKh ? "0" : "1px",
               textTransform: "uppercase",
               marginBottom: "4px",
             }}
           >
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#EA580C" }} />
-            QUICK STUDIO CHECK-IN · UNLOCKS FORM BELOW
+            <span
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                backgroundColor: "#EA580C",
+              }}
+            />
+            {isKh ? "ចូលគណនី ឬ ចុះឈ្មោះ" : "CONTRIBUTOR ACCESS"}
           </span>
           <h2
             style={{
               margin: 0,
-              fontSize: "20px",
+              fontSize: isKh ? "19px" : "20px",
               fontWeight: 600,
               color: "#FFFFFF",
-              fontFamily: "var(--font-serif), Georgia, serif",
+              fontFamily: isKh
+                ? "var(--font-khmer-title), var(--font-khmer)"
+                : "var(--font-serif), Georgia, serif",
+              lineHeight: 1.4,
             }}
           >
             {authMode === "login"
-              ? "Log in to activate specimen submission"
-              : "Create a contributor account to submit tools"}
+              ? isKh
+                ? "ចូលគណនីដើម្បីបញ្ជូនឧបករណ៍ទៅកាន់បណ្ណសារ"
+                : "Log in to submit a tool to the archive"
+              : isKh
+                ? "ចុះឈ្មោះគណនីអ្នកចូលរួមថ្មី"
+                : "Create a contributor account to submit tools"}
           </h2>
         </div>
 
@@ -164,9 +213,10 @@ function QuickContributeAuthBar({ onUnlocked }) {
               fontSize: "12px",
               fontWeight: 600,
               cursor: "pointer",
+              fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
             }}
           >
-            Log In
+            {isKh ? "ចូលគណនី" : "Log In"}
           </button>
           <button
             type="button"
@@ -184,22 +234,27 @@ function QuickContributeAuthBar({ onUnlocked }) {
               fontSize: "12px",
               fontWeight: 600,
               cursor: "pointer",
+              fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
             }}
           >
-            Sign Up
+            {isKh ? "ចុះឈ្មោះ" : "Sign Up"}
           </button>
         </div>
       </div>
 
       {err && (
-        <div style={{ color: "#FCA5A5", fontSize: "12.5px", marginBottom: "12px" }}>{err}</div>
+        <div style={{ color: "#FCA5A5", fontSize: "12.5px", marginBottom: "12px" }}>
+          {err}
+        </div>
       )}
       {msg && (
-        <div style={{ color: "#6EE7B7", fontSize: "12.5px", marginBottom: "12px" }}>{msg}</div>
+        <div style={{ color: "#6EE7B7", fontSize: "12.5px", marginBottom: "12px" }}>
+          {msg}
+        </div>
       )}
 
       <form
-        onSubmit={handleQuickAuth}
+        onSubmit={handleAuth}
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 210px), 1fr))",
@@ -212,7 +267,11 @@ function QuickContributeAuthBar({ onUnlocked }) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Contributor email (e.g. you@aupp.edu.kh)"
+          placeholder={
+            isKh
+              ? "អ៊ីមែលអ្នកចូលរួម (ឧ. you@aupp.edu.kh)"
+              : "Contributor email (e.g. you@aupp.edu.kh)"
+          }
           className="editorial-input signup-dark"
           style={{ height: "44px", padding: "0 14px" }}
         />
@@ -222,7 +281,15 @@ function QuickContributeAuthBar({ onUnlocked }) {
           minLength={authMode === "signup" ? 6 : undefined}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder={authMode === "signup" ? "Password (min 6 chars)" : "Password"}
+          placeholder={
+            authMode === "signup"
+              ? isKh
+                ? "ពាក្យសម្ងាត់ (យ៉ាងតិច ៦ តួអក្សរ)"
+                : "Password (min 6 chars)"
+              : isKh
+                ? "ពាក្យសម្ងាត់"
+                : "Password"
+          }
           className="editorial-input signup-dark"
           style={{ height: "44px", padding: "0 14px" }}
         />
@@ -241,13 +308,20 @@ function QuickContributeAuthBar({ onUnlocked }) {
             padding: "0 20px",
             whiteSpace: "nowrap",
             boxShadow: "0 6px 18px rgba(234, 88, 12, 0.35)",
+            fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
           }}
         >
           {busy
-            ? "Verifying..."
+            ? isKh
+              ? "កំពុងផ្ទៀងផ្ទាត់..."
+              : "Verifying..."
             : authMode === "login"
-              ? "Log In & Unlock Studio →"
-              : "Sign Up & Unlock →"}
+              ? isKh
+                ? "ចូលគណនី →"
+                : "Log In →"
+              : isKh
+                ? "ចុះឈ្មោះ →"
+                : "Sign Up →"}
         </button>
       </form>
     </div>
@@ -255,6 +329,10 @@ function QuickContributeAuthBar({ onUnlocked }) {
 }
 
 export default function ContributePage() {
+  const { lang } = useLanguage();
+  const isKh = lang === "KH";
+  const categoryOptions = isKh ? CATEGORY_OPTIONS_KH : CATEGORY_OPTIONS_EN;
+
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
 
@@ -318,7 +396,9 @@ export default function ContributePage() {
       setPhoto(null);
       setErrors((prev) => ({
         ...prev,
-        photo: "រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP / Please upload a JPG, PNG, or WebP image.",
+        photo: isKh
+          ? "រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP"
+          : "Please upload a JPG, PNG, or WebP image.",
       }));
       return;
     }
@@ -328,7 +408,9 @@ export default function ContributePage() {
       setPhoto(null);
       setErrors((prev) => ({
         ...prev,
-        photo: "ទំហំរូបភាពត្រូវតែតូចជាង 5 MB / Image size must be under 5 MB.",
+        photo: isKh
+          ? "ទំហំរូបភាពត្រូវតែតូចជាង 5 MB"
+          : "Image size must be under 5 MB.",
       }));
       return;
     }
@@ -347,25 +429,58 @@ export default function ContributePage() {
     const c = formData.contributor.trim();
     const p = formData.place.trim();
 
-    if (!t) newErrors.title = "Title is required.";
-    else if (t.length > 200) newErrors.title = "Title must be 200 characters or less.";
+    if (!t) {
+      newErrors.title = isKh
+        ? "សូមបញ្ចូលឈ្មោះឧបករណ៍"
+        : "Title is required.";
+    } else if (t.length > 200) {
+      newErrors.title = isKh
+        ? "ឈ្មោះឧបករណ៍ត្រូវតែតិចជាង ២០០ តួអក្សរ"
+        : "Title must be 200 characters or less.";
+    }
 
-    if (!cat) newErrors.category = "Season / Category is required.";
+    if (!cat) {
+      newErrors.category = isKh
+        ? "សូមជ្រើសរើសប្រភេទឧបករណ៍"
+        : "Season / Category is required.";
+    }
 
-    if (!d) newErrors.description = "Description is required.";
-    else if (d.length > 2000) newErrors.description = "Description must be 2000 characters or less.";
+    if (!d) {
+      newErrors.description = isKh
+        ? "សូមបញ្ចូលការពិពណ៌នា"
+        : "Description is required.";
+    } else if (d.length > 2000) {
+      newErrors.description = isKh
+        ? "ការពិពណ៌នាត្រូវតែតិចជាង ២០០០ តួអក្សរ"
+        : "Description must be 2000 characters or less.";
+    }
 
-    if (!c) newErrors.contributor = "Contributor is required.";
-    if (!p) newErrors.place = "Place is required.";
+    if (!c) {
+      newErrors.contributor = isKh
+        ? "សូមបញ្ចូលឈ្មោះអ្នកចូលរួម ឬចាស់ទុំ"
+        : "Contributor is required.";
+    }
+
+    if (!p) {
+      newErrors.place = isKh
+        ? "សូមបញ្ចូលទីកន្លែងកំណើត"
+        : "Place is required.";
+    }
 
     if (!photo) {
-      newErrors.photo = "Photo is required.";
+      newErrors.photo = isKh
+        ? "សូមជ្រើសរើសរូបថតឧបករណ៍"
+        : "Photo is required.";
     } else {
       const validTypes = ["image/jpeg", "image/png", "image/webp"];
       if (!validTypes.includes(photo.type)) {
-        newErrors.photo = "Only JPEG, PNG, or WEBP images are allowed.";
+        newErrors.photo = isKh
+          ? "រូបភាពត្រូវតែជា JPEG, PNG ឬ WebP"
+          : "Only JPEG, PNG, or WEBP images are allowed.";
       } else if (photo.size > 5 * 1024 * 1024) {
-        newErrors.photo = "File size must be 5MB or less.";
+        newErrors.photo = isKh
+          ? "ទំហំរូបថតត្រូវតែតូចជាង 5MB"
+          : "File size must be 5MB or less.";
       }
     }
 
@@ -425,7 +540,11 @@ export default function ContributePage() {
       setPhoto(null);
     } catch (err) {
       console.error(err);
-      setSubmitError("មិនអាចរក្សាទុកកំណត់ត្រាបានទេ សូមព្យាយាមម្តងទៀត / Failed to save entry. Please try again.");
+      setSubmitError(
+        isKh
+          ? "មិនអាចរក្សាទុកកំណត់ត្រាបានទេ សូមព្យាយាមម្តងទៀត"
+          : "Failed to save entry. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -451,12 +570,12 @@ export default function ContributePage() {
             backgroundColor: "#FFFFFF",
             border: "1px solid rgba(40, 28, 18, 0.1)",
             fontSize: "13px",
-            fontFamily: "monospace",
+            fontFamily: isKh ? "var(--font-khmer)" : "monospace",
             color: "#6B635B",
             boxShadow: "0 10px 25px rgba(40, 28, 18, 0.06)",
           }}
         >
-          Loading Contribution Studio...
+          {isKh ? "កំពុងផ្ទុកទម្រង់..." : "Loading submission form..."}
         </div>
       </main>
     );
@@ -493,15 +612,15 @@ export default function ContributePage() {
           userSelect: "none",
           zIndex: 0,
           textTransform: "uppercase",
-          fontFamily: "var(--font-sans), sans-serif",
+          fontFamily: isKh ? "var(--font-khmer-title)" : "var(--font-sans), sans-serif",
           maxWidth: "100%",
           overflow: "hidden",
         }}
       >
-        SUBMIT TOOL
+        {isKh ? "បញ្ជូនឧបករណ៍" : "SUBMIT TOOL"}
       </div>
 
-      {/* Studio Header */}
+      {/* Header */}
       <div
         style={{
           width: "100%",
@@ -528,20 +647,35 @@ export default function ContributePage() {
               border: "1px solid rgba(40, 28, 18, 0.12)",
               color: "#C2410C",
               fontSize: "11px",
-              fontFamily: "monospace",
+              fontFamily: isKh ? "var(--font-khmer)" : "monospace",
               marginBottom: "14px",
               boxShadow: "0 4px 12px rgba(40, 28, 18, 0.04)",
             }}
           >
-            <span style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: user ? "#16A34A" : "#EA580C" }} />
+            <span
+              style={{
+                width: "7px",
+                height: "7px",
+                borderRadius: "50%",
+                backgroundColor: user ? "#16A34A" : "#EA580C",
+              }}
+            />
             <span>
-              {user ? "STUDIO ACTIVE · SPECIMEN SUBMISSION" : "CONTRIBUTION STUDIO · LOCKED PREVIEW"}
+              {user
+                ? isKh
+                  ? "គណនីសកម្ម · បញ្ជូនឧបករណ៍"
+                  : "CONTRIBUTOR ACTIVE · SUBMIT TOOL"
+                : isKh
+                  ? "ចូលរួមចំណែក · បណ្ណសាររស់"
+                  : "CONTRIBUTE · LIVING ARCHIVE"}
             </span>
           </div>
 
           <h1
             style={{
-              fontFamily: "var(--font-khmer-title), var(--font-serif), Georgia, serif",
+              fontFamily: isKh
+                ? "var(--font-khmer-title)"
+                : "var(--font-serif), Georgia, serif",
               fontSize: "clamp(28px, 4vw, 42px)",
               fontWeight: 600,
               color: "#191614",
@@ -549,10 +683,19 @@ export default function ContributePage() {
               lineHeight: 1.25,
             }}
           >
-            បន្ថែមឧបករណ៍កសិកម្មថ្មី
+            {isKh ? "បន្ថែមឧបករណ៍កសិកម្មថ្មី" : "Contribute a Farming Tool"}
           </h1>
-          <p style={{ margin: 0, fontSize: "14.5px", color: "#6B635B" }}>
-            Document a traditional farming implement and its elder memory for the Kampong Cham Living Archive.
+          <p
+            style={{
+              margin: 0,
+              fontSize: "14.5px",
+              color: "#6B635B",
+              fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+            }}
+          >
+            {isKh
+              ? "កត់ត្រាឧបករណ៍កសិកម្មបុរាណ និងការចងចាំរបស់ចាស់ទុំសម្រាប់បណ្ណសាររស់ខេត្តកំពង់ចាម"
+              : "Document a traditional farming implement and its elder memory for the Kampong Cham Living Archive."}
           </p>
         </div>
 
@@ -565,10 +708,11 @@ export default function ContributePage() {
               border: "1px solid rgba(40, 28, 18, 0.1)",
               fontSize: "12px",
               color: "#57534E",
-              fontFamily: "monospace",
+              fontFamily: isKh ? "var(--font-khmer)" : "monospace",
             }}
           >
-            Contributor: <strong style={{ color: "#191614" }}>{user.email}</strong>
+            {isKh ? "អ្នកចូលរួម៖ " : "Contributor: "}
+            <strong style={{ color: "#191614" }}>{user.email}</strong>
           </div>
         ) : (
           <Link
@@ -582,15 +726,16 @@ export default function ContributePage() {
               fontSize: "12.5px",
               fontWeight: 600,
               color: "#191614",
+              fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
             }}
           >
-            Open Full Login Page &rarr;
+            {isKh ? "ទំព័រចូលគណនីពេញលេញ →" : "Full Login Page →"}
           </Link>
         )}
       </div>
 
-      {/* When logged out, show Quick Check-In strip right above the real Contribution Studio workspace */}
-      {!user && <QuickContributeAuthBar onUnlocked={(u) => setUser(u)} />}
+      {/* When logged out, show Contributor Sign-in strip */}
+      {!user && <ContributeAuthPrompt onUnlocked={(u) => setUser(u)} />}
 
       {submitted ? (
         <div
@@ -621,20 +766,31 @@ export default function ContributePage() {
               margin: "0 auto 20px",
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+            >
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
 
           <h2
             style={{
-              fontFamily: "var(--font-khmer-title), var(--font-serif), Georgia, serif",
+              fontFamily: isKh
+                ? "var(--font-khmer-title)"
+                : "var(--font-serif), Georgia, serif",
               fontSize: "24px",
               color: "#191614",
               margin: "0 0 12px",
             }}
           >
-            សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ!
+            {isKh
+              ? "សំណើរបស់អ្នកត្រូវបានបញ្ជូនសម្រាប់ការត្រួតពិនិត្យ!"
+              : "Your entry has been submitted for review!"}
           </h2>
 
           <p
@@ -644,12 +800,22 @@ export default function ContributePage() {
               color: "#57534E",
               margin: "0 auto 28px",
               maxWidth: "480px",
+              fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
             }}
           >
-            Your entry has been submitted for review! It will be verified by an archivist before appearing in the public collection.
+            {isKh
+              ? "កំណត់ត្រារបស់អ្នកត្រូវបានបញ្ជូនទៅកាន់ជួរត្រួតពិនិត្យ! វានឹងត្រូវបានផ្ទៀងផ្ទាត់ដោយអ្នកពិនិត្យបណ្ណសារ មុនពេលបង្ហាញនៅលើបណ្តុំសាធារណៈ។"
+              : "Your entry has been submitted for review! It will be verified by an archivist before appearing in the public collection."}
           </p>
 
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
             <Link
               href="/my-entries"
               style={{
@@ -661,9 +827,10 @@ export default function ContributePage() {
                 fontSize: "13.5px",
                 fontWeight: 600,
                 boxShadow: "0 8px 20px rgba(234, 88, 12, 0.3)",
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
-              My Entries / កំណត់ត្រារបស់ខ្ញុំ
+              {isKh ? "កំណត់ត្រារបស់ខ្ញុំ" : "My Entries"}
             </Link>
             <button
               type="button"
@@ -677,9 +844,10 @@ export default function ContributePage() {
                 fontSize: "13.5px",
                 fontWeight: 600,
                 cursor: "pointer",
+                fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
               }}
             >
-              Submit Another Tool
+              {isKh ? "បន្ថែមឧបករណ៍មួយទៀត" : "Submit Another Tool"}
             </button>
           </div>
         </div>
@@ -687,12 +855,12 @@ export default function ContributePage() {
         <div
           className="contribute-studio-grid"
           style={{
-            opacity: user ? 1 : 0.62,
+            opacity: user ? 1 : 0.72,
             pointerEvents: user ? "auto" : "none",
             transition: "opacity 0.25s ease",
           }}
         >
-          {/* LEFT: Main Submission Card */}
+          {/* LEFT: Main Submission Form */}
           <div
             style={{
               backgroundColor: "#FFFFFF",
@@ -702,6 +870,25 @@ export default function ContributePage() {
               boxShadow: "0 24px 60px -18px rgba(40, 28, 18, 0.1)",
             }}
           >
+            {!user && (
+              <div
+                style={{
+                  backgroundColor: "#FFFBEB",
+                  border: "1px solid #FDE68A",
+                  color: "#B45309",
+                  borderRadius: "14px",
+                  padding: "10px 16px",
+                  fontSize: "12.5px",
+                  marginBottom: "20px",
+                  fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                }}
+              >
+                {isKh
+                  ? "ទម្រង់បញ្ជូនឧបករណ៍ (សូមចូលគណនីខាងលើដើម្បីបំពេញ និងបញ្ជូន)"
+                  : "Submission Form (Please sign in above to complete and submit)"}
+              </div>
+            )}
+
             {submitError && (
               <div
                 style={{
@@ -718,13 +905,21 @@ export default function ContributePage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+            >
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="title"
-                  style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                  style={{
+                    fontSize: "12.5px",
+                    fontWeight: 700,
+                    color: "#44403C",
+                    fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                  }}
                 >
-                  Tool Title / ឈ្មោះឧបករណ៍ *
+                  {isKh ? "ឈ្មោះឧបករណ៍ *" : "Tool Title *"}
                 </label>
                 <input
                   id="title"
@@ -732,20 +927,33 @@ export default function ContributePage() {
                   disabled={!user}
                   value={formData.title}
                   onChange={handleInputChange}
-                  placeholder="e.g. នង្គ័លបុរាណ (Traditional Wooden Plough)"
+                  placeholder={
+                    isKh
+                      ? "ឧ. នង្គ័លបុរាណ"
+                      : "e.g. Traditional Wooden Plough (នង្គ័លបុរាណ)"
+                  }
                   maxLength={200}
                   className="editorial-input"
                   style={{ padding: "0 16px" }}
                 />
-                {errors.title && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.title}</span>}
+                {errors.title && (
+                  <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                    {errors.title}
+                  </span>
+                )}
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="category"
-                  style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                  style={{
+                    fontSize: "12.5px",
+                    fontWeight: 700,
+                    color: "#44403C",
+                    fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                  }}
                 >
-                  Season / Category (រដូវកាលកសិកម្ម) *
+                  {isKh ? "រដូវកាលកសិកម្ម / ប្រភេទ *" : "Season / Category *"}
                 </label>
                 <select
                   id="category"
@@ -755,23 +963,38 @@ export default function ContributePage() {
                   value={formData.category}
                   onChange={handleInputChange}
                   className="editorial-input"
-                  style={{ padding: "0 14px", cursor: user ? "pointer" : "default" }}
+                  style={{
+                    padding: "0 14px",
+                    cursor: user ? "pointer" : "default",
+                    fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                  }}
                 >
-                  {CATEGORY_OPTIONS.map((opt) => (
+                  {categoryOptions.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>
                   ))}
                 </select>
-                {errors.category && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.category}</span>}
+                {errors.category && (
+                  <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                    {errors.category}
+                  </span>
+                )}
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="description"
-                  style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                  style={{
+                    fontSize: "12.5px",
+                    fontWeight: 700,
+                    color: "#44403C",
+                    fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                  }}
                 >
-                  Description &amp; Oral Story / ការពិពណ៌នា *
+                  {isKh
+                    ? "ការពិពណ៌នា និងរឿងរ៉ាវចាស់ទុំ *"
+                    : "Description & Oral Story *"}
                 </label>
                 <textarea
                   id="description"
@@ -779,21 +1002,47 @@ export default function ContributePage() {
                   disabled={!user}
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Describe the wood/metal craft, seasonal usage, and oral memories shared by elders..."
+                  placeholder={
+                    isKh
+                      ? "ពិពណ៌នាអំពីឈើ ឬដែក ការប្រើប្រាស់តាមរដូវកាល និងការចងចាំរបស់ចាស់ទុំ..."
+                      : "Describe the wood/metal craft, seasonal usage, and oral memories shared by elders..."
+                  }
                   maxLength={2000}
                   className="editorial-input"
-                  style={{ minHeight: "124px", height: "auto", padding: "12px 16px", resize: "vertical" }}
+                  style={{
+                    minHeight: "124px",
+                    height: "auto",
+                    padding: "12px 16px",
+                    resize: "vertical",
+                  }}
                 />
-                {errors.description && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.description}</span>}
+                {errors.description && (
+                  <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                    {errors.description}
+                  </span>
+                )}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "16px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+                  gap: "16px",
+                }}
+              >
                 <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                   <label
                     htmlFor="contributor"
-                    style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                    style={{
+                      fontSize: "12.5px",
+                      fontWeight: 700,
+                      color: "#44403C",
+                      fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                    }}
                   >
-                    Contributor (Elder / Source) *
+                    {isKh
+                      ? "អ្នកចូលរួម (ចាស់ទុំ / ប្រភព) *"
+                      : "Contributor (Elder / Source) *"}
                   </label>
                   <input
                     id="contributor"
@@ -801,19 +1050,34 @@ export default function ContributePage() {
                     disabled={!user}
                     value={formData.contributor}
                     onChange={handleInputChange}
-                    placeholder="e.g. Grandfather Sok (Kampong Siem)"
+                    placeholder={
+                      isKh
+                        ? "ឧ. លោកតា សុខ (ស្រុកកំពង់សៀម)"
+                        : "e.g. Grandfather Sok (Kampong Siem)"
+                    }
                     className="editorial-input"
                     style={{ padding: "0 16px" }}
                   />
-                  {errors.contributor && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.contributor}</span>}
+                  {errors.contributor && (
+                    <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                      {errors.contributor}
+                    </span>
+                  )}
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                   <label
                     htmlFor="place"
-                    style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                    style={{
+                      fontSize: "12.5px",
+                      fontWeight: 700,
+                      color: "#44403C",
+                      fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                    }}
                   >
-                    Place of Origin (Province / District) *
+                    {isKh
+                      ? "ទីកន្លែងកំណើត (ខេត្ត / ស្រុក) *"
+                      : "Place of Origin (Province / District) *"}
                   </label>
                   <input
                     id="place"
@@ -821,20 +1085,31 @@ export default function ContributePage() {
                     disabled={!user}
                     value={formData.place}
                     onChange={handleInputChange}
-                    placeholder="e.g. Kampong Cham"
+                    placeholder={isKh ? "ឧ. ខេត្តកំពង់ចាម" : "e.g. Kampong Cham"}
                     className="editorial-input"
                     style={{ padding: "0 16px" }}
                   />
-                  {errors.place && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.place}</span>}
+                  {errors.place && (
+                    <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                      {errors.place}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 <label
                   htmlFor="photo"
-                  style={{ fontSize: "12.5px", fontWeight: 700, color: "#44403C", fontFamily: "var(--font-sans)" }}
+                  style={{
+                    fontSize: "12.5px",
+                    fontWeight: 700,
+                    color: "#44403C",
+                    fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                  }}
                 >
-                  Specimen Photograph (JPG, PNG, WebP under 5MB) *
+                  {isKh
+                    ? "រូបថតឧបករណ៍ (JPG, PNG, WebP ក្រោម 5MB) *"
+                    : "Specimen Photograph (JPG, PNG, WebP under 5MB) *"}
                 </label>
 
                 <label htmlFor="photo" className="editorial-dropzone">
@@ -847,7 +1122,15 @@ export default function ContributePage() {
                     style={{ display: "none" }}
                   />
                   {photo ? (
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "14px", flexWrap: "wrap" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "14px",
+                        flexWrap: "wrap",
+                      }}
+                    >
                       {photoPreviewUrl && (
                         <img
                           src={photoPreviewUrl}
@@ -862,9 +1145,24 @@ export default function ContributePage() {
                         />
                       )}
                       <div style={{ textAlign: "left" }}>
-                        <div style={{ fontSize: "13px", fontWeight: 600, color: "#191614" }}>{photo.name}</div>
-                        <div style={{ fontSize: "11.5px", color: "#78716C", fontFamily: "monospace" }}>
-                          {(photo.size / (1024 * 1024)).toFixed(2)} MB &middot; Click to replace
+                        <div
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 600,
+                            color: "#191614",
+                          }}
+                        >
+                          {photo.name}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "11.5px",
+                            color: "#78716C",
+                            fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+                          }}
+                        >
+                          {(photo.size / (1024 * 1024)).toFixed(2)} MB &middot;{" "}
+                          {isKh ? "ចុចដើម្បីប្តូររូបថត" : "Click to replace"}
                         </div>
                       </div>
                     </div>
@@ -883,23 +1181,52 @@ export default function ContributePage() {
                           marginBottom: "8px",
                         }}
                       >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                           <polyline points="17 8 12 3 7 8" />
                           <line x1="12" y1="3" x2="12" y2="15" />
                         </svg>
                       </div>
-                      <div style={{ fontSize: "13px", fontWeight: 600, color: "#191614" }}>
-                        Choose a photograph from your device
+                      <div
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          color: "#191614",
+                          fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                        }}
+                      >
+                        {isKh
+                          ? "ជ្រើសរើសរូបថតពីឧបករណ៍របស់អ្នក"
+                          : "Choose a photograph from your device"}
                       </div>
-                      <div style={{ fontSize: "12px", color: "#78716C", marginTop: "2px" }}>
-                        JPG, PNG, or WebP &middot; Maximum 5 MB
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "#78716C",
+                          marginTop: "2px",
+                          fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                        }}
+                      >
+                        {isKh
+                          ? "JPG, PNG ឬ WebP · ទំហំអតិបរមា 5 MB"
+                          : "JPG, PNG, or WebP · Maximum 5 MB"}
                       </div>
                     </div>
                   )}
                 </label>
 
-                {errors.photo && <span style={{ color: "#EA580C", fontSize: "12.5px" }}>{errors.photo}</span>}
+                {errors.photo && (
+                  <span style={{ color: "#EA580C", fontSize: "12.5px" }}>
+                    {errors.photo}
+                  </span>
+                )}
               </div>
 
               <button
@@ -910,7 +1237,8 @@ export default function ContributePage() {
                   height: "50px",
                   marginTop: "6px",
                   borderRadius: "9999px",
-                  background: "linear-gradient(135deg, #FB923C 0%, #EA580C 52%, #C2410C 100%)",
+                  background:
+                    "linear-gradient(135deg, #FB923C 0%, #EA580C 52%, #C2410C 100%)",
                   border: "none",
                   color: "#FFFFFF",
                   fontSize: "14px",
@@ -918,9 +1246,16 @@ export default function ContributePage() {
                   cursor: !user || isSubmitting ? "not-allowed" : "pointer",
                   opacity: isSubmitting ? 0.7 : 1,
                   boxShadow: "0 12px 26px -8px rgba(234, 88, 12, 0.45)",
+                  fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
                 }}
               >
-                {isSubmitting ? "កំពុងផ្ទុករូបភាព... / Uploading Specimen..." : "Submit Entry for Review →"}
+                {isSubmitting
+                  ? isKh
+                    ? "កំពុងផ្ទុករូបភាព..."
+                    : "Uploading Specimen..."
+                  : isKh
+                    ? "បញ្ជូនកំណត់ត្រាសម្រាប់ការត្រួតពិនិត្យ →"
+                    : "Submit Entry for Review →"}
               </button>
             </form>
           </div>
@@ -944,13 +1279,20 @@ export default function ContributePage() {
                   marginBottom: "14px",
                 }}
               >
-                <span style={{ fontSize: "10.5px", fontFamily: "monospace", color: "#78716C", letterSpacing: "1px" }}>
-                  LIVE SHELF PREVIEW
+                <span
+                  style={{
+                    fontSize: "10.5px",
+                    fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+                    color: "#78716C",
+                    letterSpacing: isKh ? "0" : "1px",
+                  }}
+                >
+                  {isKh ? "ការមើលជាមុនលើធ្នើបណ្ណសារ" : "LIVE SHELF PREVIEW"}
                 </span>
                 <span
                   style={{
                     fontSize: "10.5px",
-                    fontFamily: "monospace",
+                    fontFamily: isKh ? "var(--font-khmer)" : "monospace",
                     padding: "3px 10px",
                     borderRadius: "9999px",
                     backgroundColor: "#FFF7ED",
@@ -958,7 +1300,7 @@ export default function ContributePage() {
                     border: "1px solid #FED7AA",
                   }}
                 >
-                  Will enter Pending Review
+                  {isKh ? "នឹងចូលទៅកាន់ការរង់ចាំពិនិត្យ" : "Will enter Pending Review"}
                 </span>
               </div>
 
@@ -983,7 +1325,13 @@ export default function ContributePage() {
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 ) : (
-                  <div style={{ textAlign: "center", color: "#9A9086", padding: "20px" }}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      color: "#9A9086",
+                      padding: "20px",
+                    }}
+                  >
                     <svg
                       width="48"
                       height="48"
@@ -994,14 +1342,34 @@ export default function ContributePage() {
                       style={{ opacity: 0.6, marginBottom: "6px" }}
                     >
                       <path d="M 15,65 Q 40,65 60,35 L 85,15" strokeLinecap="round" />
-                      <path d="M 50,45 L 35,70 L 65,70 Z" fill="rgba(234, 88, 12, 0.16)" />
+                      <path
+                        d="M 50,45 L 35,70 L 65,70 Z"
+                        fill="rgba(234, 88, 12, 0.16)"
+                      />
                     </svg>
-                    <div style={{ fontSize: "11.5px", fontFamily: "monospace" }}>Photo preview appears here</div>
+                    <div
+                      style={{
+                        fontSize: "11.5px",
+                        fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+                      }}
+                    >
+                      {isKh
+                        ? "រូបថតនឹងបង្ហាញនៅទីនេះ"
+                        : "Photo preview appears here"}
+                    </div>
                   </div>
                 )}
               </div>
 
-              <div style={{ fontSize: "10.5px", fontFamily: "monospace", color: "#EA580C", textTransform: "uppercase", marginBottom: "4px" }}>
+              <div
+                style={{
+                  fontSize: "10.5px",
+                  fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+                  color: "#EA580C",
+                  textTransform: "uppercase",
+                  marginBottom: "4px",
+                }}
+              >
                 {formData.category}
               </div>
 
@@ -1010,12 +1378,17 @@ export default function ContributePage() {
                   fontSize: "20px",
                   fontWeight: 600,
                   color: "#191614",
-                  fontFamily: "var(--font-khmer-title), var(--font-serif), Georgia, serif",
+                  fontFamily: isKh
+                    ? "var(--font-khmer-title)"
+                    : "var(--font-serif), Georgia, serif",
                   margin: "0 0 8px",
                   lineHeight: 1.35,
                 }}
               >
-                {formData.title.trim() || "នង្គ័លបុរាណ (Your Tool Title)"}
+                {formData.title.trim() ||
+                  (isKh
+                    ? "ឈ្មោះឧបករណ៍របស់អ្នក (ឧ. នង្គ័លបុរាណ)"
+                    : "Your Tool Title")}
               </h3>
 
               <p
@@ -1028,10 +1401,13 @@ export default function ContributePage() {
                   WebkitLineClamp: 3,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
+                  fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
                 }}
               >
                 {formData.description.trim() ||
-                  "The craftsmanship story and elder memory you record here helps preserve rural Cambodian heritage."}
+                  (isKh
+                    ? "រឿងរ៉ាវសិប្បកម្ម និងការចងចាំរបស់ចាស់ទុំដែលអ្នកកត់ត្រានៅទីនេះ ជួយអភិរក្សកេរដំណែលជនបទខ្មែរ។"
+                    : "The craftsmanship story and elder memory you record here helps preserve rural Cambodian heritage.")}
               </p>
 
               <div
@@ -1042,11 +1418,15 @@ export default function ContributePage() {
                   justifyContent: "space-between",
                   fontSize: "12px",
                   color: "#57534E",
+                  fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
                 }}
               >
-                <span>{formData.place.trim() || "Kampong Cham"}</span>
+                <span>
+                  {formData.place.trim() || (isKh ? "ខេត្តកំពង់ចាម" : "Kampong Cham")}
+                </span>
                 <span style={{ color: "#191614", fontWeight: 600 }}>
-                  {formData.contributor.trim() || "Elder Source"}
+                  {formData.contributor.trim() ||
+                    (isKh ? "ប្រភពចាស់ទុំ" : "Elder Source")}
                 </span>
               </div>
             </div>
@@ -1059,11 +1439,42 @@ export default function ContributePage() {
                 padding: "20px 22px",
               }}
             >
-              <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#F59E0B", letterSpacing: "1px", marginBottom: "6px" }}>
-                CURATORIAL GATE PROCESS
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontFamily: isKh ? "var(--font-khmer)" : "monospace",
+                  color: "#F59E0B",
+                  letterSpacing: isKh ? "0" : "1px",
+                  marginBottom: "6px",
+                  fontWeight: 600,
+                }}
+              >
+                {isKh ? "ដំណើរការត្រួតពិនិត្យបណ្ណសារ" : "CURATORIAL GATE PROCESS"}
               </div>
-              <p style={{ margin: 0, fontSize: "12.5px", color: "#CEC6BE", lineHeight: 1.6 }}>
-                Every new submission enters the queue as <strong style={{ color: "#FFFFFF" }}>Pending Review</strong>. Reviewers inspect provenance and clarity before shelving publicly, keeping test clutter out of the living collection.
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "12.5px",
+                  color: "#CEC6BE",
+                  lineHeight: 1.6,
+                  fontFamily: isKh ? "var(--font-khmer)" : "var(--font-sans)",
+                }}
+              >
+                {isKh ? (
+                  <>
+                    រាល់កំណត់ត្រាដែលបានបញ្ជូនថ្មី នឹងចូលទៅក្នុងជួរ{" "}
+                    <strong style={{ color: "#FFFFFF" }}>«រង់ចាំពិនិត្យ»</strong>។
+                    អ្នកពិនិត្យនឹងផ្ទៀងផ្ទាត់ប្រភព និងភាពត្រឹមត្រូវ
+                    មុននឹងដាក់បង្ហាញជាសាធារណៈ ដើម្បីធានាគុណភាពបណ្ណសាររស់។
+                  </>
+                ) : (
+                  <>
+                    Every new submission enters the queue as{" "}
+                    <strong style={{ color: "#FFFFFF" }}>Pending Review</strong>.
+                    Reviewers inspect provenance and clarity before shelving publicly,
+                    keeping test clutter out of the living collection.
+                  </>
+                )}
               </p>
             </div>
           </div>
